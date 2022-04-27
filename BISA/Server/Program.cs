@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.ResponseCompression;
+global using Microsoft.EntityFrameworkCore;
+using BISA.Server.Data.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+// BisaDb
+builder.Services.AddDbContext<BisaDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("BisaDbConnection")));
+
 var app = builder.Build();
+
+//// Deletes, creates and updates database anew with the seeded data
+//using (var scope = app.Services.CreateScope())
+//{
+//    using (var context = scope.ServiceProvider.GetService<BisaDbContext>())
+//    {
+//        context.Database.EnsureDeleted();
+//        context.Database.Migrate();
+//        context.Database.EnsureCreated();
+//    }
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
