@@ -15,15 +15,16 @@ builder.Services.AddDbContext<BisaDbContext>(options => options.UseSqlServer(
 var app = builder.Build();
 
 //// Deletes, creates and updates database anew with the seeded data
-//using (var scope = app.Services.CreateScope())
-//{
-//    using (var context = scope.ServiceProvider.GetService<BisaDbContext>())
-//    {
-//        context.Database.EnsureDeleted();
-//        context.Database.Migrate();
-//        context.Database.EnsureCreated();
-//    }
-//}
+using (var scope = app.Services.CreateScope())
+{
+    using (var context = scope.ServiceProvider.GetService<BisaDbContext>())
+    {
+        
+        context.Database.EnsureDeleted();
+        //context.Database.Migrate();
+        context.Database.EnsureCreated();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
