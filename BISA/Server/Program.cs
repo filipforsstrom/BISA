@@ -2,6 +2,7 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Text;
 global using BISA.Server.Entities;
 global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Authorization;
 
 using BISA.Server.Data.DbContexts;
 using Microsoft.OpenApi.Models;
