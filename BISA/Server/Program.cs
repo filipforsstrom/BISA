@@ -4,7 +4,9 @@ global using BISA.Server.Entities;
 global using Microsoft.AspNetCore.Identity;
 
 using BISA.Server.Data.DbContexts;
-
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
