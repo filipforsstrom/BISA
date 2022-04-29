@@ -4,35 +4,35 @@ namespace BISA.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class UserRolesController : ControllerBase
     {
-        // GET: api/<AuthController>
+        // GET: api/<UserRolesController>
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<AuthController>/5
+        // GET api/<UserRolesController>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<AuthController>
+        // POST api/<UserRolesController>
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<AuthController>/5
+        // PUT api/<UserRolesController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<AuthController>/5
+        // DELETE api/<UserRolesController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
