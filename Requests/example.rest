@@ -1,0 +1,16 @@
+// Save variable
+@baseUrl = https://www.google.se/?hl=sv
+
+GET {{baseUrl}}
+
+### // New Request on same page
+GET {{baseUrl}}
+
+###
+POST url
+Content-Type: application/json
+Authorization: bearer token
+
+{
+
+}
