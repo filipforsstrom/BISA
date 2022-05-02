@@ -6,36 +6,97 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class EventsController : ControllerBase
     {
-        // GET: api/<EventsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var eventResponse = new ServiceResponseDTO<List<EventDTO>>();
+
+            if(eventResponse.Success)
+            {
+                return Ok(eventResponse.Data);
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
         }
 
-        // GET api/<EventsController>/5
+        [HttpGet]
+        public async Task<IActionResult> GetEventTypes()
+        {
+            var eventTypeResponse = new ServiceResponseDTO<List<EventTypeDTO>>();
+
+            if (eventTypeResponse.Success)
+            {
+                return Ok(eventTypeResponse.Data);
+            }
+            else
+            {
+                return BadRequest(eventTypeResponse.Message);
+            }
+        }
+
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var eventResponse = new ServiceResponseDTO<EventDTO>();
+
+            if (eventResponse.Success)
+            {
+                return Ok(eventResponse.Data);
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
+
         }
 
-        // POST api/<EventsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] EventDTO createdEvent)
         {
+            await Task.Delay(1);
+
+            var eventResponse = new ServiceResponseDTO<string>();
+
+            if (eventResponse.Success)
+            {
+                return Ok(eventResponse.Message);
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
         }
 
-        // PUT api/<EventsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToChange)
         {
+            var eventResponse = new ServiceResponseDTO<EventDTO>();
+
+            if (eventResponse.Success)
+            {
+                return Ok(eventResponse.Data);
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
         }
 
-        // DELETE api/<EventsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var eventResponse = new ServiceResponseDTO<EventDTO>();
+
+            if(eventResponse.Success)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
         }
     }
 }

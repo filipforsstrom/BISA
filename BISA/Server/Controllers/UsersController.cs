@@ -22,8 +22,19 @@ namespace BISA.Server.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePassword)
         {
+            var changePasswordResponse = new ServiceResponseDTO<UserChangePasswordDTO>(); 
+
+            if(changePasswordResponse.Success)
+            {
+                return Ok(changePasswordResponse.Message);
+            }
+            else
+            {
+                return BadRequest(changePasswordResponse.Message);
+            }
+
         }
 
         // PUT api/<UsersController>/5

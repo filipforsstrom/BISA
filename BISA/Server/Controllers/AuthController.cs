@@ -20,10 +20,48 @@ namespace BISA.Server.Controllers
             return "value";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param UserLoginDTO="user"></param>
+        /// <returns> returns a valid JWT token if serviceResponse is valid </returns>
+        /// 
         // POST api/<AuthController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDTO user)
         {
+            await Task.Delay(1);
+
+            var loginResponse = new ServiceResponseDTO<string>();
+
+            if (loginResponse.Success)
+            {
+                return Ok(loginResponse.Data);
+            }
+            else
+            {
+                return BadRequest(loginResponse.Message);
+            }
+        }
+
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserRegisterDTO user)
+        {
+            await Task.Delay(1);
+
+            var registerResponse = new ServiceResponseDTO<string>();
+
+            if (registerResponse.Success)
+            {
+                return Ok(registerResponse.Data);
+            }
+            else
+            {
+                return BadRequest(registerResponse.Message);
+            }
+
+
         }
 
         // PUT api/<AuthController>/5

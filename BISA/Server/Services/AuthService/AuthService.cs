@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 
 
-namespace BISA.Server.Services
+namespace BISA.Server.Services.AuthService
 {
     public class AuthService
     {
