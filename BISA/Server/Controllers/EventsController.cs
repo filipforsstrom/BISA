@@ -11,7 +11,7 @@ namespace BISA.Server.Controllers
         {
             var eventResponse = new ServiceResponseDTO<List<EventDTO>>();
 
-            if(eventResponse.Success)
+            if (eventResponse.Success)
             {
                 return Ok(eventResponse.Data);
             }
@@ -21,7 +21,7 @@ namespace BISA.Server.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("Type")]
         public async Task<IActionResult> GetEventTypes()
         {
             var eventTypeResponse = new ServiceResponseDTO<List<EventTypeDTO>>();
@@ -89,7 +89,7 @@ namespace BISA.Server.Controllers
         {
             var eventResponse = new ServiceResponseDTO<EventDTO>();
 
-            if(eventResponse.Success)
+            if (eventResponse.Success)
             {
                 return NoContent();
             }
