@@ -6,6 +6,19 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
+
+
+        /*
+         * Get one item
+         * Add Item
+         * Update item
+         * Delete iteminventory? 
+         
+         
+         */
+
+
+
         // GET: api/<ItemsController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -15,27 +28,61 @@ namespace BISA.Server.Controllers
 
         // GET api/<ItemsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var eventResponse = new ServiceResponseDTO<ItemDTO>();
+
+            if (eventResponse.Success)
+            {
+                return Ok(eventResponse.Data);
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
+
         }
 
         // POST api/<ItemsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] string AddItemDTO) // här kommer AddItemDTO in
         {
+            var eventResponse = new ServiceResponseDTO<string>();
+
+            if (eventResponse.Success)
+            {
+                return Created("", eventResponse); // vad vill vi returnera med created? message eller created
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
+
         }
 
         // PUT api/<ItemsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] string AddItemDTO) // här kommer AddItemDTO in, ska vi ha ett helt objekt in?
         {
+            var eventResponse = new ServiceResponseDTO<string>();
+
+            if (eventResponse.Success)
+            {
+                return Ok(eventResponse.Message);
+            }
+            else
+            {
+                return BadRequest(eventResponse.Message);
+            }
+
         }
 
         // DELETE api/<ItemsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 
         {
+
+
         }
     }
 }
