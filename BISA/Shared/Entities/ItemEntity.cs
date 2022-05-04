@@ -10,13 +10,12 @@ namespace BISA.Shared.Entities
     {
         public int Id { get; set; }
         public string? Title { get; set; }
-        public int InStock { get; set; }
-        public int TotalStock { get; set; }
         public string? Language { get; set; }
         public string? Date { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
         public List<TagEntity>? Tags { get; set; }
+        public List<ItemInventoryEntity> ItemInventory { get; set; }
 
-    }  
+    }
 }

@@ -24,7 +24,7 @@ namespace BISA.Server.Data.DbContexts
         {
             modelBuilder.Entity<BookEntity>()
                 .HasData(
-                new BookEntity { Id = 1, Title = "Hej", InStock = 4, TotalStock = 5 }
+                new BookEntity { Id = 1, Title = "Hej" }
                 );
 
             modelBuilder.Entity<UserEntity>()
@@ -34,7 +34,7 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<LoanEntity>()
                 .HasData(
-                new LoanEntity { Id = 1, ItemId = 1, UserId = 1 }
+                new LoanEntity { Id = 1, ItemInventoryId = 1, UserId = 1 }
                 );
 
             modelBuilder.Entity<TagEntity>()
@@ -58,8 +58,8 @@ namespace BISA.Server.Data.DbContexts
                 );
             modelBuilder.Entity<ItemInventoryEntity>()
                 .HasData(
-                new ItemInventoryEntity { Id = 1, ItemId = 1 },
-                new ItemInventoryEntity { Id = 2, ItemId = 1 }
+                new ItemInventoryEntity { Id = 1, ItemId = 1, Available = true },
+                new ItemInventoryEntity { Id = 2, ItemId = 1, Available = false }
                 );
         }
     }

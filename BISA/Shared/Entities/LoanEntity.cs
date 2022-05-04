@@ -17,9 +17,9 @@ namespace BISA.Shared.Entities
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public UserEntity? User { get; set; }
-        [ForeignKey(nameof(Item))]
-        public int ItemId { get; set; } 
-        public ItemEntity? Item { get; set; }
+        [ForeignKey(nameof(ItemInventory))]
+        public int ItemInventoryId { get; set; }
+        public ItemInventoryEntity? ItemInventory { get; set; }
 
     }
 }

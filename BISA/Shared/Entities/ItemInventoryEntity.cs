@@ -13,5 +13,6 @@ namespace BISA.Shared.Entities
         [ForeignKey(nameof(Item))]
         public int ItemId { get; set; }
         public ItemEntity? Item { get; set; }
+        public bool Available { get; set; }
     }
 }

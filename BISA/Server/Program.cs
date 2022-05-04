@@ -1,14 +1,14 @@
+global using BISA.Server.Entities;
+global using BISA.Shared.DTO;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using System.Text;
-global using BISA.Server.Entities;
-global using Microsoft.AspNetCore.Identity;
-global using Microsoft.AspNetCore.Authorization;
-global using BISA.Shared.DTO;
-
 using BISA.Server.Data.DbContexts;
-using Microsoft.OpenApi.Models;
+using BISA.Server.Services.LibrisService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<ILibrisService, LibrisService>();
+builder.Services.AddHttpClient();
 
 // Swagger with Bearer token
 builder.Services.AddEndpointsApiExplorer();
