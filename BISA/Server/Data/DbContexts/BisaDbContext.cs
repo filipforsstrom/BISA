@@ -10,6 +10,8 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<LoanHistoryEntity> LoanHistory { get; set; }
         public DbSet<LoanReservationEntity> LoanReservations { get; set; }
         public DbSet<EventEntity> Events { get; set; }
+        public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
+
 
 
         public BisaDbContext(DbContextOptions<BisaDbContext> options)
@@ -22,7 +24,7 @@ namespace BISA.Server.Data.DbContexts
         {
             modelBuilder.Entity<BookEntity>()
                 .HasData(
-                new BookEntity { Id = 1, Title = "Hej", InStock = 4, TotalStock = 5}
+                new BookEntity { Id = 1, Title = "Hej" }
                 );
 
             modelBuilder.Entity<UserEntity>()
@@ -32,7 +34,7 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<LoanEntity>()
                 .HasData(
-                new LoanEntity { Id = 1, ItemId = 1, UserId = 1 }
+                new LoanEntity { Id = 1, ItemInventoryId = 1, UserId = 1 }
                 );
 
             modelBuilder.Entity<TagEntity>()
@@ -52,9 +54,13 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<EventEntity>()
                 .HasData(
-                new EventEntity { Id = 1, Date = DateTime.Now, Location = "Malmö", Organizer = "Kalle-Staffan", Subject = "Staffans kalle", EventTypeId = 1}
+                new EventEntity { Id = 1, Date = DateTime.Now, Location = "Malmö", Organizer = "Kalle-Staffan", Subject = "Staffans kalle", EventTypeId = 1 }
                 );
-
+            modelBuilder.Entity<ItemInventoryEntity>()
+                .HasData(
+                new ItemInventoryEntity { Id = 1, ItemId = 1, Available = true },
+                new ItemInventoryEntity { Id = 2, ItemId = 1, Available = false }
+                );
         }
     }
 }
