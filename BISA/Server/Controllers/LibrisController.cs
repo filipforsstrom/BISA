@@ -16,9 +16,15 @@ namespace BISA.Server.Controllers
             _librisService = librisService ?? throw new ArgumentNullException(nameof(librisService));
         }
         [HttpGet]
-        public async Task<LibrisItemDTO> GetItems()
+        public async Task<List<LibrisItemDTO>> GetItems()
         {
             var result = await _librisService.GetItems();
+            return result;
+        }
+        [HttpGet("{isbn}")]
+        public async Task<List<LibrisItemDTO>> GetItem(string isbn)
+        {
+            var result = await _librisService.GetItem(isbn);
             return result;
         }
     }
