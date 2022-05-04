@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Shared.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
@@ -8,22 +9,44 @@ namespace BISA.Server.Controllers
     {
         // GET: api/<LoanController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
+            var loans = new List<LoanEntity>();
+            loanResponse.Data = loans;
+            if (loanResponse.Success)
+            {
+                return Ok(loanResponse.Data);
+            }
+            return BadRequest(loanResponse.Message);
         }
 
         // GET api/<LoanController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            // Hämta en användares lån
+            var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
+            var loans = new List<LoanEntity>();
+            loanResponse.Data = loans;
+            if (loanResponse.Success)
+            {
+                return Ok(loanResponse.Data);
+            }
+            return BadRequest(loanResponse.Message);
         }
 
         // POST api/<LoanController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] List<string> loanItems) // Krävs korrekt DTO
         {
+            var loanResponse = new ServiceResponseDTO<string>();
+            
+            if (loanResponse.Success)
+            {
+                return Created("", loanResponse); // Vad ska returneras?
+            }
+            return BadRequest(loanResponse.Message);
         }
 
         // PUT api/<LoanController>/5
@@ -33,9 +56,17 @@ namespace BISA.Server.Controllers
         }
 
         // DELETE api/<LoanController>/5
+        // Bok återlämnad
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
+            
+            if (loanResponse.Success)
+            {
+                return NoContent();
+            }
+            return BadRequest(loanResponse.Message);
         }
     }
 }
