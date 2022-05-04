@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Shared.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
@@ -8,9 +9,15 @@ namespace BISA.Server.Controllers
     {
         // GET: api/<SearchController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get(SearchDTO searchParams)
         {
-            return new string[] { "value1", "value2" };
+            // Filter response by title, tags
+            var searchResponse = new ServiceResponseDTO<List<ItemDTO>>();
+            if (searchResponse.Success)
+            {
+                return Ok(searchResponse.Data);
+            }
+            return BadRequest(searchResponse.Message);
         }
 
         // GET api/<SearchController>/5
@@ -20,22 +27,5 @@ namespace BISA.Server.Controllers
             return "value";
         }
 
-        // POST api/<SearchController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<SearchController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<SearchController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
