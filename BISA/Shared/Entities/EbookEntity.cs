@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BISA.Shared.Entities
 {
-    public class EbookEntity
+    public class EbookEntity : ItemEntity
     {
 
     }

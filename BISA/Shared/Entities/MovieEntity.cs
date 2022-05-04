@@ -8,6 +8,6 @@ namespace BISA.Shared.Entities
 {
     public class MovieEntity : ItemEntity
     {
-
+        public int RuntimeInMinutes { get; set; }
     }
 }

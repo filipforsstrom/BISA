@@ -22,10 +22,20 @@ namespace BISA.Server.Data.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ItemEntity>()
+            .HasDiscriminator<string>("Type")
+            .HasValue<BookEntity>("Book")
+            .HasValue<MovieEntity>("Movie")
+            .HasValue<EbookEntity>("Ebook");
+
             modelBuilder.Entity<BookEntity>()
                 .HasData(
-                new BookEntity { Id = 1, Title = "Hej" }
+                new BookEntity { Id = 1, Title = "Hej", ISBN = "523577987" }
                 );
+
+            modelBuilder.Entity<MovieEntity>()
+                .HasData(
+                new MovieEntity { Id = 2, Title = "Hej the movie", RuntimeInMinutes = 120, Creator = "Tolkien", Language = "English" });
 
             modelBuilder.Entity<UserEntity>()
                 .HasData(
