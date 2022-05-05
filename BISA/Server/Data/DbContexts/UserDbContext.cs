@@ -16,8 +16,8 @@ namespace BISA.Server.Data.DbContexts
         {
             base.OnModelCreating(builder);
             this.SeedUsers(builder);
-            //this.SeedRoles(builder);
-            //this.SeedUserRoles(builder);
+            this.SeedRoles(builder);
+            this.SeedUserRoles(builder);
         }
 
         private void SeedUsers(ModelBuilder builder)
@@ -34,8 +34,35 @@ namespace BISA.Server.Data.DbContexts
             };
             admin.PasswordHash = passwordHasher.HashPassword(admin, "admin");
 
+            ApplicationUser jaff = new()
+            {
+                Id = "b74ddd14-6340-4840-95c2-db12554843e6",
+                UserName = "Jaff",
+                NormalizedUserName = "JAFF",
+                Email = "jaff@gmail.com",
+                NormalizedEmail = "JAFF@GMAIL.COM",
+                LockoutEnabled = false,
+            };
+            jaff.PasswordHash = passwordHasher.HashPassword(jaff, "jaff");
 
-            builder.Entity<ApplicationUser>().HasData(admin);
+
+            builder.Entity<ApplicationUser>().HasData(admin, jaff);
+        }
+
+        private void SeedRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityRole>().HasData(
+                new IdentityRole() { Id = "AdminId", Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "ADMIN" },
+                new IdentityRole() { Id = "StaffId", Name = "Staff", ConcurrencyStamp = "2", NormalizedName = "STAFF" }
+                );
+        }
+
+        private void SeedUserRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>() { RoleId = "AdminId", UserId = "b74ddd14-6340-4840-95c2-db12554843e5" },
+                new IdentityUserRole<string>() { RoleId = "StaffId", UserId = "b74ddd14-6340-4840-95c2-db12554843e6" }
+                );
         }
     }
 }
