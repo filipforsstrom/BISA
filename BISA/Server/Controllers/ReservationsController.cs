@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Shared.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
@@ -6,36 +7,27 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        // GET: api/<ReservationsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<ReservationsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            // Get reservations for one item
+            var resResponse = new ServiceResponseDTO<LoanReservationEntity>();
+            if (resResponse.Success)
+            {
+                return Ok(resResponse.Data);
+            }
+            return BadRequest(resResponse.Message);
         }
 
-        // POST api/<ReservationsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("/user/{id}")]
+        public async Task<IActionResult> GetByUser(int userId)
         {
-        }
-
-        // PUT api/<ReservationsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ReservationsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var resResponse = new ServiceResponseDTO<LoanReservationEntity>();
+            if (resResponse.Success)
+            {
+                return Ok(resResponse.Data);
+            }
+            return BadRequest(resResponse.Message);
         }
     }
 }
