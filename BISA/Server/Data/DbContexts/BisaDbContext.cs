@@ -5,6 +5,7 @@ namespace BISA.Server.Data.DbContexts
     public class BisaDbContext : DbContext
     {
         public DbSet<ItemEntity> Items { get; set; }
+        public DbSet<BookEntity> Books { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<LoanEntity> LoansActive { get; set; }
         public DbSet<LoanHistoryEntity> LoanHistory { get; set; }
@@ -27,6 +28,10 @@ namespace BISA.Server.Data.DbContexts
             .HasValue<BookEntity>("Book")
             .HasValue<MovieEntity>("Movie")
             .HasValue<EbookEntity>("Ebook");
+
+            modelBuilder.Entity<ItemEntity>()
+            .Property(i => i.Type)
+            .HasColumnName("Type");
 
             modelBuilder.Entity<BookEntity>()
                 .HasData(

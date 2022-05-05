@@ -12,6 +12,7 @@ namespace BISA.Shared.Entities
         public string? Title { get; set; }
         public string? Language { get; set; }
         public string? Date { get; set; }
+        public string? Type { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
         public List<TagEntity>? Tags { get; set; }
