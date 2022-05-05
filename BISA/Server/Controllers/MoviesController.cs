@@ -25,7 +25,7 @@ namespace BISA.Server.Controllers
             }
         }
 
-        // POST api/<BooksController>
+        // POST api/<MoviesController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] MovieDTO movieToAdd)
         {
@@ -42,7 +42,7 @@ namespace BISA.Server.Controllers
             }
         }
 
-        // PUT api/<BooksController>/5
+        // PUT api/<MoviesController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromBody] MovieDTO movieToUpdate)
         {
