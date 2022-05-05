@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.ItemService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
@@ -6,7 +7,12 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
+        private readonly IItemService _itemService;
 
+        public ItemsController(IItemService ItemService)
+        {
+            _itemService = ItemService;
+        }
 
         /*
          * Get one item
@@ -31,6 +37,8 @@ namespace BISA.Server.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var eventResponse = new ServiceResponseDTO<ItemDTO>();
+
+            var eventResponsen = _itemService.GetItem(id);
 
             if (eventResponse.Success)
             {

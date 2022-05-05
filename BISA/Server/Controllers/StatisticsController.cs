@@ -6,36 +6,16 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class StatisticsController : ControllerBase
     {
-        // GET: api/<StatisticsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<StatisticsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<StatisticsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<StatisticsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<StatisticsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            // Populäraste item i biblioteket
+            var statResponse = new ServiceResponseDTO<ItemDTO>();
+            if (statResponse.Success)
+            {
+                return Ok(statResponse.Data);
+            }
+            return BadRequest(statResponse.Message);
         }
     }
 }
