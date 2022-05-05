@@ -36,17 +36,17 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var eventResponse = new ServiceResponseDTO<ItemDTO>();
+            var itemResponse = new ServiceResponseDTO<ItemDTO>();
 
-            var eventResponsen = _itemService.GetItem(id);
+            var itemResponsen = _itemService.GetItem(id);
 
-            if (eventResponse.Success)
+            if (itemResponse.Success)
             {
-                return Ok(eventResponse.Data);
+                return Ok(itemResponse.Data);
             }
             else
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(itemResponse.Message);
             }
 
         }
@@ -55,15 +55,15 @@ namespace BISA.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] string AddItemDTO) // här kommer AddItemDTO in
         {
-            var eventResponse = new ServiceResponseDTO<string>();
+            var itemResponse = new ServiceResponseDTO<string>();
 
-            if (eventResponse.Success)
+            if (itemResponse.Success)
             {
-                return Created("", eventResponse); // vad vill vi returnera med created? message eller created
+                return Created("", itemResponse); // vad vill vi returnera med created? message eller created
             }
             else
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(itemResponse.Message);
             }
 
         }
@@ -72,15 +72,15 @@ namespace BISA.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] string AddItemDTO) // här kommer AddItemDTO in, ska vi ha ett helt objekt in?
         {
-            var eventResponse = new ServiceResponseDTO<string>();
+            var itemResponse = new ServiceResponseDTO<string>();
 
-            if (eventResponse.Success)
+            if (itemResponse.Success)
             {
-                return Ok(eventResponse.Message);
+                return Ok(itemResponse.Message);
             }
             else
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(itemResponse.Message);
             }
 
         }

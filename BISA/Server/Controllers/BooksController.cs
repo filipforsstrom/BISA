@@ -12,7 +12,7 @@ namespace BISA.Server.Controllers
 
         // GET api/<BooksController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int itemId)
         {
             await Task.Delay(1);
             var bookResponse = new ServiceResponseDTO<BookDTO>();

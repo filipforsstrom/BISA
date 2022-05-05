@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BISA.Shared.DTO
 {
-    public class BookDTO
+    public class MovieDTO
     {
         public int Id { get; set; }
         public string? Title { get; set; }
@@ -18,7 +18,7 @@ namespace BISA.Shared.DTO
         public string? Creator { get; set; }
         public List<TagEntity>? Tags { get; set; }
         public List<ItemInventoryEntity> ItemInventory { get; set; }
-        public string? ISBN { get; set; }
+        public int RuntimeInMinutes { get; set; }
 
     }
 }
