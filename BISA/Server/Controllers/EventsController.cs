@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.EventService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
@@ -6,10 +7,17 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class EventsController : ControllerBase
     {
+        private readonly IEventService _eventService;
+
+        public EventsController(IEventService eventService)
+        {
+            _eventService = eventService;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var eventResponse = new ServiceResponseDTO<List<EventDTO>>();
+            var eventResponse = await _eventService.GetEvents();
 
             if (eventResponse.Success)
             {
@@ -24,7 +32,7 @@ namespace BISA.Server.Controllers
         [HttpGet("Type")]
         public async Task<IActionResult> GetEventTypes()
         {
-            var eventTypeResponse = new ServiceResponseDTO<List<EventTypeDTO>>();
+            var eventTypeResponse = await _eventService.GetEventTypes();
 
             if (eventTypeResponse.Success)
             {
@@ -39,7 +47,7 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var eventResponse = new ServiceResponseDTO<EventDTO>();
+            var eventResponse = await _eventService.GetEvent(id);
 
             if (eventResponse.Success)
             {
@@ -53,11 +61,15 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EventDTO createdEvent)
+        public async Task<IActionResult> Post([FromBody] EventDTO eventToCreate)
         {
-            await Task.Delay(1);
+            //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00 och inte på millisekunden"
+            //eventToCreate.Date = new DateTime(2020, 03, 22);
 
-            var eventResponse = new ServiceResponseDTO<string>();
+            //await Task.Delay(1);
+            
+
+            var eventResponse = await _eventService.CreateEvent(eventToCreate);
 
             if (eventResponse.Success)
             {
@@ -87,7 +99,7 @@ namespace BISA.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var eventResponse = new ServiceResponseDTO<EventDTO>();
+            var eventResponse = await _eventService.DeleteEvent(id);
 
             if (eventResponse.Success)
             {

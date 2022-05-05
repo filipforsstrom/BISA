@@ -13,6 +13,7 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<LoanHistoryEntity> LoanHistory { get; set; }
         public DbSet<LoanReservationEntity> LoanReservations { get; set; }
         public DbSet<EventEntity> Events { get; set; }
+        public DbSet<EventTypeEntity> EventType { get; set; }
         public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
 
 
@@ -66,13 +67,17 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<EventTypeEntity>()
                 .HasData(
-                new EventTypeEntity { Id = 1, Capacity = 500, Description = "Tjena hallå", Image = "Katt", Type = "Högläsning för barn" }
+                new EventTypeEntity { Id = 1, Capacity = 500, Description = "Tjena hallå", Image = "Katt", Type = "Högläsning för barn" },
+                new EventTypeEntity { Id = 2, Capacity = 300, Description = "Kom hit och fiska", Image = "Hund", Type = "Konsert" }
                 );
+
 
             modelBuilder.Entity<EventEntity>()
                 .HasData(
-                new EventEntity { Id = 1, Date = DateTime.Now, Location = "Malmö", Organizer = "Kalle-Staffan", Subject = "Staffans kalle", EventTypeId = 1 }
+                new EventEntity { Id = 1, Date = DateTime.Now, Location = "Malmö", Organizer = "Kalle-Staffan", Subject = "Staffans kalle", EventTypeId = 1 },
+                new EventEntity { Id = 2, Date = DateTime.Now, Location = "Tranås", Organizer = "Fora", Subject = "Diskutera i forum", EventTypeId = 1 }
                 );
+
             modelBuilder.Entity<ItemInventoryEntity>()
                 .HasData(
                 new ItemInventoryEntity { Id = 1, ItemId = 1, Available = true },

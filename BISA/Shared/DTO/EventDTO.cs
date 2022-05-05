@@ -8,6 +8,7 @@ namespace BISA.Shared.DTO
 {
     public class EventDTO
     {
+        public int Id { get; set; }
         public DateTime Date { get; set; }
         public string? Organizer { get; set; }
         public string? Subject { get; set; }
