@@ -6,6 +6,8 @@ namespace BISA.Server.Data.DbContexts
     {
         public DbSet<ItemEntity> Items { get; set; }
         public DbSet<BookEntity> Books { get; set; }
+        public DbSet<MovieEntity> Movies { get; set; }
+        public DbSet<EbookEntity> Ebooks { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<LoanEntity> LoansActive { get; set; }
         public DbSet<LoanHistoryEntity> LoanHistory { get; set; }
