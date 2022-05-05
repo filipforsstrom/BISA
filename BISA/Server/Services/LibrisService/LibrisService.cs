@@ -1,14 +1,17 @@
-﻿using BISA.Shared.Entities;
+﻿using BISA.Server.Data.DbContexts;
+using BISA.Shared.Entities;
 using System.Text.Json;
 
 namespace BISA.Server.Services.LibrisService
 {
     public class LibrisService : ILibrisService
     {
+        private readonly BisaDbContext _bisaDbContext;
         private readonly HttpClient _http;
 
-        public LibrisService(HttpClient http)
+        public LibrisService(BisaDbContext bisaDbContext, HttpClient http)
         {
+            _bisaDbContext = bisaDbContext ?? throw new ArgumentNullException(nameof(bisaDbContext));
             _http = http ?? throw new ArgumentNullException(nameof(http));
         }
 
@@ -70,7 +73,14 @@ namespace BISA.Server.Services.LibrisService
                     }
                     if (JsonItem.TryGetProperty("date", out JsonElement dateElement))
                     {
-                        item.Date = dateElement.ToString();
+                        if (dateElement.ValueKind == JsonValueKind.Array)
+                        {
+                            item.Date = FormatYear(dateElement[0].ToString());
+                        }
+                        else
+                        {
+                            item.Date = FormatYear(dateElement.ToString());
+                        }
                     }
                     if (JsonItem.TryGetProperty("language", out JsonElement languageElement))
                     {
@@ -81,9 +91,119 @@ namespace BISA.Server.Services.LibrisService
             }
             return items;
         }
-        private async Task AddItemsToDb(List<LibrisItemDTO> items)
+        private string FormatYear(string json)
         {
+            return new string(json.TakeWhile(char.IsDigit).ToArray());
+        }
+        private async Task AddBooksToDb(List<BookEntity> bookEntities)
+        {
+            if (bookEntities != null)
+            {
+                foreach (var bookEntity in bookEntities)
+                {
+                    _bisaDbContext.Add(bookEntity);
+                    await _bisaDbContext.SaveChangesAsync();
+                }
+            }
+        }
+        private List<BookEntity> ConvertLibrisDTOsToBookEntities(List<LibrisItemDTO> items)
+        {
+            List<BookEntity> bookEntities = new List<BookEntity>();
+            foreach (LibrisItemDTO item in items)
+            {
+                BookEntity bookEntity = new BookEntity
+                {
+                    Title = item.Title,
+                    Language = item.Language,
+                    Date = item.Date,
+                    Publisher = item.Publisher,
+                    Creator = item.Creator,
+                    ISBN = item.ISBN,
+                };
+                bookEntities.Add(bookEntity);
+            }
+            return bookEntities;
+        }
+        private BookEntity ConvertLibrisDTOToBookEntity(LibrisItemDTO item)
+        {
+            BookEntity bookEntity = new BookEntity
+            {
+                Title = item.Title,
+                Language = item.Language,
+                Date = item.Date,
+                Publisher = item.Publisher,
+                Creator = item.Creator,
+                ISBN = item.ISBN,
+            };
+            return bookEntity;
+        }
+        private MovieEntity ConvertLibrisDTOToMovieEntity(LibrisItemDTO item)
+        {
+            MovieEntity movieEntity = new MovieEntity
+            {
+                Title = item.Title,
+                Language = item.Language,
+                Date = item.Date,
+                Publisher = item.Publisher,
+                Creator = item.Creator,
+            };
+            return movieEntity;
+        }
+        private EbookEntity ConvertLibrisDTOToEbookEntity(LibrisItemDTO item)
+        {
+            EbookEntity ebookEntity = new EbookEntity
+            {
+                Title = item.Title,
+                Language = item.Language,
+                Date = item.Date,
+                Publisher = item.Publisher,
+                Creator = item.Creator,
+            };
+            return ebookEntity;
+        }
+        private async Task AddBookToDb(BookEntity bookEntity)
+        {
+            _bisaDbContext.Add(bookEntity);
+            await _bisaDbContext.SaveChangesAsync();
+        }
+        private async Task AddEbookToDb(EbookEntity ebookEntity)
+        {
+            _bisaDbContext.Add(ebookEntity);
+            await _bisaDbContext.SaveChangesAsync();
+        }
+        private async Task AddMovieToDb(MovieEntity movieEntity)
+        {
+            _bisaDbContext.Add(movieEntity);
+            await _bisaDbContext.SaveChangesAsync();
+        }
 
+        public async Task SeedDatabase()
+        {
+            var librisItems = await GetItems();
+            //var bookEntities = ConvertLibrisDTOsToBookEntities(librisItems);
+            //await AddBooksToDb(bookEntities);
+            await AddItemsToDb(librisItems);
+        }
+        private async Task AddItemsToDb(List<LibrisItemDTO> librisItems)
+        {
+            foreach (var item in librisItems)
+            {
+                if (item.Type == "book")
+                {
+                    var bookEntity = ConvertLibrisDTOToBookEntity(item);
+                    await AddBookToDb(bookEntity);
+                }
+                else if (item.Type == "E-book")
+                {
+                    var ebookEntity = ConvertLibrisDTOToEbookEntity(item);
+                    await AddEbookToDb(ebookEntity);
+                }
+                else if (item.Type == "moving imag")
+                {
+                    var movieEntity = ConvertLibrisDTOToMovieEntity(item);
+                    await AddMovieToDb(movieEntity);
+                }
+            }
         }
     }
 }
