@@ -40,11 +40,11 @@ namespace BISA.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<string> loanItems) // Krävs korrekt DTO
         {
-            var loanResponse = new ServiceResponseDTO<string>();
-            
+            var loanResponse = new ServiceResponseDTO<List<string>>();
+
             if (loanResponse.Success)
             {
-                return Created("", loanResponse); // Vad ska returneras?
+                return Created("/loans", loanResponse.Data); 
             }
             return BadRequest(loanResponse.Message);
         }
@@ -60,6 +60,7 @@ namespace BISA.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            // Ta bort lån, flytta till lånehistorik, flytta reservationer
             var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
             
             if (loanResponse.Success)

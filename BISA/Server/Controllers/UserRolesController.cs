@@ -6,23 +6,10 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class UserRolesController : ControllerBase
     {
-        // GET: api/<UserRolesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<UserRolesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
         // POST api/<UserRolesController>
-        [HttpPost("{id}")]
-        public async Task<IActionResult> PromoteToStaff(int id) //bara make staff? heta bara post?
+        [HttpPost("[action]/{id}")]
+        public async Task<IActionResult> PromoteToStaff(int id)
         {
             var eventResponse = new ServiceResponseDTO<string>();
 
@@ -37,8 +24,8 @@ namespace BISA.Server.Controllers
 
         }
 
-        [HttpPost("/[action]/{id}")]
-        public async Task<IActionResult> PromoteToAdmin(int id) //bara make staff? 
+        [HttpPost("[action]/{id}")]
+        public async Task<IActionResult> PromoteToAdmin(int id)
         {
             var eventResponse = new ServiceResponseDTO<string>();
 
@@ -50,19 +37,12 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(eventResponse.Message);
             }
-
-        }
-
-        // PUT api/<UserRolesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
 
         }
 
         // DELETE api/<UserRolesController>/5
-        [HttpDelete("/demoteAdmin/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteAdmin(int id)
         {
             var eventResponse = new ServiceResponseDTO<string>();
 
@@ -77,7 +57,7 @@ namespace BISA.Server.Controllers
 
         }
         // DELETE api/<UserRolesController>/5
-        [HttpDelete("/demoteStaff/{id}")]
+        [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteStaff(int id)
         {
             var eventResponse = new ServiceResponseDTO<string>();

@@ -17,6 +17,11 @@ namespace BISA.Server.Services.ItemService
             throw new NotImplementedException();
         }
 
+        public Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<ServiceResponseDTO<ItemDTO>> GetItem(int id)
         {
             //var item = _context.Items.Where(i => i.Id == id && i.Type == "Book").FirstOrDefault();

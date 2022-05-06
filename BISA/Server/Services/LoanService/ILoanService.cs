@@ -4,7 +4,7 @@
     {
         Task<ServiceResponseDTO<List<string>>> GetAllLoans();
         Task<ServiceResponseDTO<List<string>>> GetMyLoans(int id);
-        Task<ServiceResponseDTO<string>> AddLoan();
+        Task<ServiceResponseDTO<List<string>>> AddLoan();
         Task<ServiceResponseDTO<string>> ReturnLoan();
     }
 }
