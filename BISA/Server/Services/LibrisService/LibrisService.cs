@@ -14,6 +14,11 @@ namespace BISA.Server.Services.LibrisService
             _bisaDbContext = bisaDbContext ?? throw new ArgumentNullException(nameof(bisaDbContext));
             _http = http ?? throw new ArgumentNullException(nameof(http));
         }
+        public async Task SeedDatabase()
+        {
+            var librisItems = await GetItems();
+            await AddItemsToDb(librisItems);
+        }
 
         public async Task<List<LibrisItemDTO>> GetItem(string ISBN)
         {
@@ -28,6 +33,7 @@ namespace BISA.Server.Services.LibrisService
             var items = JsonToLibrisDTO(result);
             return items;
         }
+
         private List<LibrisItemDTO> JsonToLibrisDTO(string json)
         {
             List<LibrisItemDTO> items = new List<LibrisItemDTO>();
@@ -118,34 +124,26 @@ namespace BISA.Server.Services.LibrisService
         {
             return new string(json.TakeWhile(char.IsDigit).ToArray());
         }
-        private async Task AddBooksToDb(List<BookEntity> bookEntities)
+        private async Task AddItemsToDb(List<LibrisItemDTO> librisItems)
         {
-            if (bookEntities != null)
+            foreach (var item in librisItems)
             {
-                foreach (var bookEntity in bookEntities)
+                if (item.Type == "book")
                 {
-                    _bisaDbContext.Add(bookEntity);
-                    await _bisaDbContext.SaveChangesAsync();
+                    var bookEntity = ConvertLibrisDTOToBookEntity(item);
+                    await AddBookToDb(bookEntity);
+                }
+                else if (item.Type == "E-book")
+                {
+                    var ebookEntity = ConvertLibrisDTOToEbookEntity(item);
+                    await AddEbookToDb(ebookEntity);
+                }
+                else if (item.Type == "moving image")
+                {
+                    var movieEntity = ConvertLibrisDTOToMovieEntity(item);
+                    await AddMovieToDb(movieEntity);
                 }
             }
-        }
-        private List<BookEntity> ConvertLibrisDTOsToBookEntities(List<LibrisItemDTO> items)
-        {
-            List<BookEntity> bookEntities = new List<BookEntity>();
-            foreach (LibrisItemDTO item in items)
-            {
-                BookEntity bookEntity = new BookEntity
-                {
-                    Title = item.Title,
-                    Language = item.Language,
-                    Date = item.Date,
-                    Publisher = item.Publisher,
-                    Creator = item.Creator,
-                    ISBN = item.ISBN,
-                };
-                bookEntities.Add(bookEntity);
-            }
-            return bookEntities;
         }
         private BookEntity ConvertLibrisDTOToBookEntity(LibrisItemDTO item)
         {
@@ -184,6 +182,11 @@ namespace BISA.Server.Services.LibrisService
             };
             return ebookEntity;
         }
+        private async Task AddMovieToDb(MovieEntity movieEntity)
+        {
+            _bisaDbContext.Add(movieEntity);
+            await _bisaDbContext.SaveChangesAsync();
+        }
         private async Task AddBookToDb(BookEntity bookEntity)
         {
             _bisaDbContext.Add(bookEntity);
@@ -194,39 +197,8 @@ namespace BISA.Server.Services.LibrisService
             _bisaDbContext.Add(ebookEntity);
             await _bisaDbContext.SaveChangesAsync();
         }
-        private async Task AddMovieToDb(MovieEntity movieEntity)
-        {
-            _bisaDbContext.Add(movieEntity);
-            await _bisaDbContext.SaveChangesAsync();
-        }
 
-        public async Task SeedDatabase()
-        {
-            var librisItems = await GetItems();
-            //var bookEntities = ConvertLibrisDTOsToBookEntities(librisItems);
-            //await AddBooksToDb(bookEntities);
-            await AddItemsToDb(librisItems);
-        }
-        private async Task AddItemsToDb(List<LibrisItemDTO> librisItems)
-        {
-            foreach (var item in librisItems)
-            {
-                if (item.Type == "book")
-                {
-                    var bookEntity = ConvertLibrisDTOToBookEntity(item);
-                    await AddBookToDb(bookEntity);
-                }
-                else if (item.Type == "E-book")
-                {
-                    var ebookEntity = ConvertLibrisDTOToEbookEntity(item);
-                    await AddEbookToDb(ebookEntity);
-                }
-                else if (item.Type == "moving image")
-                {
-                    var movieEntity = ConvertLibrisDTOToMovieEntity(item);
-                    await AddMovieToDb(movieEntity);
-                }
-            }
-        }
+
+
     }
 }
