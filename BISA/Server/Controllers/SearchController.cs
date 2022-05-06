@@ -1,4 +1,5 @@
-﻿using BISA.Shared.Entities;
+﻿using BISA.Server.Services.SearchService;
+using BISA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
@@ -7,12 +8,22 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
+        private readonly ISearchService _searchService;
+
+        public SearchController(ISearchService searchService)
+        {
+            _searchService = searchService;
+        }
+
         // GET: api/<SearchController>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetByTitle(SearchDTO searchParams)
+        public async Task<IActionResult> GetByTitle([FromQuery] string searchTitle) // searchdto
         {
-            // Filter response by title, tags
-            var searchResponse = new ServiceResponseDTO<List<ItemDTO>>();
+            if (string.IsNullOrEmpty(searchTitle))
+            {
+                return BadRequest("Please enter a title");
+            }
+            var searchResponse = await _searchService.SearchByTitle(searchTitle);
             if (searchResponse.Success)
             {
                 return Ok(searchResponse.Data);
@@ -21,10 +32,14 @@ namespace BISA.Server.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetByTags(SearchDTO searchParams)
+        public async Task<IActionResult> GetByTags([FromQuery] string tag)
         {
+            if (string.IsNullOrEmpty(tag))
+            {
+                return BadRequest("Please enter a subject");
+            }
             // Filter response by title, tags
-            var searchResponse = new ServiceResponseDTO<List<ItemDTO>>();
+            var searchResponse = await _searchService.SearchByTags(tag);
             if (searchResponse.Success)
             {
                 return Ok(searchResponse.Data);

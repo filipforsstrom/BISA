@@ -8,6 +8,7 @@ using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.EventService;
 using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
+using BISA.Server.Services.SearchService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -22,6 +23,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<ILibrisService, LibrisService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddHttpClient();
 
 // Swagger with Bearer token
