@@ -5,6 +5,7 @@ global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using System.Text;
 using BISA.Server.Data.DbContexts;
+using BISA.Server.Services.EventService;
 using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +21,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ILibrisService, LibrisService>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddHttpClient();
 
 // Swagger with Bearer token
