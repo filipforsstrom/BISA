@@ -6,7 +6,7 @@ namespace BISA.Server.Services.EventService
     public class EventService : IEventService
     {
         private readonly BisaDbContext _context;
-        private readonly ServiceResponseDTO<EventDTO> responseDTO = new();
+        private ServiceResponseDTO<EventDTO> responseDTO = new();
 
         public EventService(BisaDbContext context)
         {
@@ -20,10 +20,10 @@ namespace BISA.Server.Services.EventService
 
             //See if event to be created has exact same property data as another event except Id.
             var foundDuplicate = allEvents.Data
-                .Any(e => e.Subject.ToLower() == eventToCreate.Subject.ToLower() 
-                && e.Date.Equals(eventToCreate.Date) 
+                .Any(e => e.Subject.ToLower() == eventToCreate.Subject.ToLower()
+                && e.Date.Equals(eventToCreate.Date)
                 && e.Location.ToLower() == eventToCreate.Location.ToLower()
-                && e.Organizer.ToLower() == eventToCreate.Organizer.ToLower() 
+                && e.Organizer.ToLower() == eventToCreate.Organizer.ToLower()
                 && e.EventTypeId == eventToCreate.EventTypeId);
 
             if (foundDuplicate)
@@ -62,9 +62,13 @@ namespace BISA.Server.Services.EventService
                 return responseDTO;
             }
 
-            _context.Events.Remove(eventToDelete);
-            await _context.SaveChangesAsync();
-            responseDTO.Success = true;
+            var removed = _context.Events.Remove(eventToDelete);
+            if (removed != null)
+            {
+                await _context.SaveChangesAsync();
+                responseDTO.Success = true;
+            }
+
             return responseDTO;
         }
 
@@ -162,9 +166,35 @@ namespace BISA.Server.Services.EventService
             return responseDTO;
         }
 
-        public Task<ServiceResponseDTO<EventDTO>> UpdateEvent(EventDTO eventToUpdate)
+        public async Task<ServiceResponseDTO<EventDTO>> UpdateEvent(EventDTO eventToUpdate)
         {
-            throw new NotImplementedException();
+            var eventEntity = await _context.Events.FirstOrDefaultAsync(i => i.Id == eventToUpdate.Id);
+
+            if (eventEntity == null)
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "Event requested for update not found.";
+                return responseDTO;
+            }
+
+            EventEntity updatedEvent = new()
+            {
+                Id = eventToUpdate.Id,
+                Date = eventToUpdate.Date,
+                Organizer = eventToUpdate.Organizer,
+                Subject = eventToUpdate.Subject,
+                Location = eventToUpdate.Location,
+                EventTypeId = eventToUpdate.EventTypeId,
+            };
+
+
+            //Overridear värdena som finns i eventEntity med dem nya.
+            _context.Entry(eventEntity).CurrentValues.SetValues(updatedEvent);
+            await _context.SaveChangesAsync();
+            responseDTO.Success = true;
+            responseDTO.Data = eventToUpdate;
+
+            return responseDTO;
         }
     }
 }

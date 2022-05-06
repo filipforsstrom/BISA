@@ -63,7 +63,7 @@ namespace BISA.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] EventDTO eventToCreate)
         {
-            //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00 och inte på millisekunden"
+            //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00" och inte på millisekunden
             //eventToCreate.Date = new DateTime(2020, 03, 22);
 
             //await Task.Delay(1);
@@ -82,9 +82,9 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToChange)
+        public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToUpdate)
         {
-            var eventResponse = new ServiceResponseDTO<EventDTO>();
+            var eventResponse = await _eventService.UpdateEvent(eventToUpdate);
 
             if (eventResponse.Success)
             {
