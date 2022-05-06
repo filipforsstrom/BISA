@@ -76,9 +76,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
-
-
 var app = builder.Build();
 
 //// Deletes, creates and updates database anew with the seeded data
@@ -96,7 +93,15 @@ using (var scope = app.Services.CreateScope())
         //context.Database.Migrate();
         context.Database.EnsureCreated();
     }
+}
 
+// Seed database with LIBRIS
+using (var serviceScope = app.Services.CreateScope())
+{
+    var services = serviceScope.ServiceProvider;
+
+    var librisService = services.GetRequiredService<ILibrisService>();
+    await librisService.SeedDatabase();
 }
 
 // Configure the HTTP request pipeline.
@@ -128,3 +133,4 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+

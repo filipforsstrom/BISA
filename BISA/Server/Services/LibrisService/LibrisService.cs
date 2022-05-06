@@ -86,10 +86,33 @@ namespace BISA.Server.Services.LibrisService
                     {
                         item.Language = languageElement.ToString();
                     }
-                    items.Add(item);
+                    if (!IsAnyNullOrEmpty(item))
+                    {
+                        items.Add(item);
+                    }
                 }
             }
             return items;
+        }
+        public static bool IsAnyNullOrEmpty(object obj)
+        {
+            if (Object.ReferenceEquals(obj, null))
+                return true;
+
+            return obj.GetType().GetProperties()
+                .Any(x => IsNullOrEmpty(x.GetValue(obj)));
+        }
+        private static bool IsNullOrEmpty(object value)
+        {
+            if (Object.ReferenceEquals(value, null))
+                return true;
+
+            if (String.IsNullOrWhiteSpace(value.ToString()))
+                return true;
+
+            var type = value.GetType();
+            return type.IsValueType
+                && Object.Equals(value, Activator.CreateInstance(type));
         }
         private string FormatYear(string json)
         {
@@ -198,7 +221,7 @@ namespace BISA.Server.Services.LibrisService
                     var ebookEntity = ConvertLibrisDTOToEbookEntity(item);
                     await AddEbookToDb(ebookEntity);
                 }
-                else if (item.Type == "moving imag")
+                else if (item.Type == "moving image")
                 {
                     var movieEntity = ConvertLibrisDTOToMovieEntity(item);
                     await AddMovieToDb(movieEntity);
