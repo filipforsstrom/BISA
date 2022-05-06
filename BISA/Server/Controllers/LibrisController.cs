@@ -27,5 +27,10 @@ namespace BISA.Server.Controllers
             var result = await _librisService.GetItem(isbn);
             return result;
         }
+        [HttpGet("/[action]")]
+        public async Task SeedDatabase()
+        {
+            await _librisService.SeedDatabase();
+        }
     }
 }
