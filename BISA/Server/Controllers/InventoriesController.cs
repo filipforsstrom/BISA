@@ -10,7 +10,7 @@ namespace BISA.Server.Controllers
     {
         // GET: api/<InventoriesController>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int itemId)
         {
             var inventoryResponse = new ServiceResponseDTO<List<int>>(); //lista med id´s
 

@@ -15,9 +15,14 @@ namespace BISA.Server.Controllers
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id) // string email or user id?
         {
-            return "value";
+            var userResponse = new ServiceResponseDTO<string>(); // UserViewModel?
+            if (userResponse.Success)
+            {
+                return Ok(userResponse.Data);
+            }
+            return BadRequest();
         }
 
         // POST api/<UsersController>
@@ -45,8 +50,14 @@ namespace BISA.Server.Controllers
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var userResponse = new ServiceResponseDTO<string>();
+            if (userResponse.Success)
+            {
+                return NoContent();
+            }
+            return BadRequest();
         }
     }
 }

@@ -14,24 +14,6 @@ namespace BISA.Server.Controllers
             _itemService = ItemService;
         }
 
-        /*
-         * Get one item
-         * Add Item
-         * Update item
-         * Delete iteminventory? 
-         
-         
-         */
-
-
-
-        // GET: api/<ItemsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET api/<ItemsController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -51,6 +33,7 @@ namespace BISA.Server.Controllers
 
         }
 
+        // Subject to review
         // POST api/<ItemsController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] string AddItemDTO) // här kommer AddItemDTO in
@@ -68,6 +51,7 @@ namespace BISA.Server.Controllers
 
         }
 
+        // Subject to review
         // PUT api/<ItemsController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] string AddItemDTO) // här kommer AddItemDTO in, ska vi ha ett helt objekt in?
@@ -87,10 +71,17 @@ namespace BISA.Server.Controllers
 
         // DELETE api/<ItemsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 
+        public async Task<IActionResult> Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 
         {
+            // Ta bort item
+            // Ta bort exemplar av item
+            var deleteResponse = new ServiceResponseDTO<ItemDTO>();
+            if (deleteResponse.Success)
+            {
+                return NoContent();
+            }
 
-
+            return BadRequest(deleteResponse.Message);
         }
     }
 }

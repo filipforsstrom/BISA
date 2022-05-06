@@ -8,8 +8,8 @@ namespace BISA.Server.Controllers
     public class SearchController : ControllerBase
     {
         // GET: api/<SearchController>
-        [HttpGet]
-        public async Task<IActionResult> Get(SearchDTO searchParams)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetByTitle(SearchDTO searchParams)
         {
             // Filter response by title, tags
             var searchResponse = new ServiceResponseDTO<List<ItemDTO>>();
@@ -20,12 +20,16 @@ namespace BISA.Server.Controllers
             return BadRequest(searchResponse.Message);
         }
 
-        // GET api/<SearchController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetByTags(SearchDTO searchParams)
         {
-            return "value";
+            // Filter response by title, tags
+            var searchResponse = new ServiceResponseDTO<List<ItemDTO>>();
+            if (searchResponse.Success)
+            {
+                return Ok(searchResponse.Data);
+            }
+            return BadRequest(searchResponse.Message);
         }
-
     }
 }
