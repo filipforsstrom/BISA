@@ -1,4 +1,6 @@
-﻿namespace BISA.Server.Services.ItemService
+﻿using BISA.Shared.Entities;
+
+namespace BISA.Server.Services.ItemService
 {
     public interface IItemService
     {
