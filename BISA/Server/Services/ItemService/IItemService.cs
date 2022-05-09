@@ -1,4 +1,6 @@
-﻿namespace BISA.Server.Services.ItemService
+﻿using BISA.Shared.Entities;
+
+namespace BISA.Server.Services.ItemService
 {
     public interface IItemService
     {
@@ -7,5 +9,6 @@
 
         Task<ServiceResponseDTO<string>> UpdateItem(string AddItemDTO);
         Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId);
+        
     }
 }
