@@ -15,6 +15,7 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<EventEntity> Events { get; set; }
         public DbSet<EventTypeEntity> EventType { get; set; }
         public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
+        public DbSet<TagEntity> Tags { get; set; }
 
 
 
