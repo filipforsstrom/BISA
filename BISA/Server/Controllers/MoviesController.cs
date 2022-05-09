@@ -1,19 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.MovieService;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BISA.Server.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class MoviesController : ControllerBase
     {
+        private readonly IMovieService _movieService;
+
+        public MoviesController(IMovieService movieService)
+        {
+            _movieService = movieService;
+        }
         // GET api/<MoviesController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int itemId)
+        public async Task<IActionResult> Get(int id)
         {
-            await Task.Delay(1);
-            var movieResponse = new ServiceResponseDTO<MovieDTO>();
+            
+            var movieResponse = await _movieService.GetMovie(id);
 
             if (movieResponse.Success)
             {
@@ -27,14 +35,14 @@ namespace BISA.Server.Controllers
 
         // POST api/<MoviesController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] MovieDTO movieToAdd)
+        public async Task<IActionResult> Post([FromBody] MovieCreateDTO movieToCreate)
         {
-            await Task.Delay(1);
-            var movieResponse = new ServiceResponseDTO<string>();
+            
+            var movieResponse = await _movieService.CreateMovie(movieToCreate);
 
             if (movieResponse.Success)
             {
-                return Ok(movieResponse.Message);
+                return Ok(movieResponse.Data);
             }
             else
             {
@@ -44,10 +52,10 @@ namespace BISA.Server.Controllers
 
         // PUT api/<MoviesController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] MovieDTO movieToUpdate)
+        public async Task<IActionResult> Put([FromBody] MovieUpdateDTO movieToUpdate)
         {
-            await Task.Delay(1);
-            var movieResponse = new ServiceResponseDTO<string>();
+          
+            var movieResponse = await _movieService.UpdateMovie(movieToUpdate);
 
             if (movieResponse.Success)
             {

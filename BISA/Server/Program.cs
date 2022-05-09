@@ -10,7 +10,10 @@ using BISA.Server.Services.BookService;
 using BISA.Server.Services.EventService;
 using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
+using BISA.Server.Services.MovieService;
+
 using BISA.Server.Services.SearchService;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -27,6 +30,9 @@ builder.Services.AddScoped<ILibrisService, LibrisService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IEventService, EventService>();
+
+builder.Services.AddScoped<IMovieService, MovieService>();
+
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddHttpClient();
 
