@@ -29,7 +29,7 @@ namespace BISA.Server.Controllers
             }
         }
 
-        [HttpGet("Type")]
+        [HttpGet("Types")]
         public async Task<IActionResult> GetEventTypes()
         {
             var eventTypeResponse = await _eventService.GetEventTypes();
@@ -67,7 +67,7 @@ namespace BISA.Server.Controllers
             //eventToCreate.Date = new DateTime(2020, 03, 22);
 
             //await Task.Delay(1);
-            
+
 
             var eventResponse = await _eventService.CreateEvent(eventToCreate);
 

@@ -4,9 +4,9 @@
 
 namespace BISA.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Inventory")]
     [ApiController]
-    public class InventoriesController : ControllerBase
+    public class InventoryController : ControllerBase
     {
         // GET: api/<InventoriesController>
         [HttpGet]
@@ -24,7 +24,7 @@ namespace BISA.Server.Controllers
             }
         }
 
-       
+
 
         // POST api/<InventoriesController>
         [HttpPost]
@@ -43,7 +43,7 @@ namespace BISA.Server.Controllers
 
         }
 
-        
+
 
         // DELETE api/<InventoriesController>/5
         [HttpDelete("{id}")]
