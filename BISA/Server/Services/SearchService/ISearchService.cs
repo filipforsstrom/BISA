@@ -2,6 +2,7 @@
 {
     public interface ISearchService
     {
-        Task GetSearchResults();
+        Task<ServiceResponseDTO<List<ItemDTO>>> SearchByTitle(string title);
+        Task<ServiceResponseDTO<List<ItemDTO>>> SearchByTags(string tag);
     }
 }
