@@ -1,0 +1,7 @@
+{
+  "rest-client.environmentVariables": {
+    "$shared": {
+      "baseUri": "https://localhost:7065/api"
+    }
+  }
+}
