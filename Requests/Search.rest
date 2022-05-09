@@ -1,0 +1,20 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name title
+GET {{baseUri}}/search/title?title=hej
+
+###
+# @name tag
+GET {{baseUri}}/search/tag?tag=action

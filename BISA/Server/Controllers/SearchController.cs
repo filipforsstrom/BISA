@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/search")]
     [ApiController]
     public class SearchController : ControllerBase
     {
@@ -16,14 +16,14 @@ namespace BISA.Server.Controllers
         }
 
         // GET: api/<SearchController>
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetByTitle([FromQuery] string searchTitle) // searchdto
+        [HttpGet("title")]
+        public async Task<IActionResult> GetByTitle([FromQuery] string title) // searchdto
         {
-            if (string.IsNullOrEmpty(searchTitle))
+            if (string.IsNullOrEmpty(title))
             {
                 return BadRequest("Please enter a title");
             }
-            var searchResponse = await _searchService.SearchByTitle(searchTitle);
+            var searchResponse = await _searchService.SearchByTitle(title);
             if (searchResponse.Success)
             {
                 return Ok(searchResponse.Data);
@@ -31,7 +31,7 @@ namespace BISA.Server.Controllers
             return BadRequest(searchResponse.Message);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("tag")]
         public async Task<IActionResult> GetByTags([FromQuery] string tag)
         {
             if (string.IsNullOrEmpty(tag))
