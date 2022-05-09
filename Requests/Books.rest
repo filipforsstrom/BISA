@@ -13,4 +13,4 @@ Content-Type: application/json
 
 ###
 # @name books
-GET {{baseUri}}/books
+GET {{baseUri}}/books/1
