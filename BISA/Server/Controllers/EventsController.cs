@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/events")]
     [ApiController]
     public class EventsController : ControllerBase
     {
@@ -29,7 +29,7 @@ namespace BISA.Server.Controllers
             }
         }
 
-        [HttpGet("Types")]
+        [HttpGet("types")]
         public async Task<IActionResult> GetEventTypes()
         {
             var eventTypeResponse = await _eventService.GetEventTypes();
@@ -57,7 +57,6 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(eventResponse.Message);
             }
-
         }
 
         [HttpPost]
@@ -65,9 +64,6 @@ namespace BISA.Server.Controllers
         {
             //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00" och inte på millisekunden
             //eventToCreate.Date = new DateTime(2020, 03, 22);
-
-            //await Task.Delay(1);
-
 
             var eventResponse = await _eventService.CreateEvent(eventToCreate);
 
@@ -84,6 +80,7 @@ namespace BISA.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToUpdate)
         {
+            eventToUpdate.Id = id;
             var eventResponse = await _eventService.UpdateEvent(eventToUpdate);
 
             if (eventResponse.Success)
