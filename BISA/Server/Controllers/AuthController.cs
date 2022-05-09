@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {

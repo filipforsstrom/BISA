@@ -1,0 +1,54 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name events
+GET {{baseUri}}/events
+
+###
+# @name events/1
+GET {{baseUri}}/events/1
+
+###
+# @name eventTypes
+GET {{baseUri}}/events/types
+
+###
+# @name createEvent
+POST {{baseUri}}/events
+Content-Type: application/json
+
+{
+  "date": "2022-05-09T14:33:08.958Z",
+  "organizer": "string",
+  "subject": "string",
+  "location": "string",
+  "eventTypeId": 1
+}
+
+###
+# @name updateEvent
+PUT {{baseUri}}/events/1
+Content-Type: application/json
+
+{
+    "date": "2022-05-09T16:34:51.1699684",
+    "organizer": "test",
+    "subject": "test",
+    "location": "test",
+    "eventTypeId": 1
+}
+
+###
+# @name deleteEvent/1
+DELETE {{baseUri}}/events/1
