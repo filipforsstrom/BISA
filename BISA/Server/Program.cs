@@ -5,6 +5,7 @@ global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using System.Text;
 using BISA.Server.Data.DbContexts;
+using BISA.Server.Services.AuthService;
 using BISA.Server.Services.BookService;
 using BISA.Server.Services.EventService;
 using BISA.Server.Services.ItemService;
@@ -21,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILibrisService, LibrisService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBookService, BookService>();
@@ -60,6 +62,18 @@ builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("UserConnection")
     ));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<UserDbContext>();
+
+// UserDb options
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 3;
+});
 
 // JWT
 var jwtSettings = builder.Configuration.GetSection("JWTSettings");
