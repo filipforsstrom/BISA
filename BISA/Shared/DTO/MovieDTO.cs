@@ -15,8 +15,8 @@ namespace BISA.Shared.DTO
         public string? Date { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
-        public List<TagEntity>? Tags { get; set; }
-        public List<ItemInventoryEntity> ItemInventory { get; set; }
+        public List<TagDTO>? Tags { get; set; }
+        public int ItemInventory { get; set; }
         public int RuntimeInMinutes { get; set; }
 
     }

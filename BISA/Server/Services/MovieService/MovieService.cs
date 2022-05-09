@@ -44,7 +44,7 @@ namespace BISA.Server.Services.MovieService
             }
             var movieEntity = new MovieEntity
             {
-                Id = movieToCreate.Id,
+               
                 Title = movieToCreate.Title,
                 Language = movieToCreate.Language,
                 Date = movieToCreate.Date,
@@ -65,6 +65,7 @@ namespace BISA.Server.Services.MovieService
 
             responseDTO.Message = "Movie successfully added";
             responseDTO.Success = true;
+            responseDTO.Data = movieToCreate;
 
             return responseDTO;
 
@@ -73,7 +74,10 @@ namespace BISA.Server.Services.MovieService
 
         public async Task<ServiceResponseDTO<MovieDTO>> GetMovie(int itemId)
         {
-            var response = await _context.Movies.Where(m => m.Id == itemId).FirstOrDefaultAsync();
+            var response = await _context.Movies.Where(m => m.Id == itemId)
+                .Include(m => m.Tags)
+                .Include(m => m.ItemInventory)
+                .FirstOrDefaultAsync();
 
             ServiceResponseDTO<MovieDTO> responseDTO = new();
 
@@ -85,6 +89,12 @@ namespace BISA.Server.Services.MovieService
                 return responseDTO;
             }
 
+            List <TagDTO> tags = new();
+            foreach (var tag in response.Tags)
+            {
+                tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
+            }
+
             responseDTO.Success = true;
             responseDTO.Data = new MovieDTO
             {
@@ -94,8 +104,8 @@ namespace BISA.Server.Services.MovieService
                 Date = response.Date,
                 Publisher = response.Publisher,
                 Creator = response.Creator,
-                Tags = response.Tags,
-                ItemInventory = response.ItemInventory,
+                Tags = tags,
+                ItemInventory = response.ItemInventory.Count(),
                 RuntimeInMinutes = response.RuntimeInMinutes
             };
             return responseDTO;
@@ -104,7 +114,7 @@ namespace BISA.Server.Services.MovieService
 
         public async Task<ServiceResponseDTO<MovieUpdateDTO>> UpdateMovie(MovieUpdateDTO updatedMovie)
         {
-            var movieToUpdate = await _context.Movies.Where(m => m.Id == updatedMovie.Id).FirstOrDefaultAsync();
+            var movieToUpdate = await _context.Movies.Where(m => m.Id == updatedMovie.Id).Include(m => m.Tags).FirstOrDefaultAsync();
 
             ServiceResponseDTO<MovieUpdateDTO> responseDTO = new();
 
@@ -114,6 +124,8 @@ namespace BISA.Server.Services.MovieService
                 responseDTO.Message = "Movie requested for update not found.";
                 return responseDTO;
             }
+
+            movieToUpdate.Tags.Clear();
 
             List<TagEntity> tagsFoMovie = new List<TagEntity>();
 
