@@ -1,4 +1,5 @@
 ﻿using BISA.Server.Data.DbContexts;
+using BISA.Server.Services.ItemService;
 using BISA.Shared.Entities;
 
 namespace BISA.Server.Services.BookService
@@ -6,7 +7,7 @@ namespace BISA.Server.Services.BookService
     public class BookService : IBookService
     {
         private readonly BisaDbContext _context;
-        private ServiceResponseDTO<BookDTO> responseDTO = new();
+
 
         public BookService(BisaDbContext context)
         {
@@ -33,7 +34,6 @@ namespace BISA.Server.Services.BookService
                 responseDTO.Message = "Book already exists.";
                 return responseDTO;
             }
-            
 
             //If bookToCreate gets a list of Tag Ids passed in,
             //search for the tags in the Tags-table and add them to a list.
@@ -50,7 +50,6 @@ namespace BISA.Server.Services.BookService
             //Create book entity for the db.
             var bookEntity = new BookEntity()
             {
-                Id = bookToCreate.Id,
                 Title = bookToCreate.Title,
                 Creator = bookToCreate.Creator,
                 Date = bookToCreate.Date,
@@ -60,23 +59,29 @@ namespace BISA.Server.Services.BookService
                 Tags = tagsForBookToBeCreated,
             };
 
+            //----------------ITEM TO INVENTORY-TABLE LOGIC------------------------//
+
             //Add how many items there will be of this book to the ItemInventory-table. 
             for (int i = 0; i < bookToCreate.ItemInventory; i++)
             {
                 _context.ItemInventory.Add(new ItemInventoryEntity { Item = bookEntity, Available = true });
             }
 
+            //-------------------SAVE ALL AND RETURN DATA-------------------------//
 
             _context.Books.Add(bookEntity);
-            var successfulCreation = await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             responseDTO.Success = true;
             responseDTO.Data = bookToCreate;
+            responseDTO.Message = "Book successfully created";
 
             return responseDTO;
         }
 
         public async Task<ServiceResponseDTO<BookDTO>> GetBook(int Itemid)
         {
+            ServiceResponseDTO<BookDTO> responseDTO = new();
+
             //Find books and include the tags & iteminventory-tables to get the books tags & see how many items in inventory.
             var book = _context.Books.Where(b => b.Id == Itemid)
                 .Include(b => b.Tags)
@@ -117,9 +122,12 @@ namespace BISA.Server.Services.BookService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<BookDTO>> UpdateBook(BookDTO bookToUpdate)
+        public async Task<ServiceResponseDTO<BookUpdateDTO>> UpdateBook(BookUpdateDTO bookToUpdate)
         {
-            var bookEntity = await _context.Books.FirstOrDefaultAsync(i => i.Id == bookToUpdate.Id);
+            ServiceResponseDTO<BookUpdateDTO> responseDTO = new();
+            List<TagEntity> tagsForBookToBeUpdated = new();
+
+            var bookEntity = await _context.Books.Include(b => b.Tags).FirstOrDefaultAsync(i => i.Id == bookToUpdate.Id);
 
             if (bookEntity == null)
             {
@@ -128,25 +136,35 @@ namespace BISA.Server.Services.BookService
                 return responseDTO;
             }
 
-            BookEntity updatedBook = new()
+            //Remove current non-updated book's tags.
+            bookEntity.Tags.Clear();
+
+            //Add the new tags.
+            if (bookToUpdate.Tags != null)
             {
-                Id = bookToUpdate.Id,
-                Title = bookToUpdate.Title,
-                Creator = bookToUpdate.Creator,
-                Date = bookToUpdate.Date,
-                Language = bookToUpdate.Language,
-                ISBN = bookToUpdate.ISBN,
-                Publisher = bookToUpdate.Publisher,
-                //Tags = bookToUpdate.Tags,
-                //ItemInventory = bookToUpdate.ItemInventory
-            };
+                foreach (var tagIds in bookToUpdate.Tags)
+                {
+                    tagsForBookToBeUpdated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                }
+            }
 
 
-            //Overridear värdena som finns i eventEntity med dem nya.
-            _context.Entry(bookEntity).CurrentValues.SetValues(updatedBook);
+            bookEntity.Id = bookToUpdate.Id;
+            bookEntity.Title = bookToUpdate.Title;
+            bookEntity.Creator = bookToUpdate.Creator;
+            bookEntity.Date = bookToUpdate.Date;
+            bookEntity.Language = bookToUpdate.Language;
+            bookEntity.ISBN = bookToUpdate.ISBN;
+            bookEntity.Publisher = bookToUpdate.Publisher;
+            bookEntity.Tags = tagsForBookToBeUpdated;
+
+
+            //Let ef know that the entity we found's state has been modified and then save changes.
+            _context.Entry(bookEntity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             responseDTO.Success = true;
             responseDTO.Data = bookToUpdate;
+            responseDTO.Message = "Book successfully updated";
 
             return responseDTO;
         }

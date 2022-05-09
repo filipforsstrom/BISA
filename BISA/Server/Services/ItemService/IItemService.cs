@@ -9,5 +9,6 @@ namespace BISA.Server.Services.ItemService
 
         Task<ServiceResponseDTO<string>> UpdateItem(string AddItemDTO);
         Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId);
+        
     }
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace BISA.Shared.DTO
 {
-    public class BookCreateDTO
+    public class BookUpdateDTO
     {
+        public int Id { get; set; }
         public string? Title { get; set; }
         public string? Language { get; set; }
         public string? Date { get; set; }

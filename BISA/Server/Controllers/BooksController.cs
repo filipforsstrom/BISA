@@ -35,17 +35,6 @@ namespace BISA.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] BookCreateDTO bookToCreate)
         {
-            //var bookToCreate = new BookCreateDTO
-            //{
-            //    Title = "Tjo",
-            //    Creator = "bre",
-            //    Date = "dag 1",
-            //    Language = "danske",
-            //    ISBN = "66666666666666666",
-            //    Publisher = "Satan",
-            //    Tags = new List<int> { 1, 5, 3 },
-            //    ItemInventory = 1
-            //};
 
             var bookResponse = await _bookService.CreateBook(bookToCreate);
 
@@ -60,7 +49,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] BookDTO bookToUpdate)
+        public async Task<IActionResult> Put([FromBody] BookUpdateDTO bookToUpdate)
         {
             var bookResponse = await _bookService.UpdateBook(bookToUpdate);
 
