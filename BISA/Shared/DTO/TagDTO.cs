@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace BISA.Shared.Entities
+namespace BISA.Shared.DTO
 {
-    public class TagEntity
+    public class TagDTO
     {
         public int Id { get; set; }
         public string? Tag { get; set; }
-        [JsonIgnore]
-        public List<ItemEntity>? Items { get; set; }
     }
 }

@@ -3,7 +3,7 @@
     public interface IBookService
     {
         Task<ServiceResponseDTO<BookDTO>> GetBook(int Itemid);
-        Task<ServiceResponseDTO<string>> UpdateBook(BookDTO BookToUpdate);
-        Task<ServiceResponseDTO<string>> AddBook(BookDTO BookToAdd);
+        Task<ServiceResponseDTO<BookUpdateDTO>> UpdateBook(BookUpdateDTO bookToUpdate);
+        Task<ServiceResponseDTO<BookCreateDTO>> CreateBook(BookCreateDTO bookToCreate);
     }
 }
