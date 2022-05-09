@@ -18,9 +18,18 @@ namespace BISA.Server.Controllers
             }
             return BadRequest(resResponse.Message);
         }
-
-        [HttpGet("/user/{id}")]
-        public async Task<IActionResult> GetByUser(int userId)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserReservation()
+        {
+            var resResponse = new ServiceResponseDTO<LoanReservationEntity>();
+            if (resResponse.Success)
+            {
+                return Ok(resResponse.Data);
+            }
+            return BadRequest(resResponse.Message);
+        }
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetUserReservations(int id)
         {
             var resResponse = new ServiceResponseDTO<LoanReservationEntity>();
             if (resResponse.Success)
