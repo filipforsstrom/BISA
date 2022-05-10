@@ -8,6 +8,7 @@ using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.AuthService;
 using BISA.Server.Services.BookService;
 using BISA.Server.Services.EventService;
+using BISA.Server.Services.InventoryService;
 using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
 using BISA.Server.Services.LoanService;
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddHttpClient();
 
 // Swagger with Bearer token

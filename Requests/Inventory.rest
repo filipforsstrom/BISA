@@ -1,0 +1,30 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name AddItemInventory
+POST {{baseUri}}/inventory
+Content-Type: application/json
+{
+    "ItemId": 1,
+    "AmountOfItems": 5
+}
+
+###
+# @name DeleteItemInventory
+DELETE {{baseUri}}/Inventory/5
+Content-Type: application/json
+
+{
+    "InventoryId": 5
+}

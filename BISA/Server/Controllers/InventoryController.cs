@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.InventoryService;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,13 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class InventoryController : ControllerBase
     {
+        private readonly IInventoryService _inventoryService;
+
+        public InventoryController(IInventoryService inventoryService)
+        {
+            _inventoryService = inventoryService;
+        }
+
         // GET: api/<InventoriesController>
         [HttpGet]
         public async Task<IActionResult> Get(int itemId)
@@ -25,12 +33,10 @@ namespace BISA.Server.Controllers
         }
 
 
-
-        // POST api/<InventoriesController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] int itemId, int amountOfItems)
+        public async Task<IActionResult> Post([FromBody] ItemInventoryDTO itemInventoryAdd)
         {
-            var inventoryResponse = new ServiceResponseDTO<List<int>>();
+            var inventoryResponse = await _inventoryService.AddItemInventory(itemInventoryAdd);
 
             if (inventoryResponse.Success)
             {
@@ -43,13 +49,11 @@ namespace BISA.Server.Controllers
 
         }
 
-
-
-        // DELETE api/<InventoriesController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int inventoryId)
+        public async Task<IActionResult> Delete(int id, ItemInventoryDTO itemInventoryDelete)
         {
-            var inventoryResponse = new ServiceResponseDTO<string>();
+            itemInventoryDelete.InventoryId = id;
+            var inventoryResponse = await _inventoryService.DeleteItemInventory(itemInventoryDelete);
 
             if (inventoryResponse.Success)
             {
