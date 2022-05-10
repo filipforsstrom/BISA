@@ -1,0 +1,51 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name books
+GET {{baseUri}}/books/1
+
+###
+# @name createBook
+POST {{baseUri}}/books
+Content-Type: application/json
+
+{
+  "Title": "test_rest",
+  "Language": "test_rest",
+  "Date": "test_rest",
+  "Publisher": "test_rest",
+  "Creator": "test_rest",
+  "Tags": [
+    1, 2, 5
+  ],
+  "ItemInventory": 3,
+  "ISBN": "test_rest"
+}
+
+###
+# @name updateBook
+PUT {{baseUri}}/books/1
+Content-Type: application/json
+
+{
+  "Title": "test_rest",
+  "Language": "test_rest",
+  "Date": "test_rest",
+  "Publisher": "test_rest",
+  "Creator": "test_rest",
+  "Tags": [
+    1, 2, 4
+  ],
+  "ISBN": "test_rest"
+}

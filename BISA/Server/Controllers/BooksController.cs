@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.BookService;
+using BISA.Shared.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,14 +10,17 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-       
+        private readonly IBookService _bookService;
 
-        // GET api/<BooksController>/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int itemId)
+        public BooksController(IBookService bookService)
         {
-            await Task.Delay(1);
-            var bookResponse = new ServiceResponseDTO<BookDTO>();
+            _bookService = bookService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var bookResponse = await _bookService.GetBook(id);
 
             if (bookResponse.Success)
             {
@@ -27,16 +32,15 @@ namespace BISA.Server.Controllers
             }
         }
 
-        // POST api/<BooksController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] BookDTO bookToAdd)
+        public async Task<IActionResult> Post([FromBody] BookCreateDTO bookToCreate)
         {
-            await Task.Delay(1);
-            var bookResponse = new ServiceResponseDTO<string>();
+
+            var bookResponse = await _bookService.CreateBook(bookToCreate);
 
             if (bookResponse.Success)
             {
-                return Ok(bookResponse.Message);
+                return Ok(bookResponse.Data);
             }
             else
             {
@@ -44,12 +48,11 @@ namespace BISA.Server.Controllers
             }
         }
 
-        // PUT api/<BooksController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] BookDTO bookToUpdate)
+        public async Task<IActionResult> Put(int id, [FromBody] BookUpdateDTO bookToUpdate)
         {
-            await Task.Delay(1);
-            var bookResponse = new ServiceResponseDTO<string>();
+            bookToUpdate.Id = id;
+            var bookResponse = await _bookService.UpdateBook(bookToUpdate);
 
             if (bookResponse.Success)
             {

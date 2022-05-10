@@ -1,20 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.AuthService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IAuthService _authService;
 
-        // POST api/<AuthController>
+        public AuthController(IAuthService authService)
+        {
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+        }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO user)
-        {           
-            var loginResponse = new ServiceResponseDTO<string>();
+        {
+            var loginResponse = await _authService.Login(user);
 
             if (loginResponse.Success)
             {
+                HttpContext.Response.Headers.Add("X-AuthToken", loginResponse.Data); // for RestClient in vscode
                 return Ok(loginResponse.Data);
             }
             else
@@ -26,18 +32,17 @@ namespace BISA.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO user)
         {
-            var registerResponse = new ServiceResponseDTO<string>();
+            var registerResponse = await _authService.Register(user);
 
             if (registerResponse.Success)
             {
+                HttpContext.Response.Headers.Add("X-AuthToken", registerResponse.Data); // for RestClient in vscode
                 return Ok(registerResponse.Data);
             }
             else
             {
                 return BadRequest(registerResponse.Message);
             }
-
-
         }
     }
 }
