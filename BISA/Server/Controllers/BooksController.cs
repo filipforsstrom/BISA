@@ -49,8 +49,9 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] BookUpdateDTO bookToUpdate)
+        public async Task<IActionResult> Put(int id, [FromBody] BookUpdateDTO bookToUpdate)
         {
+            bookToUpdate.Id = id;
             var bookResponse = await _bookService.UpdateBook(bookToUpdate);
 
             if (bookResponse.Success)
