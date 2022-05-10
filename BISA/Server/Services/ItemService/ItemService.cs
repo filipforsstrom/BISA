@@ -13,26 +13,80 @@ namespace BISA.Server.Services.ItemService
             _context = context;
         }
 
-        public Task<ServiceResponseDTO<string>> AddItem(string AddItemDTO)
+
+        public async Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId)
         {
-            throw new NotImplementedException();
+            ServiceResponseDTO<ItemDTO> responseDTO = new();
+
+            var itemToDelete = _context.Items.Where(x => x.Id == itemId)
+                .Include(i => i.Tags)
+                .Include(i => i.ItemInventory)
+                .FirstOrDefault();
+
+            if(itemToDelete == null)
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "Item requested for deletion not found";
+                return responseDTO;
+            }
+
+            itemToDelete.ItemInventory.Clear();
+            itemToDelete.Tags.Clear();
+            _context.Items.Remove(itemToDelete);
+
+            await _context.SaveChangesAsync();
+            responseDTO.Success = true;
+            return responseDTO;
         }
 
-        public Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId)
+
+        public async Task<ServiceResponseDTO<List<ItemDTO>>> GetItems()
         {
-            throw new NotImplementedException();
+            ServiceResponseDTO<List<ItemDTO>> responseDTO = new();
+
+            var itemsFromDbList = await _context.Items
+                .Include(i => i.Tags)
+                .Include(i => i.ItemInventory)
+                .ToListAsync();
+
+            if(itemsFromDbList == null)
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "List of items requested is empty.";
+                return responseDTO;
+            }
+
+            var listOfItems = new List<ItemDTO>();
+            
+            foreach(var item in itemsFromDbList)
+            {
+                listOfItems.Add(
+                    new ItemDTO { Id = item.Id, 
+                        Title = item.Title, 
+                        Creator = item.Creator, 
+                        Date = item.Date, 
+                        ItemInventory = item.ItemInventory.Count(), 
+                        Language = item.Language, 
+                        Publisher = item.Publisher, 
+                        Tags = ConvertTagToTagDTO(item.Tags) 
+                    });
+            }
+
+            responseDTO.Success = true;
+            responseDTO.Data = listOfItems;
+            return responseDTO;
         }
 
-        public Task<ServiceResponseDTO<ItemDTO>> GetItem(int id)
+        private List<TagDTO> ConvertTagToTagDTO(List<TagEntity> tags)
         {
-            //var item = _context.Items.Where(i => i.Id == id && i.Type == "Book").FirstOrDefault();
-            throw new NotImplementedException();
+            List<TagDTO> tagsAsDTOs = new();
 
-        }
+            foreach (var tag in tags)
+            {
+                tagsAsDTOs.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
+            }
 
-        public Task<ServiceResponseDTO<string>> UpdateItem(string AddItemDTO)
-        {
-            throw new NotImplementedException();
+            return tagsAsDTOs;
         }
 
     }

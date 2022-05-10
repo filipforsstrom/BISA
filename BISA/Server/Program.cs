@@ -3,6 +3,7 @@ global using BISA.Shared.DTO;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
+global using System.Security.Claims;
 global using System.Text;
 using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.AuthService;
@@ -13,7 +14,6 @@ using BISA.Server.Services.LibrisService;
 using BISA.Server.Services.LoanService;
 using BISA.Server.Services.MovieService;
 using BISA.Server.Services.SearchService;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
