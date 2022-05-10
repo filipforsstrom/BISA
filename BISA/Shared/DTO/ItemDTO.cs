@@ -14,7 +14,7 @@ namespace BISA.Shared.DTO
         public string? Date { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
-        public string[] Tags { get; set; } // i ItemService omvandlar vi List<TagEntity> till en string array?? diskussion
+        public List<TagDTO> Tags { get; set; } // i ItemService omvandlar vi List<TagEntity> till en string array?? diskussion
         public int ItemInventory { get; set; } // i ItemService omvandlar vi  List<ItemInventoryEntity> till int
 
     }
