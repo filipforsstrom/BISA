@@ -43,7 +43,16 @@ namespace BISA.Server.Services.BookService
             {
                 foreach (var tagIds in bookToCreate.Tags)
                 {
-                    tagsForBookToBeCreated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                    try
+                    {
+                        tagsForBookToBeCreated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                    }
+                    catch (Exception)
+                    {
+
+
+                    }
+
                 }
             }
 
