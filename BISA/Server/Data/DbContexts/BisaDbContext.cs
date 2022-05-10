@@ -39,7 +39,9 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<BookEntity>()
                 .HasData(
-                new BookEntity { Id = 1, Title = "Hej", ISBN = "523577987" }
+                new BookEntity { Id = 1, Title = "Hej", ISBN = "523577987" },
+                new BookEntity { Id = 3, Title = "Dune", ISBN = "523577988" },
+                new BookEntity { Id = 4, Title = "Lord of the Rings", ISBN = "523577989" }
                 );
 
             modelBuilder.Entity<MovieEntity>()
@@ -48,12 +50,19 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<UserEntity>()
                 .HasData(
-                new UserEntity { Id = 1, Email = "jaf@newton.co.uk", Warnings = 3 }
+                new UserEntity { Id = 1, Email = "jaf@newton.co.uk", Warnings = 3 },
+                new UserEntity { Id = 2, Email = "peter@newton.co.uk", Warnings = 0 },
+                new UserEntity { Id = 3, Email = "elsie@newton.co.uk", Warnings = 0 },
+                new UserEntity { Id = 4, Email = "frank@newton.co.uk", Warnings = 0 },
+                new UserEntity { Id = 5, Email = "lina@newton.co.uk", Warnings = 0 }
                 );
 
             modelBuilder.Entity<LoanEntity>()
                 .HasData(
-                new LoanEntity { Id = 1, ItemInventoryId = 1, UserId = 1 }
+                new LoanEntity { Id = 1, ItemInventoryId = 1, UserId = 1 },
+                new LoanEntity { Id = 2, ItemInventoryId = 2, UserId = 1 },
+                new LoanEntity { Id = 3, ItemInventoryId = 4, UserId = 2 },
+                new LoanEntity { Id = 4, ItemInventoryId = 6, UserId = 3 }
                 );
 
             modelBuilder.Entity<TagEntity>()
@@ -81,8 +90,12 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<ItemInventoryEntity>()
                 .HasData(
-                new ItemInventoryEntity { Id = 1, ItemId = 1, Available = true },
-                new ItemInventoryEntity { Id = 2, ItemId = 1, Available = false }
+                new ItemInventoryEntity { Id = 1, ItemId = 1, Available = false },
+                new ItemInventoryEntity { Id = 2, ItemId = 1, Available = false },
+                new ItemInventoryEntity { Id = 3, ItemId = 2, Available = true },
+                new ItemInventoryEntity { Id = 4, ItemId = 2, Available = false },
+                new ItemInventoryEntity { Id = 5, ItemId = 3, Available = true },
+                new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false }
                 );
         }
     }

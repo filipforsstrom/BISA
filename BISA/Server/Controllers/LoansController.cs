@@ -1,4 +1,5 @@
-﻿using BISA.Shared.Entities;
+﻿using BISA.Server.Services.LoanService;
+using BISA.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
@@ -7,13 +8,19 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class LoansController : ControllerBase
     {
+        private readonly ILoanService _loanService;
+
+        public LoansController(ILoanService loanService)
+        {
+            _loanService = loanService;
+        }
+
         // GET: api/<LoanController>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
-            var loans = new List<LoanEntity>();
-            loanResponse.Data = loans;
+            var loanResponse = await _loanService.GetAllLoans();
+                        
             if (loanResponse.Success)
             {
                 return Ok(loanResponse.Data);
@@ -25,10 +32,8 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            // Hämta en användares lån
-            var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
-            var loans = new List<LoanEntity>();
-            loanResponse.Data = loans;
+            var loanResponse = await _loanService.GetMyLoans(id);
+            
             if (loanResponse.Success)
             {
                 return Ok(loanResponse.Data);
@@ -38,9 +43,9 @@ namespace BISA.Server.Controllers
 
         // POST api/<LoanController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] List<string> loanItems) // Krävs korrekt DTO
+        public async Task<IActionResult> Post([FromBody] List<ItemDTO> loanItems)
         {
-            var loanResponse = new ServiceResponseDTO<List<string>>();
+            var loanResponse = await _loanService.AddLoan(loanItems);
 
             if (loanResponse.Success)
             {
@@ -61,7 +66,7 @@ namespace BISA.Server.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             // Ta bort lån, flytta till lånehistorik, flytta reservationer
-            var loanResponse = new ServiceResponseDTO<List<LoanEntity>>();
+            var loanResponse = await _loanService.ReturnLoan(id);
             
             if (loanResponse.Success)
             {
