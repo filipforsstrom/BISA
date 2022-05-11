@@ -136,9 +136,25 @@ namespace BISA.Server.Services.ReservationService
         private DateTime CheckTimeAvailable(int id)
         {
             // Check earlier reservations
-            // Calculate estimated time of earliest available invItem
-            // return time
-            return DateTime.Now;
+            var reservations = _context.LoanReservations
+                .Where(lr => lr.ItemId == id)
+                .ToList();
+
+            if (reservations != null)
+            {
+                // Calculate estimated time of earliest available invItem
+                // return time
+                return DateTime.Now;
+            }
+            else
+            {
+                var loans = _context.LoansActive
+                    .Where(l => l.ItemInventory.ItemId == id)
+                    .OrderBy(l => l.Date_To)
+                    .ToList();
+
+                return loans[0].Date_To.AddDays(1);
+            }
         }
     }
 }
