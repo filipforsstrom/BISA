@@ -1,0 +1,9 @@
+@id = 1
+GET {{baseUri}}/reservations/1
+
+###
+# @name RemoveReservation
+DELETE {{baseUri}}/reservations/1
+
+###
+GET {{baseUri}}/reservations/1

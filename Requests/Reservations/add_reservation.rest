@@ -1,0 +1,7 @@
+@id = 1
+
+# @name AddReservation
+POST {{baseUri}}/reservations/{{id}}
+
+###
+GET {{baseUri}}/reservations/user
