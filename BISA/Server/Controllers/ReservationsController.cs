@@ -38,13 +38,24 @@ namespace BISA.Server.Controllers
             return BadRequest(resResponse.Message);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(int itemId)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> Post(int id)
         {
-            var resResponse = await _reservationService.AddReservation(itemId);
+            var resResponse = await _reservationService.AddReservation(id);
             if (resResponse.Success)
             {
                 return Ok(resResponse.Data);
+            }
+            return BadRequest(resResponse.Message);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var resResponse = await _reservationService.RemoveReservation(id);
+            if (resResponse.Success)
+            {
+                return NoContent();
             }
             return BadRequest(resResponse.Message);
         }

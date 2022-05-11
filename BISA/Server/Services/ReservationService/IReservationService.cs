@@ -7,5 +7,6 @@ namespace BISA.Server.Services.ReservationService
         Task<ServiceResponseDTO<List<LoanReservationEntity>>> GetItemReservations(int itemId);
         Task<ServiceResponseDTO<List<LoanReservationEntity>>> GetMyReservations();
         Task<ServiceResponseDTO<LoanReservationEntity>> AddReservation(int itemId);
+        Task<ServiceResponseDTO<string>> RemoveReservation(int id);
     }
 }

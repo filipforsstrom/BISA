@@ -16,7 +16,6 @@ namespace BISA.Server.Services.ReservationService
         {
             var response = new ServiceResponseDTO<LoanReservationEntity>();
 
-            // get user
             // simulated user
             var simUser = await _context.Users.FirstOrDefaultAsync();
 
@@ -24,15 +23,34 @@ namespace BISA.Server.Services.ReservationService
 
             if (item != null)
             {
-                // check earliest available time
-                var time = CheckTimeAvailable(item.Id);
+                var duplicateCheck = await _context.LoanReservations
+                    .Where(lr => lr.ItemId == itemId && lr.UserId == simUser.Id)
+                    .FirstOrDefaultAsync();
 
-                var newReservation = new LoanReservationEntity
+                if (duplicateCheck == null)
                 {
-                    UserId = simUser.Id,
-                    Date_From = time,
-                    Date_To = time.AddDays(20)
-                };
+                    // check earliest available time
+                    var time = CheckTimeAvailable(item.Id);
+
+                    var newReservation = new LoanReservationEntity
+                    {
+                        UserId = simUser.Id,
+                        Date_From = time,
+                        Date_To = time.AddDays(20),
+                        ItemId = item.Id
+                    };
+
+                    _context.LoanReservations.Add(newReservation);
+                    await _context.SaveChangesAsync();
+
+                    response.Data = newReservation;
+                    response.Success = true;
+                    return response;
+                }
+
+                response.Success = false;
+                response.Message = $"Item with id: {itemId} allready reserved by user";
+                return response;
             }
 
             response.Success = false;
@@ -79,6 +97,39 @@ namespace BISA.Server.Services.ReservationService
 
             response.Success = false;
             response.Message = "";
+            return response;
+        }
+
+        public async Task<ServiceResponseDTO<string>> RemoveReservation(int id)
+        {
+            var response = new ServiceResponseDTO<string>();
+
+            // simulated user
+            var simUser = await _context.Users.FirstOrDefaultAsync();
+
+            var reservationToRemove = await _context.LoanReservations
+                .Where(lr => lr.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (reservationToRemove != null)
+            {
+                if (simUser.Id == reservationToRemove.UserId)
+                {
+                    _context.LoanReservations.Remove(reservationToRemove);
+                    await _context.SaveChangesAsync();
+
+                    response.Success = true;
+                    response.Data = $"Reservation {id} canceled";
+                    return response;
+                }
+
+                response.Success = false;
+                response.Message = "Invalid user";
+                return response;
+            }
+
+            response.Success = false;
+            response.Message = "No matching reservation found";
             return response;
         }
 
