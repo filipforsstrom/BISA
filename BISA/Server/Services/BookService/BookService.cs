@@ -26,7 +26,7 @@ namespace BISA.Server.Services.BookService
                 b.Date.Equals(bookToCreate.Date) &&
                 b.Language.ToLower() == bookToCreate.Language.ToLower() &&
                 b.ISBN.ToLower() == bookToCreate.ISBN.ToLower() &&
-                b.Publisher.ToLower() == b.Publisher.ToLower());
+                b.Publisher.ToLower() == bookToCreate.Publisher.ToLower());
 
             if (foundDuplicate)
             {
@@ -151,7 +151,15 @@ namespace BISA.Server.Services.BookService
             {
                 foreach (var tagIds in bookToUpdate.Tags)
                 {
-                    tagsForBookToBeUpdated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                    try
+                    {
+                        tagsForBookToBeUpdated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    
                 }
             }
 

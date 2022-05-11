@@ -13,8 +13,10 @@ namespace BISA.Server.Services.MovieService
         }
         public async Task<ServiceResponseDTO<MovieCreateDTO>> CreateMovie(MovieCreateDTO movieToCreate)
         {
-            var allMovies = await _context.Movies.ToListAsync();
             ServiceResponseDTO<MovieCreateDTO> responseDTO = new();
+            
+
+            var allMovies = await _context.Movies.ToListAsync();
 
             var foundDuplicate = allMovies
                 .Any(m => m.Creator.ToLower() == movieToCreate.Creator.ToLower()
@@ -33,13 +35,21 @@ namespace BISA.Server.Services.MovieService
 
             }
 
-            List<TagEntity> tagsFoMovie = new List<TagEntity>();   
+            List<TagEntity> tagsFoMovie = new List<TagEntity>();
 
-            if(movieToCreate.Tags != null)
+            if (movieToCreate.Tags != null)
             {
                 foreach (var tag in movieToCreate.Tags)
                 {
-                    tagsFoMovie.Add(_context.Tags.Single(m => m.Id == tag));
+                    try
+                    {
+                        tagsFoMovie.Add(_context.Tags.Single(m => m.Id == tag));
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    
                 }
             }
             var movieEntity = new MovieEntity
@@ -114,7 +124,10 @@ namespace BISA.Server.Services.MovieService
 
         public async Task<ServiceResponseDTO<MovieUpdateDTO>> UpdateMovie(MovieUpdateDTO updatedMovie)
         {
-            var movieToUpdate = await _context.Movies.Where(m => m.Id == updatedMovie.Id).Include(m => m.Tags).FirstOrDefaultAsync();
+            var movieToUpdate = await _context.Movies
+                .Where(m => m.Id == updatedMovie.Id)
+                .Include(m => m.Tags)
+                .FirstOrDefaultAsync();
 
             ServiceResponseDTO<MovieUpdateDTO> responseDTO = new();
 
@@ -127,20 +140,28 @@ namespace BISA.Server.Services.MovieService
 
             movieToUpdate.Tags.Clear();
 
-            List<TagEntity> tagsFoMovie = new List<TagEntity>();
+            List<TagEntity> tagsForMovie = new List<TagEntity>();
 
-            if (updatedMovie.Tags != null)
+            if (updatedMovie.Tags != null )
             {
                 foreach (var tag in updatedMovie.Tags)
                 {
-                    tagsFoMovie.Add(_context.Tags.Single(m => m.Id == tag));
+                    try
+                    {
+                        tagsForMovie.Add(_context.Tags.Single(m => m.Id == tag));
+                    }
+                    catch (Exception)
+                    {
+                           
+                    }
+                  
                 }
             }
 
             movieToUpdate.Id = updatedMovie.Id;
             movieToUpdate.Title = updatedMovie.Title;
             movieToUpdate.RuntimeInMinutes = updatedMovie.RuntimeInMinutes;
-            movieToUpdate.Tags = tagsFoMovie;
+            movieToUpdate.Tags = tagsForMovie;
             movieToUpdate.Language = updatedMovie.Language; 
             movieToUpdate.Creator = updatedMovie.Creator;
             movieToUpdate.Date = updatedMovie.Date;
