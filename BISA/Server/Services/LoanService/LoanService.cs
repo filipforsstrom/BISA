@@ -46,7 +46,6 @@ namespace BISA.Server.Services.LoanService
                             UserId = simUser.Id,
                             Date_From = DateTime.Now,
                             Date_To = DateTime.Now.AddDays(20),
-                            Date_Returned = DateTime.MinValue,
                             ItemInventoryId = freeInvItem.Id,
                             ItemInventory = freeInvItem,
                             User = simUser,
