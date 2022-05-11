@@ -6,10 +6,12 @@ namespace BISA.Server.Services.LoanService
     public class LoanService : ILoanService
     {
         private readonly BisaDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LoanService(BisaDbContext context)
+        public LoanService(BisaDbContext context, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public async Task<ServiceResponseDTO<List<LoanDTO>>> AddLoan(List<ItemDTO> items)
@@ -18,7 +20,8 @@ namespace BISA.Server.Services.LoanService
             var response = new ServiceResponseDTO<List<LoanDTO>>();
 
             // get user id using context
-            
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
             // simulated user
             var simUser = await _context.Users.FirstOrDefaultAsync();
 
@@ -98,7 +101,7 @@ namespace BISA.Server.Services.LoanService
         {
             var response = new ServiceResponseDTO<List<LoanDTO>>();
             // get user from context, simulated by id
-            
+
             // get matching user from db
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
@@ -119,7 +122,7 @@ namespace BISA.Server.Services.LoanService
                 response.Success = false;
                 response.Message = "No active loans";
                 return response;
-                
+
             }
             response.Success = false;
             response.Message = "No matching user found";
@@ -142,7 +145,7 @@ namespace BISA.Server.Services.LoanService
                 // toggle available
                 var invItem = await _context.ItemInventory
                     .FirstOrDefaultAsync(i => i.Id == loanToRemove.ItemInventoryId);
-                
+
                 invItem.Available = true;
                 _context.Update(invItem);
                 await _context.SaveChangesAsync();

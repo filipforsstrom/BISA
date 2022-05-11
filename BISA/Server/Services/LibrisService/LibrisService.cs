@@ -197,8 +197,5 @@ namespace BISA.Server.Services.LibrisService
             _bisaDbContext.Add(ebookEntity);
             await _bisaDbContext.SaveChangesAsync();
         }
-
-
-
     }
 }

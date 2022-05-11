@@ -49,9 +49,8 @@ namespace BISA.Server.Services.BookService
                     }
                     catch (Exception)
                     {
-
+                        // add to responseDTO.Message
                     }
-                    
                 }
             }
 
