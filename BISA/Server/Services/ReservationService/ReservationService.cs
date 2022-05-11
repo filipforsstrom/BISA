@@ -84,6 +84,9 @@ namespace BISA.Server.Services.ReservationService
 
         private DateTime CheckTimeAvailable(int id)
         {
+            // Check earlier reservations
+            // Calculate estimated time of earliest available invItem
+            // return time
             return DateTime.Now;
         }
     }
