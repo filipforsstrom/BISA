@@ -1,0 +1,54 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name movies/id
+GET {{baseUri}}/movies/2
+
+###
+# @name movies/id
+PUT {{baseUri}}/movies/2
+Content-Type: application/json
+
+{
+    "title": "string",
+    "language": "string",
+    "date": "string",
+    "publisher": "string",
+    "creator": "string",
+    "tags": [
+        1,2
+    ],
+    "runtimeInMinutes": 0
+}
+
+###
+# @name movies
+POST {{baseUri}}/movies
+Content-Type: application/json
+
+{
+
+  "title": "string",
+  "language": "string",
+  "date": "string",
+  "publisher": "string",
+  "creator": "string",
+  "tags": [
+    1,2
+  ],
+  "itemInventory": 0,
+  "runtimeInMinutes": 0
+}
+
+

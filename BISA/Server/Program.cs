@@ -7,6 +7,7 @@ global using System.Text;
 using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.AuthService;
 using BISA.Server.Services.BookService;
+using BISA.Server.Services.EbookService;
 using BISA.Server.Services.EventService;
 using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IEventService, EventService>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IEbookService, EbookService>();
 
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
