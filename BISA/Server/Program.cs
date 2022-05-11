@@ -12,6 +12,7 @@ using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
 using BISA.Server.Services.LoanService;
 using BISA.Server.Services.MovieService;
+using BISA.Server.Services.ReservationService;
 using BISA.Server.Services.SearchService;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddHttpClient();
 
 // Swagger with Bearer token
