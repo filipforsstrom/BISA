@@ -15,9 +15,10 @@ Content-Type: application/json
 # @name AddItemInventory
 POST {{baseUri}}/inventory
 Content-Type: application/json
+
 {
-    "ItemId": 1,
-    "AmountOfItems": 5
+    "ItemId": 5,
+    "AmountToAdd": 10
 }
 
 ###

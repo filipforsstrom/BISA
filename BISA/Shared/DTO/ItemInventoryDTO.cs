@@ -9,7 +9,7 @@ namespace BISA.Shared.DTO
     public class ItemInventoryDTO
     {
         public int InventoryId { get; set; }
+        public int AmountToAdd { get; set; }
         public int ItemId { get; set; }
-        public int AmountOfItems { get; set; }
     }
 }

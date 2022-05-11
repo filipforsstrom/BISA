@@ -1,8 +1,6 @@
 ﻿using BISA.Server.Services.InventoryService;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BISA.Server.Controllers
 {
     [Route("api/Inventory")]
@@ -16,22 +14,6 @@ namespace BISA.Server.Controllers
             _inventoryService = inventoryService;
         }
 
-        // GET: api/<InventoriesController>
-        [HttpGet]
-        public async Task<IActionResult> Get(int itemId)
-        {
-            var inventoryResponse = new ServiceResponseDTO<List<int>>(); //lista med id´s
-
-            if (inventoryResponse.Success)
-            {
-                return Ok(inventoryResponse.Data);
-            }
-            else
-            {
-                return BadRequest(inventoryResponse.Message);
-            }
-        }
-
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ItemInventoryDTO itemInventoryAdd)
@@ -40,7 +22,7 @@ namespace BISA.Server.Controllers
 
             if (inventoryResponse.Success)
             {
-                return Ok(inventoryResponse.Data);
+                return Ok(inventoryResponse.Message);
             }
             else
             {

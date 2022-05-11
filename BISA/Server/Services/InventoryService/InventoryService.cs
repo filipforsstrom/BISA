@@ -12,13 +12,14 @@ namespace BISA.Server.Services.InventoryService
             _context = context;
         }
 
-        public async Task<ServiceResponseDTO<List<int>>> AddItemInventory(ItemInventoryDTO itemInventoryAdd)
+        public async Task<ServiceResponseDTO<ItemInventoryDTO>> AddItemInventory(ItemInventoryDTO itemInventoryAdd)
         {
-            ServiceResponseDTO<List<int>> responseDTO = new();
+            ServiceResponseDTO<ItemInventoryDTO> responseDTO = new();
 
             var item = await _context.Items
                 .Where(i => i.Id == itemInventoryAdd.ItemId)
-                .Include(i => i.ItemInventory).FirstOrDefaultAsync();
+                .Include(i => i.ItemInventory)
+                .FirstOrDefaultAsync();
 
             if(item == null)
             {
@@ -27,13 +28,13 @@ namespace BISA.Server.Services.InventoryService
                 return responseDTO;
             }
 
-            for (int i = 0; i < itemInventoryAdd.AmountOfItems; i++)
+            for (int i = 0; i < itemInventoryAdd.AmountToAdd; i++)
             {
                 item.ItemInventory.Add(new ItemInventoryEntity { ItemId = item.Id, Available = true });
             }
 
             await _context.SaveChangesAsync();
-            responseDTO.Message = "Items successfully added";
+            responseDTO.Message = $"{itemInventoryAdd.AmountToAdd} inventory items has successfully been added to Item {itemInventoryAdd.ItemId}";
             responseDTO.Success = true;
             return responseDTO;
         }
@@ -44,10 +45,16 @@ namespace BISA.Server.Services.InventoryService
 
             var inventoryItem = await _context.ItemInventory.Where(i => i.Id == itemInventoryDelete.InventoryId).FirstOrDefaultAsync();
 
-            if (inventoryItem == null || !inventoryItem.Available)
+            if (inventoryItem == null)
             {
-                responseDTO.Message = "Inventory item requested for deletion either not found or currently loaned out.";
+                responseDTO.Message = "Inventory item requested for deletion not found.";
                 responseDTO.Success = false;
+                return responseDTO;
+            }
+            else if(!inventoryItem.Available)
+            {
+                responseDTO.Message = "Inventory item requested for deletion currently loaned out.";
+                responseDTO.Success=false;
                 return responseDTO;
             }
 
@@ -59,9 +66,5 @@ namespace BISA.Server.Services.InventoryService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<List<int>>> GetItemInventory(ItemInventoryDTO itemInventory)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
