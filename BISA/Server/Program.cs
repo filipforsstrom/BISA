@@ -16,6 +16,7 @@ using BISA.Server.Services.LibrisService;
 using BISA.Server.Services.LoanService;
 using BISA.Server.Services.MovieService;
 using BISA.Server.Services.SearchService;
+using BISA.Server.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IEbookService, EbookService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpClient();
 
 // Swagger with Bearer token
