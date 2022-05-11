@@ -52,9 +52,9 @@ namespace BISA.Server.Controllers
 
         // PUT api/<MoviesController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] MovieUpdateDTO movieToUpdate)
+        public async Task<IActionResult> Put(int id,[FromBody] MovieUpdateDTO movieToUpdate)
         {
-          
+            movieToUpdate.Id = id;
             var movieResponse = await _movieService.UpdateMovie(movieToUpdate);
 
             if (movieResponse.Success)
