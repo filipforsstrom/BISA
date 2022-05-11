@@ -75,7 +75,7 @@ namespace BISA.Server.Services.AuthService
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
             foreach (var role in roles)

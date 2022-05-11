@@ -3,18 +3,21 @@ global using BISA.Shared.DTO;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
+global using System.Security.Claims;
 global using System.Text;
 using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.AuthService;
 using BISA.Server.Services.BookService;
+using BISA.Server.Services.EbookService;
 using BISA.Server.Services.EventService;
+using BISA.Server.Services.InventoryService;
 using BISA.Server.Services.ItemService;
 using BISA.Server.Services.LibrisService;
 using BISA.Server.Services.LoanService;
 using BISA.Server.Services.MovieService;
 using BISA.Server.Services.ReservationService;
 using BISA.Server.Services.SearchService;
-
+using BISA.Server.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -33,10 +36,15 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IEventService, EventService>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IEbookService, EbookService>();
 
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
+
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddHttpClient();
 
 // Swagger with Bearer token

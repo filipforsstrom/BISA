@@ -68,7 +68,7 @@ namespace BISA.Server.Services.SearchService
                     Date = item.Date,
                     Publisher = item.Publisher,
                     Creator = item.Creator,
-                    Tags = ConvertTagsToStrings(item.Tags),
+                    Tags = ConvertTagsToTagDTOs(item.Tags),
                     ItemInventory = item.ItemInventory.Count
                 });
             }
@@ -76,16 +76,16 @@ namespace BISA.Server.Services.SearchService
             return result;
         }
 
-        private string[] ConvertTagsToStrings(List<TagEntity> tags)
+        private List<TagDTO> ConvertTagsToTagDTOs(List<TagEntity> tags)
         {
-            string[] tagsAsStrings = new string[tags.Count];
+            List<TagDTO> tagsAsDTOs = new();
 
-            for (int i = 0; i < tagsAsStrings.Length; i++)
+            foreach(var tag in tags)
             {
-                tagsAsStrings[i] = tags[i].Tag;
+                tagsAsDTOs.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
             }
 
-            return tagsAsStrings;
+            return tagsAsDTOs;
         }
     }
 }

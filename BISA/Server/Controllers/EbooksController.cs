@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.EbookService;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,12 +9,20 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class EbooksController : ControllerBase
     {
+        private readonly IEbookService _ebookService;
+
+        public EbooksController(IEbookService ebookService)
+        {
+            _ebookService = ebookService;
+        }
+
+
         // GET api/<EbooksController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int itemId)
+        public async Task<IActionResult> Get(int id)
         {
-            await Task.Delay(1);
-            var ebookResponse = new ServiceResponseDTO<EbookDTO>();
+           
+            var ebookResponse = await _ebookService.GetEbook(id);
 
             if (ebookResponse.Success)
             {
@@ -27,10 +36,10 @@ namespace BISA.Server.Controllers
 
         // POST api/<EbooksController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EbookDTO ebookToAdd)
+        public async Task<IActionResult> Post([FromBody] EbookCreateDTO ebookToAdd)
         {
-            await Task.Delay(1);
-            var ebookResponse = new ServiceResponseDTO<string>();
+
+            var ebookResponse = await _ebookService.CreateEbook(ebookToAdd);
 
             if (ebookResponse.Success)
             {
@@ -44,10 +53,10 @@ namespace BISA.Server.Controllers
 
         // PUT api/<EbooksController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] EbookDTO ebookToUpdate)
+        public async Task<IActionResult> Put(int id, [FromBody] EbookUpdateDTO ebookToUpdate)
         {
-            await Task.Delay(1);
-            var ebookResponse = new ServiceResponseDTO<string>();
+            ebookToUpdate.Id = id;
+            var ebookResponse = await _ebookService.UpdateEbook(ebookToUpdate);
 
             if (ebookResponse.Success)
             {
