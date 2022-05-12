@@ -15,21 +15,11 @@ namespace BISA.Server.Services.StatisticsService
         public async Task<ServiceResponseDTO<ItemDTO>> GetMostPopularItem()
         {
             ServiceResponseDTO<ItemDTO> responseDTO = new();
-
-            //fake list of loan history
-            List<LoanHistoryEntity> loanHistory = new();
-            loanHistory.Add(new LoanHistoryEntity { Id = 1, ItemInventoryId = 1, UserId = 1 });
-            loanHistory.Add(new LoanHistoryEntity { Id = 2, ItemInventoryId = 6, UserId = 1 });
-            loanHistory.Add(new LoanHistoryEntity { Id = 3, ItemInventoryId = 4, UserId = 2 });
-            loanHistory.Add(new LoanHistoryEntity { Id = 4, ItemInventoryId = 6, UserId = 3 });
-            loanHistory.Add(new LoanHistoryEntity { Id = 5, ItemInventoryId = 6, UserId = 1 });
-            loanHistory.Add(new LoanHistoryEntity { Id = 6, ItemInventoryId = 1, UserId = 4 });
-            loanHistory.Add(new LoanHistoryEntity { Id = 7, ItemInventoryId = 6, UserId = 2 });
-
-
+            //get complete hisory
+            var loanhistory = await _context.LoanHistory.ToListAsync();
 
             //grouping list of most popular items
-            var sortedLoans = loanHistory.GroupBy(l => l.ItemInventoryId).OrderByDescending(g => g.Count()).Select(g => g).First();
+            var sortedLoans = loanhistory.GroupBy(l => l.ItemInventoryId).OrderByDescending(g => g.Count()).Select(g => g).First();
 
             //getting the most popular inventory id from grouping key
             int mostPopularInventoryId = sortedLoans.Key;

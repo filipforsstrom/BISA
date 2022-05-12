@@ -64,16 +64,16 @@ namespace BISA.Server.Data.DbContexts
                 new LoanEntity { Id = 3, ItemInventoryId = 4, UserId = 2 },
                 new LoanEntity { Id = 4, ItemInventoryId = 6, UserId = 3 }
                 );
-            //modelBuilder.Entity<LoanHistoryEntity>()
-            //    .HasData(
-            //        new LoanHistoryEntity { Id = 5, ItemInventoryId = 1, UserId = 1 },
-            //        new LoanHistoryEntity { Id = 6, ItemInventoryId = 6, UserId = 1 },
-            //        new LoanHistoryEntity { Id = 7, ItemInventoryId = 4, UserId = 2 },
-            //        new LoanHistoryEntity { Id = 8, ItemInventoryId = 6, UserId = 3 },
-            //        new LoanHistoryEntity { Id = 9, ItemInventoryId = 6, UserId = 1 },
-            //        new LoanHistoryEntity { Id = 10, ItemInventoryId = 1, UserId = 4 },
-            //        new LoanHistoryEntity { Id = 11, ItemInventoryId = 6, UserId = 2 }
-            //    );
+            modelBuilder.Entity<LoanHistoryEntity>()
+                .HasData(
+                    new LoanHistoryEntity { Id = 5, ItemInventoryId = 1, UserId = 1 },
+                    new LoanHistoryEntity { Id = 6, ItemInventoryId = 6, UserId = 1 },
+                    new LoanHistoryEntity { Id = 7, ItemInventoryId = 4, UserId = 2 },
+                    new LoanHistoryEntity { Id = 8, ItemInventoryId = 6, UserId = 3 },
+                    new LoanHistoryEntity { Id = 9, ItemInventoryId = 6, UserId = 1 },
+                    new LoanHistoryEntity { Id = 10, ItemInventoryId = 1, UserId = 4 },
+                    new LoanHistoryEntity { Id = 11, ItemInventoryId = 6, UserId = 2 }
+                );
 
             modelBuilder.Entity<TagEntity>()
                 .HasData(
