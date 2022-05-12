@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 namespace BISA.Shared.Entities
 {
     [Table("LoanHistory")]
-    public class LoanHistoryEntity : LoanEntity
+    public class LoanHistoryEntity : LoanSuperEntity
     {
-
+        public DateTime Date_Returned { get; set; }
+        [ForeignKey(nameof(ItemInventory))]
+        public int ItemInventoryId { get; set; }
+        public ItemInventoryEntity? ItemInventory { get; set; }
     }
 }

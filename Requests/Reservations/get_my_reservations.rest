@@ -1,0 +1,4 @@
+@id = 1
+
+# @name GetItemReservations
+get {{baseUri}}/reservations/{{id}}

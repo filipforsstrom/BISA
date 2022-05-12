@@ -22,79 +22,88 @@ namespace BISA.Server.Services.LibrisService
 
         public async Task<List<LibrisItemDTO>> GetItem(string ISBN)
         {
-            var result = await _http.GetStringAsync($"https://libris.kb.se/xsearch?query=ISBN:({ISBN})&format=json&n=200");
-            var items = JsonToLibrisDTO(result);
+            List<string> results = new List<string>();
+            results.Add(await _http.GetStringAsync($"https://libris.kb.se/xsearch?query=ISBN:({ISBN})&format=json&n=200"));
+            var items = JsonToLibrisDTO(results);
             return items;
         }
 
         public async Task<List<LibrisItemDTO>> GetItems()
         {
-            var result = await _http.GetStringAsync("https://libris.kb.se/xsearch?query=W.V.+Quine&format=json&n=200");
-            var items = JsonToLibrisDTO(result);
+            List<string> results = new List<string>();
+            results.Add(await _http.GetStringAsync("https://libris.kb.se/xsearch?query=W.V.+Quine&format=json&n=200"));
+            //results.Add(await _http.GetStringAsync("https://libris.kb.se/xsearch?query=saga&format=json&n=200"));
+            //results.Add(await _http.GetStringAsync("https://libris.kb.se/xsearch?query=historia&format=json&n=200"));
+            //results.Add(await _http.GetStringAsync("https://libris.kb.se/xsearch?query=code&format=json&n=200"));
+            //results.Add(await _http.GetStringAsync("https://libris.kb.se/xsearch?query=history&format=json&n=200"));
+            var items = JsonToLibrisDTO(results);
             return items;
         }
 
-        private List<LibrisItemDTO> JsonToLibrisDTO(string json)
+        private List<LibrisItemDTO> JsonToLibrisDTO(List<string> results)
         {
             List<LibrisItemDTO> items = new List<LibrisItemDTO>();
-            using (JsonDocument document = JsonDocument.Parse(json))
+            foreach (var json in results)
             {
-                JsonElement JsonItemsList = document.RootElement.GetProperty("xsearch").GetProperty("list");
-                foreach (JsonElement JsonItem in JsonItemsList.EnumerateArray())
+                using (JsonDocument document = JsonDocument.Parse(json))
                 {
-                    LibrisItemDTO item = new LibrisItemDTO();
-                    if (JsonItem.TryGetProperty("title", out JsonElement titleElement))
+                    JsonElement JsonItemsList = document.RootElement.GetProperty("xsearch").GetProperty("list");
+                    foreach (JsonElement JsonItem in JsonItemsList.EnumerateArray())
                     {
-                        item.Title = titleElement.ToString();
-                    }
-                    if (JsonItem.TryGetProperty("creator", out JsonElement creatorElement))
-                    {
-                        item.Creator = creatorElement.ToString();
-                    }
-                    if (JsonItem.TryGetProperty("isbn", out JsonElement isbnElement))
-                    {
-                        if (isbnElement.ValueKind == JsonValueKind.Array)
+                        LibrisItemDTO item = new LibrisItemDTO();
+                        if (JsonItem.TryGetProperty("title", out JsonElement titleElement))
                         {
-                            item.ISBN = isbnElement[0].ToString();
+                            item.Title = titleElement.ToString();
                         }
-                        else
+                        if (JsonItem.TryGetProperty("creator", out JsonElement creatorElement))
                         {
-                            item.ISBN = isbnElement.ToString();
+                            item.Creator = creatorElement.ToString();
                         }
-                    }
-                    if (JsonItem.TryGetProperty("type", out JsonElement typeElement))
-                    {
-                        item.Type = typeElement.ToString();
-                    }
-                    if (JsonItem.TryGetProperty("publisher", out JsonElement publisherElement))
-                    {
-                        if (publisherElement.ValueKind == JsonValueKind.Array)
+                        if (JsonItem.TryGetProperty("isbn", out JsonElement isbnElement))
                         {
-                            item.Publisher = publisherElement[0].ToString();
+                            if (isbnElement.ValueKind == JsonValueKind.Array)
+                            {
+                                item.ISBN = isbnElement[0].ToString();
+                            }
+                            else
+                            {
+                                item.ISBN = isbnElement.ToString();
+                            }
                         }
-                        else
+                        if (JsonItem.TryGetProperty("type", out JsonElement typeElement))
                         {
-                            item.Publisher = publisherElement.ToString();
+                            item.Type = typeElement.ToString();
                         }
-                    }
-                    if (JsonItem.TryGetProperty("date", out JsonElement dateElement))
-                    {
-                        if (dateElement.ValueKind == JsonValueKind.Array)
+                        if (JsonItem.TryGetProperty("publisher", out JsonElement publisherElement))
                         {
-                            item.Date = FormatYear(dateElement[0].ToString());
+                            if (publisherElement.ValueKind == JsonValueKind.Array)
+                            {
+                                item.Publisher = publisherElement[0].ToString();
+                            }
+                            else
+                            {
+                                item.Publisher = publisherElement.ToString();
+                            }
                         }
-                        else
+                        if (JsonItem.TryGetProperty("date", out JsonElement dateElement))
                         {
-                            item.Date = FormatYear(dateElement.ToString());
+                            if (dateElement.ValueKind == JsonValueKind.Array)
+                            {
+                                item.Date = FormatYear(dateElement[0].ToString());
+                            }
+                            else
+                            {
+                                item.Date = FormatYear(dateElement.ToString());
+                            }
                         }
-                    }
-                    if (JsonItem.TryGetProperty("language", out JsonElement languageElement))
-                    {
-                        item.Language = languageElement.ToString();
-                    }
-                    if (!IsAnyNullOrEmpty(item))
-                    {
+                        if (JsonItem.TryGetProperty("language", out JsonElement languageElement))
+                        {
+                            item.Language = languageElement.ToString();
+                        }
+                        //if (!IsAnyNullOrEmpty(item))
+                        //{
                         items.Add(item);
+                        //}
                     }
                 }
             }

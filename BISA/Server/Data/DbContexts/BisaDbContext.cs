@@ -10,8 +10,8 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<EbookEntity> Ebooks { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<LoanEntity> LoansActive { get; set; }
-        public DbSet<LoanHistoryEntity> LoanHistory { get; set; }
-        public DbSet<LoanReservationEntity> LoanReservations { get; set; }
+        public DbSet<LoanHistoryEntity> LoansHistory { get; set; }
+        public DbSet<LoanReservationEntity> LoansReservation { get; set; }
         public DbSet<EventEntity> Events { get; set; }
         public DbSet<EventTypeEntity> EventType { get; set; }
         public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
@@ -64,6 +64,16 @@ namespace BISA.Server.Data.DbContexts
                 new LoanEntity { Id = 3, ItemInventoryId = 4, UserId = 2 },
                 new LoanEntity { Id = 4, ItemInventoryId = 6, UserId = 3 }
                 );
+            modelBuilder.Entity<LoanHistoryEntity>()
+                .HasData(
+                    new LoanHistoryEntity { Id = 5, ItemInventoryId = 1, UserId = 1 },
+                    new LoanHistoryEntity { Id = 6, ItemInventoryId = 6, UserId = 1 },
+                    new LoanHistoryEntity { Id = 7, ItemInventoryId = 4, UserId = 2 },
+                    new LoanHistoryEntity { Id = 8, ItemInventoryId = 6, UserId = 3 },
+                    new LoanHistoryEntity { Id = 9, ItemInventoryId = 6, UserId = 1 },
+                    new LoanHistoryEntity { Id = 10, ItemInventoryId = 1, UserId = 4 },
+                    new LoanHistoryEntity { Id = 11, ItemInventoryId = 6, UserId = 2 }
+                );
 
             modelBuilder.Entity<TagEntity>()
                 .HasData(
@@ -97,6 +107,11 @@ namespace BISA.Server.Data.DbContexts
                 new ItemInventoryEntity { Id = 5, ItemId = 3, Available = true },
                 new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false }
                 );
+            modelBuilder.Entity<LoanReservationEntity>()
+                .HasData(
+                    new LoanReservationEntity { Id = 1, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(2), ItemId = 1, UserId = 3 },
+                    new LoanReservationEntity { Id = 2, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(1), ItemId = 1, UserId = 4 });
+
         }
     }
 }
