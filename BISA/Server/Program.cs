@@ -15,6 +15,7 @@ using BISA.Server.Services.LibrisService;
 using BISA.Server.Services.LoanService;
 using BISA.Server.Services.MovieService;
 using BISA.Server.Services.SearchService;
+using BISA.Server.Services.StatisticsService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IEbookService, EbookService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
