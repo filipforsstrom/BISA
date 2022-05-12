@@ -23,11 +23,12 @@ namespace BISA.Server.Services.ReservationService
 
             if (item != null)
             {
-                var duplicateCheck = await _context.LoanReservations
+                var duplicateCheck = await _context.LoansReservation
                     .Where(lr => lr.ItemId == itemId && lr.UserId == simUser.Id)
                     .FirstOrDefaultAsync();
 
-                if (duplicateCheck == null)
+                //if (duplicateCheck == null)
+                if (true)
                 {
                     // check earliest available time
                     var time = CheckTimeAvailable(item.Id);
@@ -40,7 +41,7 @@ namespace BISA.Server.Services.ReservationService
                         ItemId = item.Id
                     };
 
-                    _context.LoanReservations.Add(newReservation);
+                    _context.LoansReservation.Add(newReservation);
                     await _context.SaveChangesAsync();
 
                     response.Data = newReservation;
@@ -62,7 +63,7 @@ namespace BISA.Server.Services.ReservationService
         {
             var response = new ServiceResponseDTO<List<LoanReservationEntity>>();
 
-            var reservations = await _context.LoanReservations
+            var reservations = await _context.LoansReservation
                 .Where(lr => lr.ItemId == itemId)
                 .ToListAsync();
 
@@ -84,7 +85,7 @@ namespace BISA.Server.Services.ReservationService
             // simulated user
             var simUser = await _context.Users.FirstOrDefaultAsync();
 
-            var reservations = await _context.LoanReservations
+            var reservations = await _context.LoansReservation
                 .Where(lr => lr.UserId == simUser.Id)
                 .ToListAsync();
 
@@ -107,7 +108,7 @@ namespace BISA.Server.Services.ReservationService
             // simulated user
             var simUser = await _context.Users.FirstOrDefaultAsync();
 
-            var reservationToRemove = await _context.LoanReservations
+            var reservationToRemove = await _context.LoansReservation
                 .Where(lr => lr.Id == id)
                 .FirstOrDefaultAsync();
 
@@ -115,7 +116,7 @@ namespace BISA.Server.Services.ReservationService
             {
                 if (simUser.Id == reservationToRemove.UserId)
                 {
-                    _context.LoanReservations.Remove(reservationToRemove);
+                    _context.LoansReservation.Remove(reservationToRemove);
                     await _context.SaveChangesAsync();
 
                     response.Success = true;
@@ -136,25 +137,39 @@ namespace BISA.Server.Services.ReservationService
         private DateTime CheckTimeAvailable(int id)
         {
             // Check earlier reservations
-            var reservations = _context.LoanReservations
-                .Where(lr => lr.ItemId == id)
+            var loans = _context.LoansActive
+                .Where(l => l.ItemInventory.ItemId == id)
+                .OrderBy(l => l.Date_To)
+                .ToList();
+
+            var reservations = _context.LoansReservation
+                .Where(lr => lr.ItemId == id).OrderBy(lr => lr.Date_To)
                 .ToList();
 
             if (reservations != null)
             {
+                var itemInventory = _context.ItemInventory.Where(i => i.ItemId == id).ToList();
+                var newReservationIndex = reservations.Count();
+                var numberOfInventory = itemInventory.Count();
+                if (numberOfInventory > reservations.Count())
+                {
+                    var earliestLoanItem = loans[newReservationIndex];
+                    return earliestLoanItem.Date_To.AddDays(1);
+                }
+
+                var earliestReservationItem = reservations[newReservationIndex - numberOfInventory];
+                return earliestReservationItem.Date_To.AddDays(1);
                 // Calculate estimated time of earliest available invItem
                 // return time
-                return DateTime.Now;
+                //return DateTime.Now;
             }
             else
             {
-                var loans = _context.LoansActive
-                    .Where(l => l.ItemInventory.ItemId == id)
-                    .OrderBy(l => l.Date_To)
-                    .ToList();
+
 
                 return loans[0].Date_To.AddDays(1);
             }
         }
+
     }
 }

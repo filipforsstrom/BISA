@@ -10,8 +10,8 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<EbookEntity> Ebooks { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<LoanEntity> LoansActive { get; set; }
-        public DbSet<LoanHistoryEntity> LoanHistory { get; set; }
-        public DbSet<LoanReservationEntity> LoanReservations { get; set; }
+        public DbSet<LoanHistoryEntity> LoansHistory { get; set; }
+        public DbSet<LoanReservationEntity> LoansReservation { get; set; }
         public DbSet<EventEntity> Events { get; set; }
         public DbSet<EventTypeEntity> EventType { get; set; }
         public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
@@ -97,6 +97,11 @@ namespace BISA.Server.Data.DbContexts
                 new ItemInventoryEntity { Id = 5, ItemId = 3, Available = true },
                 new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false }
                 );
+            modelBuilder.Entity<LoanReservationEntity>()
+                .HasData(
+                    new LoanReservationEntity { Id = 1, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(2), ItemId = 1, UserId = 3 },
+                    new LoanReservationEntity { Id = 2, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(1), ItemId = 1, UserId = 4 });
+
         }
     }
 }
