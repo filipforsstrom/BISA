@@ -1,0 +1,50 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name DemoteAdmin
+DELETE {{baseUri}}/UserRoles/DeleteAdmin
+Content-Type: application/json
+
+{
+    "Id": "b74ddd14-6340-4840-95c2-db12554843e8"
+}
+
+###
+# @name DemoteStaff
+DELETE {{baseUri}}/UserRoles/DeleteStaff
+Content-Type: application/json
+
+{
+    "Id": "b74ddd14-6340-4840-95c2-db12554843e6"
+}
+
+###
+# @name PromoteToStaff
+POST {{baseUri}}/UserRoles/PromoteToStaff
+Content-Type: application/json
+
+{
+    "Id": "b74ddd14-6340-4840-95c2-db12554843e7"
+    
+}
+
+###
+# @name PromoteToAdmin
+POST {{baseUri}}/UserRoles/PromoteToAdmin
+Content-Type: application/json
+
+{
+    "Id": "b74ddd14-6340-4840-95c2-db12554843e7"
+    
+}

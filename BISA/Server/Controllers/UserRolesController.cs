@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BISA.Server.Services.UserRolesService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
@@ -6,12 +7,18 @@ namespace BISA.Server.Controllers
     [ApiController]
     public class UserRolesController : ControllerBase
     {
+        private readonly IUserRolesService _userRolesService;
 
-        // POST api/<UserRolesController>
-        [HttpPost("[action]/{id}")]
-        public async Task<IActionResult> PromoteToStaff(int id)
+        public UserRolesController(IUserRolesService userRolesService)
         {
-            var eventResponse = new ServiceResponseDTO<string>();
+            _userRolesService = userRolesService;
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PromoteToStaff(UserRoleDTO userToPromote)
+        {
+
+            var eventResponse = await _userRolesService.PromoteToStaff(userToPromote);
 
             if (eventResponse.Success)
             {
@@ -24,10 +31,10 @@ namespace BISA.Server.Controllers
 
         }
 
-        [HttpPost("[action]/{id}")]
-        public async Task<IActionResult> PromoteToAdmin(int id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PromoteToAdmin(UserRoleDTO userToPromote)
         {
-            var eventResponse = new ServiceResponseDTO<string>();
+            var eventResponse = await _userRolesService.PromoteToAdmin(userToPromote);
 
             if (eventResponse.Success)
             {
@@ -40,11 +47,10 @@ namespace BISA.Server.Controllers
 
         }
 
-        // DELETE api/<UserRolesController>/5
-        [HttpDelete("[action]/{id}")]
-        public async Task<IActionResult> DeleteAdmin(int id)
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteAdmin(UserRoleDTO userToDemote)
         {
-            var eventResponse = new ServiceResponseDTO<string>();
+            var eventResponse = await _userRolesService.DemoteAdmin(userToDemote);
 
             if (eventResponse.Success)
             {
@@ -56,11 +62,10 @@ namespace BISA.Server.Controllers
             }
 
         }
-        // DELETE api/<UserRolesController>/5
-        [HttpDelete("[action]/{id}")]
-        public async Task<IActionResult> DeleteStaff(int id)
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteStaff(UserRoleDTO userToDemote)
         {
-            var eventResponse = new ServiceResponseDTO<string>();
+            var eventResponse = await _userRolesService.DemoteStaff(userToDemote);
 
             if (eventResponse.Success)
             {
