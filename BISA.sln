@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BISA.Client", "BISA\Client\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BISA.Shared", "BISA\Shared\BISA.Shared.csproj", "{6E81E14F-24FE-4DA2-860B-5B7ED8FEB8FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BISA.Server.Tests", "BISA.Server.Tests\BISA.Server.Tests.csproj", "{8F4B9F5E-429E-497E-AADE-50609543CF53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BISA.Server.Tests", "BISA.Server.Tests\BISA.Server.Tests.csproj", "{8F4B9F5E-429E-497E-AADE-50609543CF53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
