@@ -16,7 +16,7 @@ namespace BISA.Server.Services.StatisticsService
         {
             ServiceResponseDTO<ItemDTO> responseDTO = new();
             //get complete hisory
-            var loanhistory = await _context.LoanHistory.ToListAsync();
+            var loanhistory = await _context.LoansHistory.ToListAsync();
 
             //grouping list of most popular items
             var sortedLoans = loanhistory.GroupBy(l => l.ItemInventoryId).OrderByDescending(g => g.Count()).Select(g => g).First();
@@ -51,7 +51,7 @@ namespace BISA.Server.Services.StatisticsService
             mostPopularItemDTO.Language = itemEntity.Language;
             mostPopularItemDTO.Date = itemEntity.Date;
             mostPopularItemDTO.Tags = ConvertTagToDTO(itemEntity.Tags);
-            
+
             mostPopularItemDTO.ItemInventory = itemEntity.ItemInventory.Count();
 
             return mostPopularItemDTO;
@@ -61,7 +61,7 @@ namespace BISA.Server.Services.StatisticsService
         {
             List<TagDTO> tagDTOs = new();
 
-            if(entityTags != null)
+            if (entityTags != null)
             {
                 foreach (var tag in entityTags)
                 {
@@ -75,7 +75,7 @@ namespace BISA.Server.Services.StatisticsService
 
                 }
             }
-            
+
 
             return tagDTOs;
         }
