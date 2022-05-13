@@ -54,11 +54,7 @@ namespace BISA.Server.Controllers
             return BadRequest(loanResponse.Message);
         }
 
-        // PUT api/<LoanController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+       
 
         // DELETE api/<LoanController>/5
         // Bok återlämnad

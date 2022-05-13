@@ -1,0 +1,57 @@
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name loans
+GET {{baseUri}}/loans
+Authorization: Bearer {{authToken}}
+
+###
+# @name loans
+POST {{baseUri}}/loans
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+[
+  {
+    "id": 2,
+    "title": "Hej the movie",
+    "language": "English",
+    "date": "NULL",
+    "publisher": "NULL",
+    "creator": "Tolkien",
+    "tags": [
+      {
+        "id": 0,
+        "tag": "string"
+      }
+    ],
+    "itemInventory": 0
+  }
+]
+
+
+###
+# @name loans/id
+GET {{baseUri}}/loans/1
+Authorization: Bearer {{authToken}}
+
+###
+# @name loans/id
+DELETE {{baseUri}}/loans/1
+Authorization: Bearer {{authToken}}
+
+
+
