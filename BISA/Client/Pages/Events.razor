@@ -1,7 +1,22 @@
 ﻿@page "/events"
+@using BISA.Client.Services.EventService
+@inject IEventService EventService
 
 <h3>Events</h3>
 
-@code {
+<MudCard>
+    <MudCardContent>
+        <MudText>Story of the day</MudText>
+        <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+    </MudCardActions>
+</MudCard>
 
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+    
+    }
 }
