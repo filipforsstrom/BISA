@@ -1,7 +1,27 @@
-﻿@page "/items"
+﻿@page "/items/{id}"
+@inject IItemService ItemService
+@inject IBookService BookService
 
 <h3>Items</h3>
 
-@code {
+<MudCard>
+    <MudCardContent>
+        <MudText>@Book.Title</MudText>
+        <MudText Typo="Typo.body2">@Book.Creator</MudText>
+    </MudCardContent>
+</MudCard>
 
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private BookViewModel Book { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var item = await ItemService.GetItem(Int32.Parse(Id));
+        if (item.Type == "Book")
+        {
+            Book = await BookService.GetBook(item.Id);
+        }
+    }
 }

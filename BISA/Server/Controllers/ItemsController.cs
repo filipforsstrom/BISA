@@ -28,7 +28,20 @@ namespace BISA.Server.Controllers
                 return BadRequest(itemsResponse.Message);
             }
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var itemResponse = await _itemService.GetItem(id);
 
+            if (itemResponse.Success)
+            {
+                return Ok(itemResponse.Data);
+            }
+            else
+            {
+                return BadRequest(itemResponse.Message);
+            }
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 

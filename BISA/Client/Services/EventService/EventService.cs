@@ -1,7 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
-
-namespace BISA.Client.Services.EventService
+﻿namespace BISA.Client.Services.EventService
 {
     public class EventService : IEventService
     {
