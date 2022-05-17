@@ -16,5 +16,9 @@ Content-Type: application/json
 GET {{baseUri}}/items
 
 ###
+# @name getItem
+GET {{baseUri}}/items/1
+
+###
 # @name deleteItem
 DELETE {{baseUri}}/items/1

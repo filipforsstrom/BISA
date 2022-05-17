@@ -85,12 +85,12 @@ namespace BISA.Server.Services.BookService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<BookDTO>> GetBook(int Itemid)
+        public async Task<ServiceResponseDTO<BookDTO>> GetBook(int id)
         {
             ServiceResponseDTO<BookDTO> responseDTO = new();
 
             //Find books and include the tags & iteminventory-tables to get the books tags & see how many items in inventory.
-            var book = _context.Books.Where(b => b.Id == Itemid)
+            var book = _context.Books.Where(b => b.Id == id)
                 .Include(b => b.Tags)
                 .Include(b => b.ItemInventory)
                 .FirstOrDefault();
@@ -159,7 +159,7 @@ namespace BISA.Server.Services.BookService
                     {
 
                     }
-                    
+
                 }
             }
 
