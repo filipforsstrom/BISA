@@ -1,3 +1,4 @@
+global using BISA.Shared.ViewModels;
 global using Blazored.LocalStorage;
 using BISA.Client;
 using BISA.Client.Services.EventService;

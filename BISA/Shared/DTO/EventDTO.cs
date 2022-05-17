@@ -14,5 +14,6 @@ namespace BISA.Shared.DTO
         public string? Subject { get; set; }
         public string? Location { get; set; }
         public int EventTypeId { get; set; }
+        public EventTypeDTO Type { get; set; }
     }
 }
