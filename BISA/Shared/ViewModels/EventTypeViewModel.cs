@@ -1,6 +1,6 @@
-﻿namespace BISA.Shared.DTO
+﻿namespace BISA.Shared.ViewModels
 {
-    public class EventTypeDTO
+    public class EventTypeViewModel
     {
         public int Id { get; set; }
         public string? Type { get; set; }

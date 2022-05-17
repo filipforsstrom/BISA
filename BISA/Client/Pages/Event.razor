@@ -1,0 +1,27 @@
+﻿@page "/events/{id}"
+@using BISA.Client.Services.EventService
+@inject IEventService EventService
+
+<h3>Event</h3>
+
+<MudCard>
+    <MudCardContent>
+        <MudText>@SingleEvent.Subject</MudText>
+        <MudText Typo="Typo.body2">@SingleEvent.Organizer</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private EventViewModel SingleEvent { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var singleEvent = await EventService.GetEvent(Int32.Parse(Id));
+        if (singleEvent != null)
+        {
+            SingleEvent = singleEvent;
+        }
+    }
+}

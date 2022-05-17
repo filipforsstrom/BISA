@@ -74,7 +74,10 @@ namespace BISA.Server.Services.EventService
 
         public async Task<ServiceResponseDTO<EventDTO>> GetEvent(int id)
         {
-            var response = await _context.Events.Where(e => e.Id == id).FirstOrDefaultAsync();
+            var response = await _context.Events
+                .Where(e => e.Id == id)
+                .Include(e => e.EventType)
+                .FirstOrDefaultAsync();
 
             if (response == null)
             {
@@ -91,7 +94,14 @@ namespace BISA.Server.Services.EventService
                 Organizer = response.Organizer,
                 Subject = response.Subject,
                 Location = response.Location,
-                EventTypeId = response.EventTypeId
+                Type = new EventTypeDTO
+                {
+                    Id = response.EventType.Id,
+                    Type = response.EventType.Type,
+                    Capacity = response.EventType.Capacity,
+                    Description = response.EventType.Description,
+                    Image = response.EventType.Image
+                }
             };
             return responseDTO;
 
@@ -99,7 +109,7 @@ namespace BISA.Server.Services.EventService
 
         public async Task<ServiceResponseDTO<List<EventDTO>>> GetEvents()
         {
-            var response = await _context.Events.ToListAsync();
+            var response = await _context.Events.Include(e => e.EventType).ToListAsync();
 
             List<EventDTO> Events = new();
             ServiceResponseDTO<List<EventDTO>> responseDTO = new();
@@ -122,7 +132,14 @@ namespace BISA.Server.Services.EventService
                     Organizer = item.Organizer,
                     Subject = item.Subject,
                     Location = item.Location,
-                    EventTypeId = item.EventTypeId
+                    Type = new EventTypeDTO
+                    {
+                        Id = item.EventType.Id,
+                        Type = item.EventType.Type,
+                        Capacity = item.EventType.Capacity,
+                        Description = item.EventType.Description,
+                        Image = item.EventType.Image
+                    }
                 });
             }
 

@@ -1,22 +1,38 @@
 ﻿@page "/events"
 @using BISA.Client.Services.EventService
 @inject IEventService EventService
+@inject NavigationManager NavigationManager
 
 <h3>Events</h3>
+@foreach (var e in EventsList)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText>@e.Subject</MudText>
+            <MudText Typo="Typo.body2">@e.Organizer</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudLink Href="@($"events/{e.Id}")">Select</MudLink>
+        </MudCardActions>
+    </MudCard>
+}
 
-<MudCard>
-    <MudCardContent>
-        <MudText>Story of the day</MudText>
-        <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
-    </MudCardContent>
-    <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-    </MudCardActions>
-</MudCard>
 
 @code {
+    [Parameter]
+    public string? Id { get; set; }
+    private List<EventViewModel>? EventsList { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
-    
+        if (Id != null)
+        {
+            var singleEvent = await EventService.GetEvent(Int32.Parse(Id));
+            if (singleEvent != null ) EventsList.Add(singleEvent);
+        }
+        else
+        {
+            EventsList = await EventService.GetEvents();
+        }
     }
 }
