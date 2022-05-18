@@ -1,4 +1,9 @@
+global using BISA.Client.Services.BookService;
+global using BISA.Client.Services.EventService;
+global using BISA.Client.Services.ItemService;
+global using BISA.Shared.ViewModels;
 global using Blazored.LocalStorage;
+global using System.Net.Http.Json;
 using BISA.Client;
 using BISA.Client.Services.AuthService;
 using BISA.Client.Services.EventService;
@@ -13,6 +18,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

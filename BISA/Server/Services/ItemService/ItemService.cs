@@ -13,6 +13,29 @@ namespace BISA.Server.Services.ItemService
             _context = context;
         }
 
+        public async Task<ServiceResponseDTO<ItemDTO>> GetItem(int itemId)
+        {
+            ServiceResponseDTO<ItemDTO> responseDTO = new();
+
+            var itemFromDb = await _context.Items.Where(i => i.Id == itemId).FirstOrDefaultAsync();
+
+            if (itemFromDb == null)
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "Item doesn't exist";
+                return responseDTO;
+            }
+
+            var item = new ItemDTO
+            {
+                Id = itemFromDb.Id,
+                Type = itemFromDb.Type
+            };
+
+            responseDTO.Success = true;
+            responseDTO.Data = item;
+            return responseDTO;
+        }
 
         public async Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId)
         {
@@ -23,7 +46,7 @@ namespace BISA.Server.Services.ItemService
                 .Include(i => i.ItemInventory)
                 .FirstOrDefault();
 
-            if(itemToDelete == null)
+            if (itemToDelete == null)
             {
                 responseDTO.Success = false;
                 responseDTO.Message = "Item requested for deletion not found";
@@ -49,7 +72,7 @@ namespace BISA.Server.Services.ItemService
                 .Include(i => i.ItemInventory)
                 .ToListAsync();
 
-            if(itemsFromDbList == null)
+            if (itemsFromDbList == null)
             {
                 responseDTO.Success = false;
                 responseDTO.Message = "List of items requested is empty.";
@@ -57,18 +80,20 @@ namespace BISA.Server.Services.ItemService
             }
 
             var listOfItems = new List<ItemDTO>();
-            
-            foreach(var item in itemsFromDbList)
+
+            foreach (var item in itemsFromDbList)
             {
                 listOfItems.Add(
-                    new ItemDTO { Id = item.Id, 
-                        Title = item.Title, 
-                        Creator = item.Creator, 
-                        Date = item.Date, 
-                        ItemInventory = item.ItemInventory.Count(), 
-                        Language = item.Language, 
-                        Publisher = item.Publisher, 
-                        Tags = ConvertTagToTagDTO(item.Tags) 
+                    new ItemDTO
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                        Creator = item.Creator,
+                        Date = item.Date,
+                        ItemInventory = item.ItemInventory.Count(),
+                        Language = item.Language,
+                        Publisher = item.Publisher,
+                        Tags = ConvertTagToTagDTO(item.Tags)
                     });
             }
 
