@@ -5,6 +5,8 @@ global using BISA.Shared.ViewModels;
 global using Blazored.LocalStorage;
 global using System.Net.Http.Json;
 using BISA.Client;
+using BISA.Client.Services.AuthService;
+using BISA.Client.Services.EventService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -15,6 +17,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBookService, BookService>();
 

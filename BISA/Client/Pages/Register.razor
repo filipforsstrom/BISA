@@ -1,7 +1,47 @@
 ﻿@page "/register"
+@inject IAuthService _authService
 
-<h3>Register</h3>
+
+<h2 style="text-align:center" class="mb-4">Register</h2>
+<EditForm Model="registratedUser" OnValidSubmit="RegisterUser">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+        <MudTextField Label="First Name" @bind-Value="registratedUser.FirstName"
+                      For="(()=> registratedUser.FirstName)"></MudTextField>
+        <MudTextField Label="Last Name" @bind-Value="registratedUser.LastName"
+                      For="(()=> registratedUser.LastName)"></MudTextField>
+        <MudTextField Label="User Name" @bind-Value="registratedUser.Username"
+                      For="(()=> registratedUser.Username)"></MudTextField>
+        <MudTextField Label="Email" @bind-Value="registratedUser.Email"
+                      For="(()=> registratedUser.Email)"></MudTextField>
+        <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3" @bind-Value="registratedUser.Password"
+                      For="(()=> registratedUser.Password)" InputType="InputType.Password"></MudTextField>
+        <MudTextField Label="Password" HelperText="Repeat your password" Class="mt-3" @bind-Value="registratedUser.ValidatePassword"
+                      For="(()=> registratedUser.ValidatePassword)"InputType="InputType.Password"></MudTextField>
+        </MudCardContent>
+        <MudCardActions>
+                <MudLink Href="#" Typo="Typo.body2" Class="ml-2">Home page</MudLink>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+    
+</EditForm>
+
+
+
+
 
 @code {
+    private UserRegisterViewModel registratedUser { get; set; } = new();
+
+
+
+
+    private async Task RegisterUser()
+    {
+        var response = await _authService.Register(registratedUser);
+    }
+
 
 }
