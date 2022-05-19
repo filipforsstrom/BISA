@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
