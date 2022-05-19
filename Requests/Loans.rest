@@ -22,16 +22,17 @@ Authorization: Bearer {{authToken}}
 POST {{baseUri}}/loans
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+
 
 [
   {
-    "id": 2,
-    "title": "Hej the movie",
-    "language": "English",
-    "date": "NULL",
-    "publisher": "NULL",
-    "creator": "Tolkien",
+    "id": 0,
+    "title": "string",
+    "language": "string",
+    "date": "string",
+    "publisher": "string",
+    "creator": "string",
+    "type": "string",
     "tags": [
       {
         "id": 0,
