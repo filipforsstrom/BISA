@@ -1,8 +1,12 @@
-﻿using System.Security.AccessControl;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BISA.Shared.ViewModels
 {
-    public class BookViewModel
+    public class EbookViewModel
     {
         public int Id { get; set; }
         public string? Title { get; set; }
@@ -13,6 +17,6 @@ namespace BISA.Shared.ViewModels
         public List<TagViewModel>? Tags { get; set; }
         public int ItemInventory { get; set; }
         public List<ItemInventoryViewModel> Inventory { get; set; }
-        public string? ISBN { get; set; }
+        public string Url { get; set; }
     }
 }

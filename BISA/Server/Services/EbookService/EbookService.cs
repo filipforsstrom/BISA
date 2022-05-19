@@ -14,7 +14,7 @@ namespace BISA.Server.Services.EbookService
         public async Task<ServiceResponseDTO<EbookCreateDTO>> CreateEbook(EbookCreateDTO ebookToCreate)
         {
             ServiceResponseDTO<EbookCreateDTO> responseDTO = new();
-            
+
 
             var allEbooks = await _context.Ebooks.ToListAsync();
 
@@ -33,11 +33,11 @@ namespace BISA.Server.Services.EbookService
                 return responseDTO;
             }
 
-            
+
             List<TagEntity> tagsForEbook = new List<TagEntity>();
 
-            if (ebookToCreate.Tags != null) 
-            { 
+            if (ebookToCreate.Tags != null)
+            {
                 foreach (var tagId in ebookToCreate.Tags)
                 {
                     try
@@ -47,7 +47,7 @@ namespace BISA.Server.Services.EbookService
                     catch (Exception)
                     {
 
-                    }  
+                    }
                 }
             }
 
@@ -89,7 +89,7 @@ namespace BISA.Server.Services.EbookService
                 .Include(e => e.ItemInventory)
                 .FirstOrDefault();
 
-            if(ebook == null)
+            if (ebook == null)
             {
                 responseDTO.Success = false;
                 responseDTO.Message = "Ebook not found";
@@ -104,6 +104,13 @@ namespace BISA.Server.Services.EbookService
                 tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
             }
 
+            List<ItemInventoryDTO> ItemInventory = new();
+            foreach (var item in ebook.ItemInventory)
+            {
+                ItemInventory.Add(new ItemInventoryDTO
+                { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
+            }
+
             var ebookDTO = new EbookDTO()
             {
                 Id = ebook.Id,
@@ -114,7 +121,8 @@ namespace BISA.Server.Services.EbookService
                 Url = ebook.Url,
                 Publisher = ebook.Publisher,
                 Tags = tags,
-                ItemInventory = ebook.ItemInventory.Count()
+                ItemInventory = ebook.ItemInventory.Count(),
+                Inventory = ItemInventory
             };
 
             responseDTO.Success = true;
@@ -131,7 +139,7 @@ namespace BISA.Server.Services.EbookService
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync();
 
-            if(ebookToUpdate == null)
+            if (ebookToUpdate == null)
             {
                 responseDTO.Success = false;
                 responseDTO.Message = "Book requested for update not found. ";
@@ -140,7 +148,7 @@ namespace BISA.Server.Services.EbookService
 
             ebookToUpdate.Tags.Clear();
 
-            List<TagEntity> tagsForEbook= new List<TagEntity>();
+            List<TagEntity> tagsForEbook = new List<TagEntity>();
 
             if (updatedEbook.Tags != null)
             {
@@ -154,7 +162,7 @@ namespace BISA.Server.Services.EbookService
                     {
 
                     }
-                    
+
                 }
             }
 
@@ -179,6 +187,6 @@ namespace BISA.Server.Services.EbookService
 
         }
 
-        
+
     }
 }

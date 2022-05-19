@@ -14,7 +14,7 @@ namespace BISA.Server.Services.MovieService
         public async Task<ServiceResponseDTO<MovieCreateDTO>> CreateMovie(MovieCreateDTO movieToCreate)
         {
             ServiceResponseDTO<MovieCreateDTO> responseDTO = new();
-            
+
 
             var allMovies = await _context.Movies.ToListAsync();
 
@@ -49,12 +49,12 @@ namespace BISA.Server.Services.MovieService
                     {
 
                     }
-                    
+
                 }
             }
             var movieEntity = new MovieEntity
             {
-               
+
                 Title = movieToCreate.Title,
                 Language = movieToCreate.Language,
                 Date = movieToCreate.Date,
@@ -67,7 +67,7 @@ namespace BISA.Server.Services.MovieService
 
             for (int i = 0; i < movieToCreate.ItemInventory; i++)
             {
-                _context.ItemInventory.Add( new ItemInventoryEntity { Item = movieEntity, Available = true});
+                _context.ItemInventory.Add(new ItemInventoryEntity { Item = movieEntity, Available = true });
             }
 
             _context.Movies.Add(movieEntity);
@@ -99,10 +99,17 @@ namespace BISA.Server.Services.MovieService
                 return responseDTO;
             }
 
-            List <TagDTO> tags = new();
+            List<TagDTO> tags = new();
             foreach (var tag in response.Tags)
             {
                 tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
+            }
+
+            List<ItemInventoryDTO> ItemInventory = new();
+            foreach (var item in response.ItemInventory)
+            {
+                ItemInventory.Add(new ItemInventoryDTO
+                { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
             }
 
             responseDTO.Success = true;
@@ -116,6 +123,7 @@ namespace BISA.Server.Services.MovieService
                 Creator = response.Creator,
                 Tags = tags,
                 ItemInventory = response.ItemInventory.Count(),
+                Inventory = ItemInventory,
                 RuntimeInMinutes = response.RuntimeInMinutes
             };
             return responseDTO;
@@ -142,7 +150,7 @@ namespace BISA.Server.Services.MovieService
 
             List<TagEntity> tagsForMovie = new List<TagEntity>();
 
-            if (updatedMovie.Tags != null )
+            if (updatedMovie.Tags != null)
             {
                 foreach (var tag in updatedMovie.Tags)
                 {
@@ -152,9 +160,9 @@ namespace BISA.Server.Services.MovieService
                     }
                     catch (Exception)
                     {
-                           
+
                     }
-                  
+
                 }
             }
 
@@ -162,7 +170,7 @@ namespace BISA.Server.Services.MovieService
             movieToUpdate.Title = updatedMovie.Title;
             movieToUpdate.RuntimeInMinutes = updatedMovie.RuntimeInMinutes;
             movieToUpdate.Tags = tagsForMovie;
-            movieToUpdate.Language = updatedMovie.Language; 
+            movieToUpdate.Language = updatedMovie.Language;
             movieToUpdate.Creator = updatedMovie.Creator;
             movieToUpdate.Date = updatedMovie.Date;
             movieToUpdate.Publisher = updatedMovie.Publisher;
