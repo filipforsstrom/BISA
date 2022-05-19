@@ -17,6 +17,7 @@ namespace BISA.Shared.DTO
         public string? Creator { get; set; }
         public List<TagDTO>? Tags { get; set; }
         public int ItemInventory { get; set; }
+        public List<ItemInventoryDTO> Inventory { get; set; }
         public string? ISBN { get; set; }
 
     }

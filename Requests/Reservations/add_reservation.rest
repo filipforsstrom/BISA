@@ -1,7 +1,38 @@
+@authToken = {{loginUser.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name loginUser
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "jaff@gmail.com",
+  "username": "Jaff",
+  "password": "jaff"
+}
+
+###
 @id = 1
 
 # @name AddReservation
 POST {{baseUri}}/reservations/{{id}}
+Authorization: bearer {{authToken}}
 
 ###
 GET {{baseUri}}/reservations/user
+Authorization: bearer {{authToken}}
+
+###
+DELETE {{baseUri}}/reservations/3
+Authorization: bearer {{authToken}}

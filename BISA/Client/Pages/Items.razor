@@ -1,27 +1,111 @@
 ﻿@page "/items/{id}"
 @inject IItemService ItemService
 @inject IBookService BookService
+@inject IEbookService EbookService
+@inject IMovieService MovieService
+@inject ILoanService LoanService
+@inject NavigationManager NavigationManager
 
 <h3>Items</h3>
-
-<MudCard>
-    <MudCardContent>
-        <MudText>@Book.Title</MudText>
-        <MudText Typo="Typo.body2">@Book.Creator</MudText>
-    </MudCardContent>
-</MudCard>
+@if (Item != null)
+{
+    @if (Item.Type == "Book")
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText>@Book.Title</MudText>
+                <MudText Typo="Typo.body2">@Book.Creator</MudText>
+                <MudText Typo="Typo.body2">@Book.ISBN</MudText>
+                <MudText Typo="Typo.body2">@Item.Type</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+    else if (Item.Type == "Ebook")
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText>@Ebook.Title</MudText>
+                <MudText Typo="Typo.body2">@Ebook.Creator</MudText>
+                <MudText Typo="Typo.body2">@Ebook.Url</MudText>
+                <MudText Typo="Typo.body2">@Item.Type</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+    else if (Item.Type == "Movie")
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText>@Movie.Title</MudText>
+                <MudText Typo="Typo.body2">@Movie.Creator</MudText>
+                <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes</MudText>
+                <MudText Typo="Typo.body2">@Item.Type</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+    @if (Available)
+    {
+        <MudButton Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
+    }
+    else
+    {
+        <MudButton Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
+    }
+    @if (NoStock)
+    {
+        <MudText>This @Item.Type isn't available</MudText>
+    }
+}
 
 @code {
     [Parameter]
     public string Id { get; set; }
+
+    private ItemViewModel Item { get; set; } = new();
     private BookViewModel Book { get; set; } = new();
+    private EbookViewModel Ebook { get; set; } = new();
+    private MovieViewModel Movie { get; set; } = new();
+    private bool Available { get; set; } = true;
+    private bool NoStock { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var item = await ItemService.GetItem(Int32.Parse(Id));
-        if (item.Type == "Book")
+        Item = await ItemService.GetItem(Int32.Parse(Id));
+        if (Item == null)
         {
-            Book = await BookService.GetBook(item.Id);
+            NavigationManager.NavigateTo("/");
         }
+        else
+        {
+            Available = CheckIfAvailable(Item.Inventory);
+            if (Item.Inventory.Count() == 0)
+            {
+                NoStock = true;
+            }
+            if (Item.Type == "Book")
+            {
+                Book = await BookService.GetBook(Item.Id);
+            }
+            else if (Item.Type == "Ebook")
+            {
+                Ebook = await EbookService.GetEbook(Item.Id);
+            }
+            else if (Item.Type == "Movie")
+            {
+                Movie = await MovieService.GetMovie(Item.Id);
+            }
+        }
+    }
+
+    private async Task<List<LoanViewModel>> AddLoan(List<ItemViewModel> items)
+    {
+        var loan = await LoanService.AddLoan(items);
+        return loan;
+    }
+
+    private bool CheckIfAvailable(List<ItemInventoryViewModel> inventory)
+    {
+        var inventoryTrue = inventory.Where(i => i.Available == true).ToList();
+        if (inventoryTrue.Any()) return true;
+        return false;
     }
 }

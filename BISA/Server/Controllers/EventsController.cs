@@ -60,7 +60,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EventDTO eventToCreate)
+        public async Task<IActionResult> Post([FromBody] EventCreateDTO eventToCreate)
         {
             //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00" och inte på millisekunden
             //eventToCreate.Date = new DateTime(2020, 03, 22);

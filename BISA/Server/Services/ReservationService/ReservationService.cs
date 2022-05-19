@@ -6,36 +6,43 @@ namespace BISA.Server.Services.ReservationService
     public class ReservationService : IReservationService
     {
         private readonly BisaDbContext _context;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public ReservationService(BisaDbContext context)
+        public ReservationService(BisaDbContext context, IHttpContextAccessor httpContext)
         {
             _context = context;
+            _httpContext = httpContext;
         }
 
         public async Task<ServiceResponseDTO<LoanReservationEntity>> AddReservation(int itemId)
         {
             var response = new ServiceResponseDTO<LoanReservationEntity>();
 
-            // simulated user
-            var simUser = await _context.Users.FirstOrDefaultAsync();
+            var userIdFromToken = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userIdFromToken);
 
+            if (userInDb == null)
+            {
+                response.Success = false;
+                response.Message = "No matching user";
+                return response;
+            }
             var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
 
             if (item != null)
             {
                 var duplicateCheck = await _context.LoansReservation
-                    .Where(lr => lr.ItemId == itemId && lr.UserId == simUser.Id)
+                    .Where(lr => lr.ItemId == itemId && lr.UserId == userInDb.Id)
                     .FirstOrDefaultAsync();
 
-                //if (duplicateCheck == null)
-                if (true)
+                if (duplicateCheck == null)
                 {
                     // check earliest available time
                     var time = CheckTimeAvailable(item.Id);
 
                     var newReservation = new LoanReservationEntity
                     {
-                        UserId = simUser.Id,
+                        UserId = userInDb.Id,
                         Date_From = time,
                         Date_To = time.AddDays(20),
                         ItemId = item.Id
@@ -82,11 +89,18 @@ namespace BISA.Server.Services.ReservationService
         {
             var response = new ServiceResponseDTO<List<LoanReservationEntity>>();
 
-            // simulated user
-            var simUser = await _context.Users.FirstOrDefaultAsync();
+            var userIdFromToken = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userIdFromToken);
+
+            if (userInDb == null)
+            {
+                response.Success = false;
+                response.Message = "No matching user";
+                return response;
+            }
 
             var reservations = await _context.LoansReservation
-                .Where(lr => lr.UserId == simUser.Id)
+                .Where(lr => lr.UserId == userInDb.Id)
                 .ToListAsync();
 
             if (reservations != null)
@@ -97,7 +111,7 @@ namespace BISA.Server.Services.ReservationService
             }
 
             response.Success = false;
-            response.Message = "";
+            response.Message = "Request failed";
             return response;
         }
 
@@ -105,8 +119,15 @@ namespace BISA.Server.Services.ReservationService
         {
             var response = new ServiceResponseDTO<string>();
 
-            // simulated user
-            var simUser = await _context.Users.FirstOrDefaultAsync();
+            var userIdFromToken = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userIdFromToken);
+
+            if (userInDb == null)
+            {
+                response.Success = false;
+                response.Message = "No matching user";
+                return response;
+            }
 
             var reservationToRemove = await _context.LoansReservation
                 .Where(lr => lr.Id == id)
@@ -114,7 +135,7 @@ namespace BISA.Server.Services.ReservationService
 
             if (reservationToRemove != null)
             {
-                if (simUser.Id == reservationToRemove.UserId)
+                if (userInDb.Id == reservationToRemove.UserId)
                 {
                     _context.LoansReservation.Remove(reservationToRemove);
                     await _context.SaveChangesAsync();
@@ -165,8 +186,6 @@ namespace BISA.Server.Services.ReservationService
             }
             else
             {
-
-
                 return loans[0].Date_To.AddDays(1);
             }
         }

@@ -111,6 +111,13 @@ namespace BISA.Server.Services.BookService
                 Tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
             }
 
+            List<ItemInventoryDTO> ItemInventory = new();
+            foreach (var item in book.ItemInventory)
+            {
+                ItemInventory.Add(new ItemInventoryDTO
+                { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
+            }
+
             var bookDTO = new BookDTO()
             {
                 Id = book.Id,
@@ -121,7 +128,8 @@ namespace BISA.Server.Services.BookService
                 ISBN = book.ISBN,
                 Publisher = book.Publisher,
                 Tags = Tags,
-                ItemInventory = book.ItemInventory.Count()
+                ItemInventory = book.ItemInventory.Count(),
+                Inventory = ItemInventory
             };
 
             responseDTO.Success = true;

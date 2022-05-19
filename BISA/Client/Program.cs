@@ -1,8 +1,11 @@
 global using Microsoft.AspNetCore.Components.Authorization;
 global using BISA.Client.Services.BookService;
+global using BISA.Client.Services.EbookService;
 global using BISA.Client.Services.EventService;
 global using BISA.Client.Services.ItemService;
 global using BISA.Client.Services.AuthService;
+global using BISA.Client.Services.LoanService;
+global using BISA.Client.Services.MovieService;
 global using BISA.Shared.ViewModels;
 global using Blazored.LocalStorage;
 global using System.Net.Http.Json;
@@ -20,6 +23,9 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IEbookService, EbookService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<ILoanService, LoanService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();

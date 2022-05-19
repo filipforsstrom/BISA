@@ -26,13 +26,12 @@ Content-Type: application/json
 
 [
   {
-    "id": 0,
-    "title": "string",
-    "language": "string",
-    "date": "string",
-    "publisher": "string",
-    "creator": "string",
-    "type": "string",
+    "id": 1,
+    "title": "Hej the movie",
+    "language": "English",
+    "date": "NULL",
+    "publisher": "NULL",
+    "creator": "Tolkien",
     "tags": [
       {
         "id": 0,
