@@ -1,0 +1,39 @@
+﻿@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject IDialogService DialogService
+
+
+<AuthorizeView>
+    <Authorized>
+        <MudButton Variant="Variant.Outlined" Color="Color.Info" StartIcon="@Icons.Filled.Logout" @onclick="OpenLogOutDialog" IconColor="Color.Info">Logout</MudButton>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton Variant="Variant.Outlined" Color="Color.Info" StartIcon="@Icons.Filled.Login" @onclick="Login" IconColor="Color.Info">Login</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    private UserLoginViewModel User { get; set; } = new();
+
+
+    async Task Login()
+    {
+      NavigationManager.NavigateTo("/login");
+    }
+
+   
+
+    private void OpenLogOutDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<LogoutDialog>("", options);
+    }
+
+     private async Task Logout()
+    {
+        await AuthService.Logout();
+        NavigationManager.NavigateTo("/");
+    }
+}

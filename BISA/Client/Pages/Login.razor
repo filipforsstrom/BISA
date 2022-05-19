@@ -1,7 +1,46 @@
 ﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
 
-<h3>Login</h3>
+
+<EditForm Model="User" OnValidSubmit="logInUser">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudText Align="Align.Center" Typo="Typo.h3">Login</MudText>
+        <MudCardContent>
+        <MudTextField Label="User Name" @bind-Value="User.Username"
+                      For="(()=> User.Username)"></MudTextField>
+        <MudTextField Label="Password" Class="mt-3" @bind-Value="User.Password"
+                      For="(()=> User.Password)" InputType="InputType.Password"></MudTextField>
+        </MudCardContent>
+        <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Log in</MudButton>
+        </MudCardActions>
+        
+    </MudCard>
+    
+</EditForm>
+<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@messageToUser</MudText>
 
 @code {
+    private UserLoginViewModel User { get; set; } = new();
+    string messageToUser;
+
+    private async void logInUser()
+    {
+        var response = await AuthService.Login(User);
+
+        if (response == "success")
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            messageToUser = response;
+            StateHasChanged();
+        }
+
+    }
+
 
 }
