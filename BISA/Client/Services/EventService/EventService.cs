@@ -13,14 +13,14 @@
             throw new NotImplementedException();
         }
 
-        public Task<EventViewModel> DeleteEvent(int id)
+        public Task<EventViewModel> DeleteEvent(int eventId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<EventViewModel> GetEvent(int id)
+        public async Task<EventViewModel> GetEvent(int eventId)
         {
-            var response = await _http.GetAsync($"api/events/{id}");
+            var response = await _http.GetAsync($"api/events/{eventId}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<EventViewModel>();
