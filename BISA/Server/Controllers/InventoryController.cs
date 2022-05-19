@@ -16,7 +16,7 @@ namespace BISA.Server.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ItemInventoryDTO itemInventoryAdd)
+        public async Task<IActionResult> Post([FromBody] ItemInventoryChangeDTO itemInventoryAdd)
         {
             var inventoryResponse = await _inventoryService.AddItemInventory(itemInventoryAdd);
 
@@ -32,7 +32,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id, ItemInventoryDTO itemInventoryDelete)
+        public async Task<IActionResult> Delete(int id, ItemInventoryChangeDTO itemInventoryDelete)
         {
             itemInventoryDelete.InventoryId = id;
             var inventoryResponse = await _inventoryService.DeleteItemInventory(itemInventoryDelete);

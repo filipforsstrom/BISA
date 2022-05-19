@@ -17,7 +17,10 @@ namespace BISA.Server.Services.ItemService
         {
             ServiceResponseDTO<ItemDTO> responseDTO = new();
 
-            var itemFromDb = await _context.Items.Where(i => i.Id == itemId).FirstOrDefaultAsync();
+            var itemFromDb = await _context.Items
+                .Where(i => i.Id == itemId)
+                .Include(i => i.ItemInventory)
+                .FirstOrDefaultAsync();
 
             if (itemFromDb == null)
             {
@@ -26,10 +29,17 @@ namespace BISA.Server.Services.ItemService
                 return responseDTO;
             }
 
+            List<ItemInventoryDTO> inventory = new List<ItemInventoryDTO>();
+            foreach (var itemInventory in itemFromDb.ItemInventory)
+            {
+                inventory.Add(new ItemInventoryDTO { Id = itemInventory.Id, ItemId = itemInventory.ItemId, Available = itemInventory.Available });
+            }
+
             var item = new ItemDTO
             {
                 Id = itemFromDb.Id,
-                Type = itemFromDb.Type
+                Type = itemFromDb.Type,
+                Inventory = inventory
             };
 
             responseDTO.Success = true;

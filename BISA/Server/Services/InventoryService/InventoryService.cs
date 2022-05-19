@@ -12,16 +12,16 @@ namespace BISA.Server.Services.InventoryService
             _context = context;
         }
 
-        public async Task<ServiceResponseDTO<ItemInventoryDTO>> AddItemInventory(ItemInventoryDTO itemInventoryAdd)
+        public async Task<ServiceResponseDTO<ItemInventoryChangeDTO>> AddItemInventory(ItemInventoryChangeDTO itemInventoryAdd)
         {
-            ServiceResponseDTO<ItemInventoryDTO> responseDTO = new();
+            ServiceResponseDTO<ItemInventoryChangeDTO> responseDTO = new();
 
             var item = await _context.Items
                 .Where(i => i.Id == itemInventoryAdd.ItemId)
                 .Include(i => i.ItemInventory)
                 .FirstOrDefaultAsync();
 
-            if(item == null)
+            if (item == null)
             {
                 responseDTO.Message = "Item requested to add inventory to not found";
                 responseDTO.Success = false;
@@ -39,9 +39,9 @@ namespace BISA.Server.Services.InventoryService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<ItemInventoryDTO>> DeleteItemInventory(ItemInventoryDTO itemInventoryDelete)
+        public async Task<ServiceResponseDTO<ItemInventoryChangeDTO>> DeleteItemInventory(ItemInventoryChangeDTO itemInventoryDelete)
         {
-            ServiceResponseDTO<ItemInventoryDTO> responseDTO = new();
+            ServiceResponseDTO<ItemInventoryChangeDTO> responseDTO = new();
 
             var inventoryItem = await _context.ItemInventory.Where(i => i.Id == itemInventoryDelete.InventoryId).FirstOrDefaultAsync();
 
@@ -51,17 +51,17 @@ namespace BISA.Server.Services.InventoryService
                 responseDTO.Success = false;
                 return responseDTO;
             }
-            else if(!inventoryItem.Available)
+            else if (!inventoryItem.Available)
             {
                 responseDTO.Message = "Inventory item requested for deletion currently loaned out.";
-                responseDTO.Success=false;
+                responseDTO.Success = false;
                 return responseDTO;
             }
 
             _context.ItemInventory.Remove(inventoryItem);
 
             await _context.SaveChangesAsync();
-            responseDTO.Success=true;
+            responseDTO.Success = true;
             responseDTO.Message = "Inventory Item deleted";
             return responseDTO;
         }

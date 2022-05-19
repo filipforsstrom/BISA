@@ -17,8 +17,8 @@ using BISA.Server.Services.LoanService;
 using BISA.Server.Services.MovieService;
 using BISA.Server.Services.ReservationService;
 using BISA.Server.Services.SearchService;
-using BISA.Server.Services.UserRolesService;
 using BISA.Server.Services.StatisticsService;
+using BISA.Server.Services.UserRolesService;
 using BISA.Server.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -140,7 +140,7 @@ using (var serviceScope = app.Services.CreateScope())
     var services = serviceScope.ServiceProvider;
 
     var librisService = services.GetRequiredService<ILibrisService>();
-    //await librisService.SeedDatabase();
+    await librisService.SeedDatabase();
 }
 
 // Configure the HTTP request pipeline.
