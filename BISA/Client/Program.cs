@@ -10,6 +10,7 @@ global using System.Net.Http.Json;
 using BISA.Client;
 using BISA.Client.Services.AuthService;
 using BISA.Client.Services.EventService;
+using BISA.Client.Services.SearchService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -26,6 +27,7 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IEbookService, EbookService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

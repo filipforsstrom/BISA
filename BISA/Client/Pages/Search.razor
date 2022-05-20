@@ -1,7 +1,32 @@
 ﻿@page "/search"
+@inject ISearchService searchService
 
-<h3>Search</h3>
+<EditForm Model="@SearchTerm" OnSubmit="@SearchFor">
+    <DataAnnotationsValidator/>
+    <ValidationSummary></ValidationSummary>
+
+    <MudTextField  T="string" Lines="2" Variant="Variant.Outlined" Text="" @bind-Value="SearchTerm.Title"></MudTextField>
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Send</MudButton>
+</EditForm>
+
+
 
 @code {
+    public SearchDTO SearchTerm { get; set; } = new();
+    private List<ItemViewModel> ItemsSearchedFor { get; set; } = new();
+    private bool searchForTitle { get; set; } = true;
+    private bool searchForTags { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task SearchFor()
+    {
+        if (searchForTitle)
+        {
+            ItemsSearchedFor = await searchService.GetByTitle(SearchTerm.Title);
+        }
+    }
 }

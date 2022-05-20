@@ -68,6 +68,7 @@ namespace BISA.Server.Services.SearchService
                     Date = item.Date,
                     Publisher = item.Publisher,
                     Creator = item.Creator,
+                    Type = item.Type,
                     Tags = ConvertTagsToTagDTOs(item.Tags),
                     ItemInventory = item.ItemInventory.Count
                 });
