@@ -1,7 +1,32 @@
 ﻿@page "/eventsmanagement"
+@inject IEventService EventService
+@inject NavigationManager NavigationManager
 
 <h3>EventsManagement</h3>
 
-@code {
+<MudTable T="EventViewModel" OnRowClick="@RowClicked" Items="@AllEvents.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Date</MudTh>
+        <MudTh>Organizer</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Date">@context.Date</MudTd>
+        <MudTd DataLabel="Organizer">@context.Organizer</MudTd>
 
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<EventViewModel> AllEvents { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllEvents = await EventService.GetEvents();
+    }
+    private void RowClicked(TableRowClickEventArgs<EventViewModel> e)
+    {
+        NavigationManager.NavigateTo($"/eventmanagement/{e.Item.Id}");
+    }
 }

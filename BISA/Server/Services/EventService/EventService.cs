@@ -24,7 +24,7 @@ namespace BISA.Server.Services.EventService
                 && e.Date.Equals(eventToCreate.Date)
                 && e.Location.ToLower() == eventToCreate.Location.ToLower()
                 && e.Organizer.ToLower() == eventToCreate.Organizer.ToLower()
-                && e.EventTypeId == eventToCreate.EventTypeId);
+                && e.Type.Id == eventToCreate.EventTypeId);
 
             if (foundDuplicate)
             {
@@ -51,9 +51,9 @@ namespace BISA.Server.Services.EventService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> DeleteEvent(int id)
+        public async Task<ServiceResponseDTO<EventDTO>> DeleteEvent(int eventId)
         {
-            var eventToDelete = await _context.Events.Where(e => e.Id == id).FirstOrDefaultAsync();
+            var eventToDelete = await _context.Events.Where(e => e.Id == eventId).FirstOrDefaultAsync();
 
             if (eventToDelete == null)
             {
@@ -72,10 +72,10 @@ namespace BISA.Server.Services.EventService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> GetEvent(int id)
+        public async Task<ServiceResponseDTO<EventDTO>> GetEvent(int eventId)
         {
             var response = await _context.Events
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == eventId)
                 .Include(e => e.EventType)
                 .FirstOrDefaultAsync();
 
@@ -183,9 +183,9 @@ namespace BISA.Server.Services.EventService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> UpdateEvent(EventDTO eventToUpdate)
+        public async Task<ServiceResponseDTO<EventDTO>> UpdateEvent(int eventId, EventDTO eventToUpdate)
         {
-            var eventEntity = await _context.Events.FirstOrDefaultAsync(i => i.Id == eventToUpdate.Id);
+            var eventEntity = await _context.Events.FirstOrDefaultAsync(i => i.Id == eventId);
 
             if (eventEntity == null)
             {
@@ -196,12 +196,13 @@ namespace BISA.Server.Services.EventService
 
             EventEntity updatedEvent = new()
             {
-                Id = eventToUpdate.Id,
+                Id = eventId,
                 Date = eventToUpdate.Date,
                 Organizer = eventToUpdate.Organizer,
                 Subject = eventToUpdate.Subject,
                 Location = eventToUpdate.Location,
-                EventTypeId = eventToUpdate.EventTypeId,
+                Description = eventToUpdate.Description,
+                EventTypeId = eventToUpdate.Type.Id,
             };
 
 

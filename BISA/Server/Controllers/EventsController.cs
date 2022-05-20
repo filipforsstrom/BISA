@@ -80,8 +80,7 @@ namespace BISA.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToUpdate)
         {
-            eventToUpdate.Id = id;
-            var eventResponse = await _eventService.UpdateEvent(eventToUpdate);
+            var eventResponse = await _eventService.UpdateEvent(id, eventToUpdate);
 
             if (eventResponse.Success)
             {
