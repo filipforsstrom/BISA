@@ -7,10 +7,16 @@ Content-Type: application/json
 
 
 {
-  "email": "admin@gmail.com",
-  "username": "admin",
-  "password": "admin"
+  "email": "jaff@gmail.com",
+  "username": "jaff",
+  "password": "jaff"
 }
+
+# {
+#   "email": "admin@gmail.com",
+#   "username": "admin",
+#   "password": "admin"
+# }
 
 ###
 # @name loans
@@ -20,37 +26,26 @@ Authorization: Bearer {{authToken}}
 ###
 # @name loans
 POST {{baseUri}}/loans
-Authorization: Bearer {{authToken}}
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 [
   {
-    "id": 1,
-    "title": "Hej the movie",
-    "language": "English",
-    "date": "NULL",
-    "publisher": "NULL",
-    "creator": "Tolkien",
-    "tags": [
-      {
-        "id": 0,
-        "tag": "string"
-      }
-    ],
-    "itemInventory": 0
+    "ItemId":4,
+    "Title": "Hej",
+    "Description" : "dkasd"
   }
 ]
 
 
 ###
-# @name loans/id
-GET {{baseUri}}/loans/1
+# @name loans/user
+GET {{baseUri}}/loans/user
 Authorization: Bearer {{authToken}}
 
 ###
 # @name loans/id
-DELETE {{baseUri}}/loans/1
+DELETE {{baseUri}}/loans/2
 Authorization: Bearer {{authToken}}
 
 
