@@ -1,46 +1,61 @@
 ﻿@page "/register"
-@inject IAuthService _authService
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
 
 
-<h2 style="text-align:center" class="mb-4">Register</h2>
-<EditForm Model="registratedUser" OnValidSubmit="RegisterUser">
+
+<EditForm Model="RegistratedUser" OnValidSubmit="RegisterUser">
     <DataAnnotationsValidator />
-    <MudCard>
+    
+    <MudCard >
+        <MudText Align="Align.Center" Typo="Typo.h3">Register</MudText>
         <MudCardContent>
-        <MudTextField Label="First Name" @bind-Value="registratedUser.FirstName"
-                      For="(()=> registratedUser.FirstName)"></MudTextField>
-        <MudTextField Label="Last Name" @bind-Value="registratedUser.LastName"
-                      For="(()=> registratedUser.LastName)"></MudTextField>
-        <MudTextField Label="User Name" @bind-Value="registratedUser.Username"
-                      For="(()=> registratedUser.Username)"></MudTextField>
-        <MudTextField Label="Email" @bind-Value="registratedUser.Email"
-                      For="(()=> registratedUser.Email)"></MudTextField>
-        <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3" @bind-Value="registratedUser.Password"
-                      For="(()=> registratedUser.Password)" InputType="InputType.Password"></MudTextField>
-        <MudTextField Label="Password" HelperText="Repeat your password" Class="mt-3" @bind-Value="registratedUser.ValidatePassword"
-                      For="(()=> registratedUser.ValidatePassword)"InputType="InputType.Password"></MudTextField>
+        <MudTextField Label="First Name" @bind-Value="RegistratedUser.FirstName"
+                      For="(()=> RegistratedUser.FirstName)"></MudTextField>
+        <MudTextField Label="Last Name" @bind-Value="RegistratedUser.LastName"
+                      For="(()=> RegistratedUser.LastName)"></MudTextField>
+        <MudTextField Label="User Name" @bind-Value="RegistratedUser.Username"
+                      For="(()=> RegistratedUser.Username)"></MudTextField>
+        <MudTextField Label="Email" @bind-Value="RegistratedUser.Email"
+                      For="(()=> RegistratedUser.Email)"></MudTextField>
+        <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3" @bind-Value="RegistratedUser.Password"
+                      For="(()=> RegistratedUser.Password)" InputType="InputType.Password"></MudTextField>
+        <MudTextField Label="Password" HelperText="Repeat your password" Class="mt-3" @bind-Value="RegistratedUser.ValidatePassword"
+                      For="(()=> RegistratedUser.ValidatePassword)"InputType="InputType.Password"></MudTextField>
         </MudCardContent>
         <MudCardActions>
                 <MudLink Href="#" Typo="Typo.body2" Class="ml-2">Home page</MudLink>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                <MudButton ButtonType="ButtonType.Submit"  Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Register</MudButton>
         </MudCardActions>
     </MudCard>
     
 </EditForm>
+<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@messageToUser</MudText>
+
 
 
 
 
 
 @code {
-    private UserRegisterViewModel registratedUser { get; set; } = new();
-
+    private UserRegisterViewModel RegistratedUser { get; set; } = new();
+    string messageToUser;
 
 
 
     private async Task RegisterUser()
     {
-        var response = await _authService.Register(registratedUser);
+        var response = await AuthService.Register(RegistratedUser);
+
+        if(response == "success")
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            messageToUser = response;
+            StateHasChanged();
+        }
     }
 
 

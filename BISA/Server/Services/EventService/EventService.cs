@@ -13,7 +13,7 @@ namespace BISA.Server.Services.EventService
             _context = context;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> CreateEvent(EventDTO eventToCreate)
+        public async Task<ServiceResponseDTO<EventDTO>> CreateEvent(EventCreateDTO eventToCreate)
         {
             //Get all events
             var allEvents = await GetEvents();
