@@ -19,34 +19,7 @@
 </EditForm>
 
 
-@if(ItemsSearchedFor.Any())
-{
-    <MudTable T="ItemViewModel" OnRowClick="@RowClicked" Items="@ItemsSearchedFor">
-
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Search results</MudText>
-        <MudSpacer />
-    </ToolBarContent>
-
-    <HeaderContent>
-        <MudTh>Title</MudTh>
-        <MudTh>Type</MudTh>
-        <MudTh>Date</MudTh>
-        <MudTh>Creator</MudTh>
-    </HeaderContent>
-
-    <RowTemplate>
-        <MudTd DataLabel="Title">@context.Title</MudTd>
-        <MudTd DataLabel="Type">@context.Type</MudTd>
-        <MudTd DataLabel="Date">@context.Date</MudTd>
-        <MudTd DataLabel="Creator">@context.Creator</MudTd>
-    </RowTemplate>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
-}
-else {<p>No results</p>}
+<SearchResults Items=ItemsSearchedFor></SearchResults>
 
 
 
@@ -82,8 +55,4 @@ else {<p>No results</p>}
         }
     }
 
-    public void RowClicked(TableRowClickEventArgs<ItemViewModel> i)
-    {
-        navManager.NavigateTo($"/items/{i.Item.Id}");
-    }
 }
