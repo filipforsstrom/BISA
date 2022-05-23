@@ -1,7 +1,89 @@
 ﻿@page "/search"
+@page "/search/{atpageloadsearch}"
+@inject ISearchService searchService
+@inject NavigationManager navManager
 
-<h3>Search</h3>
+<EditForm Model="@SearchMessage" OnSubmit="SearchBy">
+                    <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" Required="true" RequiredError="Search is required!"/>
+                    
+                    <div class="d-flex">
+                        <MudRadioGroup T="string" Required="true" @bind-SelectedOption="SearchByProperty">
+                            <MudRadio Option="@("title")">Search by title</MudRadio>
+                            <MudRadio Option="@("tags")">Search by tags</MudRadio>
+                            <MudRadio  Option="@("all")">All</MudRadio>
+                        </MudRadioGroup>
+                    </div>
+                    <div class="d-flex align-center justify-space-between mt-6">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
+                    </div>
+</EditForm>
+
+
+@if(ItemsSearchedFor.Any())
+{
+    <MudTable T="ItemViewModel" OnRowClick="@RowClicked" Items="@ItemsSearchedFor">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Search results</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Date</MudTh>
+        <MudTh>Creator</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+        <MudTd DataLabel="Date">@context.Date</MudTd>
+        <MudTd DataLabel="Creator">@context.Creator</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+}
+else {<p>No results</p>}
+
+
 
 @code {
+    [Parameter]
+    public string? AtPageLoadSearch { get; set; }
+    public SearchDTO SearchMessage { get; set; } = new();
+    private List<ItemViewModel> ItemsSearchedFor { get; set; } = new();
+    private string SearchByProperty { get; set; } = "all";
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (!String.IsNullOrEmpty(AtPageLoadSearch))
+        {
+            SearchMessage.UserSearch = AtPageLoadSearch;
+            await SearchBy();
+        }
+    }
+
+    private async Task SearchBy()
+    {
+        if (SearchByProperty.Equals("title"))
+        {
+            ItemsSearchedFor = await searchService.GetByTitle(SearchMessage);
+        }
+        else if(SearchByProperty.Equals("tags"))
+        {
+            ItemsSearchedFor = await searchService.GetByTags(SearchMessage);
+        }
+        else if(SearchByProperty.Equals("all"))
+        {
+            ItemsSearchedFor = await searchService.GetByAll(SearchMessage);
+        }
+    }
+
+    public void RowClicked(TableRowClickEventArgs<ItemViewModel> i)
+    {
+        navManager.NavigateTo($"/items/{i.Item.Id}");
+    }
 }

@@ -46,5 +46,20 @@ namespace BISA.Server.Controllers
             }
             return BadRequest(searchResponse.Message);
         }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetByAll([FromQuery] string search) // searchdto
+        {
+            if (string.IsNullOrEmpty(search))
+            {
+                return BadRequest("Please enter a title");
+            }
+            var searchResponse = await _searchService.SearchByAll(search);
+            if (searchResponse.Success)
+            {
+                return Ok(searchResponse.Data);
+            }
+            return BadRequest(searchResponse.Message);
+        }
     }
 }

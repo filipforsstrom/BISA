@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LoansController : ControllerBase
@@ -29,10 +30,10 @@ namespace BISA.Server.Controllers
         }
 
         // GET api/<LoanController>/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserLoans()
         {
-            var loanResponse = await _loanService.GetMyLoans(id);
+            var loanResponse = await _loanService.GetMyLoans();
             
             if (loanResponse.Success)
             {
@@ -43,7 +44,7 @@ namespace BISA.Server.Controllers
 
         // POST api/<LoanController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] List<ItemDTO> loanItems)
+        public async Task<IActionResult> Post([FromBody] List<CheckoutDTO> loanItems)
         {
             var loanResponse = await _loanService.AddLoan(loanItems);
 
