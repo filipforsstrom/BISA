@@ -1,7 +1,32 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new BISA.
+<MudStack>
+    <MudPaper Class="pa-3">
+        <MudText Typo="Typo.h3" Align="Align.Center">Welcome to BISA</MudText>
+        <EditForm Model="@SearchMessage" OnSubmit="SearchBy">
+            <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" Required="true" RequiredError="Search is required!" Placeholder="enter a title" />
+
+            <div class="d-flex align-center justify-space-between mt-6">
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
+            </div>
+        </EditForm>
+    </MudPaper>
+    <MudPaper Class="pa-3">
+        <MudImage Alt="Photo of books by emily" Fluid="true" Src="assets/emily_pexels_index.jpg"></MudImage>
+    </MudPaper>
+</MudStack>
+
+
+
+@code {
+    public SearchDTO SearchMessage { get; set; } = new();
+
+    private void SearchBy()
+    {
+        NavigationManager.NavigateTo($"/search/{SearchMessage.UserSearch}");
+    }
+}

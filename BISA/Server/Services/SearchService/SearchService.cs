@@ -54,6 +54,31 @@ namespace BISA.Server.Services.SearchService
             return response;
         }
 
+        public async Task<ServiceResponseDTO<List<ItemDTO>>> SearchByAll(string search)
+        {
+            ServiceResponseDTO<List<ItemDTO>> response = new();
+
+            var items = await _context.Items
+                .Include(i => i.ItemInventory)
+                .Include(i => i.Tags)
+                .Where(i => i.Title.ToLower().Contains(search.ToLower()) ||
+                i.Creator.ToLower().Contains(search.ToLower()) ||
+                i.Publisher.ToLower().Contains(search.ToLower()) ||
+                i.Date.ToLower().Contains(search.ToLower()) || i.Tags.Any(t => t.Tag.ToLower().Contains(search.ToLower())))
+                .ToListAsync();
+
+            if (items != null)
+            {
+                response.Data = ConvertToItemDTO(items);
+                response.Success = true;
+                return response;
+            }
+
+            response.Success = false;
+            response.Message = "No matching results";
+            return response;
+        }
+
         private List<ItemDTO> ConvertToItemDTO(List<ItemEntity> itemsInDb)
         {
             List<ItemDTO> result = new();
@@ -68,6 +93,7 @@ namespace BISA.Server.Services.SearchService
                     Date = item.Date,
                     Publisher = item.Publisher,
                     Creator = item.Creator,
+                    Type = item.Type,
                     Tags = ConvertTagsToTagDTOs(item.Tags),
                     ItemInventory = item.ItemInventory.Count
                 });
