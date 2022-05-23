@@ -24,10 +24,10 @@ GET {{baseUri}}/loans
 Authorization: Bearer {{authToken}}
 
 ###
-# @name loans
+# @name loansPost
 POST {{baseUri}}/loans
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
-
 
 [
   {
@@ -45,7 +45,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 # @name loans/id
-DELETE {{baseUri}}/loans/2
+DELETE {{baseUri}}/loans/5
 Authorization: Bearer {{authToken}}
 
 
