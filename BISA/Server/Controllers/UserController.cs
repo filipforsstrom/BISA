@@ -23,7 +23,7 @@ namespace BISA.Server.Controllers
             }
             return BadRequest();
         }
-
+        [Authorize]
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePassword)
         {

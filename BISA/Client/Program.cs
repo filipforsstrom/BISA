@@ -14,6 +14,8 @@ using BISA.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using BISA.Client.Services.UserService;
+using BISA.Client.Services.ReservationsService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -26,6 +28,8 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IEbookService, EbookService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IReservationsService, ReservationsService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();

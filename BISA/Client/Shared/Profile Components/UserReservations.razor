@@ -1,0 +1,35 @@
+﻿@inject IReservationsService ReservationsService
+
+
+<MudText Align="Align.Center" Typo="Typo.h5">Your Reserved Items</MudText>
+@if(userReservations.Any())
+{
+    @foreach (var item in userReservations)
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText Typo="Typo.h6"> @item.Item.Title</MudText>
+                <MudText Typo="Typo.body2">@item.Item.Type</MudText>
+                <MudText Typo="Typo.body2">Creator: @item.Item.Creator</MudText>
+                <MudText Typo="Typo.button">Return date: @item.Date_To</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+}
+else
+{
+    <MudText Align="Align.Center" Typo="Typo.body1">Your dont have any reserved items</MudText>
+}
+
+    
+
+              
+        
+@code {
+    private List<LoanReservationViewModel> userReservations { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        userReservations = await ReservationsService.GetMyReservations();
+    }
+}

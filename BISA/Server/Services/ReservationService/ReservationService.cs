@@ -100,6 +100,7 @@ namespace BISA.Server.Services.ReservationService
             }
 
             var reservations = await _context.LoansReservation
+                .Include(lrItem => lrItem.Item)
                 .Where(lr => lr.UserId == userInDb.Id)
                 .ToListAsync();
 

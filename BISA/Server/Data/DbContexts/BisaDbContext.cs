@@ -110,8 +110,9 @@ namespace BISA.Server.Data.DbContexts
             modelBuilder.Entity<LoanReservationEntity>()
                 .HasData(
                     new LoanReservationEntity { Id = 1, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(2), ItemId = 1, UserId = 3 },
-                    new LoanReservationEntity { Id = 2, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(1), ItemId = 1, UserId = 4 });
-
+                    new LoanReservationEntity { Id = 2, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(1), ItemId = 1, UserId = 4 },
+                    new LoanReservationEntity { Id = 3, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(2), ItemId = 2, UserId = 1 }
+                    );
         }
     }
 }
