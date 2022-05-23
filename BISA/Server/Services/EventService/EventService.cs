@@ -24,36 +24,64 @@ namespace BISA.Server.Services.EventService
                 && e.Date.Equals(eventToCreate.Date)
                 && e.Location.ToLower() == eventToCreate.Location.ToLower()
                 && e.Organizer.ToLower() == eventToCreate.Organizer.ToLower()
-                && e.EventTypeId == eventToCreate.EventTypeId);
+                && e.Description.ToLower() == eventToCreate.Description.ToLower()
+                && e.Type.Id == eventToCreate.Type.Id);
 
             if (foundDuplicate)
             {
                 responseDTO.Success = false;
-                responseDTO.Message = "Event already exists.";
+                responseDTO.Message = "Event already exists";
                 return responseDTO;
             }
 
             var eventEntity = new EventEntity()
             {
-                Id = eventToCreate.Id,
                 Date = eventToCreate.Date,
                 Organizer = eventToCreate.Organizer,
                 Subject = eventToCreate.Subject,
                 Location = eventToCreate.Location,
-                EventTypeId = eventToCreate.EventTypeId
+                Description = eventToCreate.Description,
+                EventTypeId = eventToCreate.Type.Id
             };
 
-            _context.Events.Add(eventEntity);
-            await _context.SaveChangesAsync();
+            var savedEntity = _context.Events.Add(eventEntity);
+            var savedResult = await _context.SaveChangesAsync();
 
+            if (savedResult < 1)
+            {
+                responseDTO.Data = null;
+                responseDTO.Success = false;
+                responseDTO.Message = "Unable to save event to database";
+                return responseDTO;
+            }
+
+            var savedEvent = new EventDTO
+            {
+                Id = savedEntity.Entity.Id,
+                Date = savedEntity.Entity.Date,
+                Organizer = savedEntity.Entity.Organizer,
+                Subject = savedEntity.Entity.Subject,
+                Location = savedEntity.Entity.Location,
+                Description = savedEntity.Entity.Description,
+                Type = new EventTypeDTO
+                {
+                    Id = savedEntity.Entity.EventType.Id,
+                    Capacity = savedEntity.Entity.EventType.Capacity,
+                    Description = savedEntity.Entity.EventType.Description,
+                    Image = savedEntity.Entity.EventType.Image,
+                    Type = savedEntity.Entity.EventType.Type
+                }
+            };
+
+            responseDTO.Data = savedEvent;
             responseDTO.Success = true;
             responseDTO.Message = "Event created";
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> DeleteEvent(int id)
+        public async Task<ServiceResponseDTO<EventDTO>> DeleteEvent(int eventId)
         {
-            var eventToDelete = await _context.Events.Where(e => e.Id == id).FirstOrDefaultAsync();
+            var eventToDelete = await _context.Events.Where(e => e.Id == eventId).FirstOrDefaultAsync();
 
             if (eventToDelete == null)
             {
@@ -72,10 +100,10 @@ namespace BISA.Server.Services.EventService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> GetEvent(int id)
+        public async Task<ServiceResponseDTO<EventDTO>> GetEvent(int eventId)
         {
             var response = await _context.Events
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == eventId)
                 .Include(e => e.EventType)
                 .FirstOrDefaultAsync();
 
@@ -94,6 +122,7 @@ namespace BISA.Server.Services.EventService
                 Organizer = response.Organizer,
                 Subject = response.Subject,
                 Location = response.Location,
+                Description = response.Description,
                 Type = new EventTypeDTO
                 {
                     Id = response.EventType.Id,
@@ -132,6 +161,7 @@ namespace BISA.Server.Services.EventService
                     Organizer = item.Organizer,
                     Subject = item.Subject,
                     Location = item.Location,
+                    Description = item.Description,
                     Type = new EventTypeDTO
                     {
                         Id = item.EventType.Id,
@@ -183,9 +213,9 @@ namespace BISA.Server.Services.EventService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> UpdateEvent(EventDTO eventToUpdate)
+        public async Task<ServiceResponseDTO<EventDTO>> UpdateEvent(int eventId, EventDTO eventToUpdate)
         {
-            var eventEntity = await _context.Events.FirstOrDefaultAsync(i => i.Id == eventToUpdate.Id);
+            var eventEntity = await _context.Events.FirstOrDefaultAsync(i => i.Id == eventId);
 
             if (eventEntity == null)
             {
@@ -196,12 +226,13 @@ namespace BISA.Server.Services.EventService
 
             EventEntity updatedEvent = new()
             {
-                Id = eventToUpdate.Id,
+                Id = eventId,
                 Date = eventToUpdate.Date,
                 Organizer = eventToUpdate.Organizer,
                 Subject = eventToUpdate.Subject,
                 Location = eventToUpdate.Location,
-                EventTypeId = eventToUpdate.EventTypeId,
+                Description = eventToUpdate.Description,
+                EventTypeId = eventToUpdate.Type.Id,
             };
 
 
