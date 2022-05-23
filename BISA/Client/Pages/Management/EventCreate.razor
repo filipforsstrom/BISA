@@ -1,13 +1,14 @@
-﻿@page "/eventmanagement/{id}"
+﻿@page "/eventcreate"
+@using System.Security
 @inject IEventService EventService
 @inject NavigationManager NavigationManager
 
-<EditForm Model="SingleEvent" OnValidSubmit="UpdateEvent">
+<EditForm Model="SingleEvent" OnValidSubmit="CreateEvent">
     <MudCard>
-        <MudText Align="Align.Center" Typo="Typo.h3">Update event @SingleEvent.Id</MudText>
+        <MudText Align="Align.Center" Typo="Typo.h3">Create event</MudText>
         <MudCardContent>
-            <MudDatePicker Label="Date" @bind-Date="EventDate"/>
-            <MudTimePicker Label="Time" @bind-Time="EventTime"/>
+            <MudDatePicker Label="Date" @bind-Date="EventDate" />
+            <MudTimePicker Label="Time" @bind-Time="EventTime" />
             <MudTextField Label="Organizer" @bind-Value="SingleEvent.Organizer"
                           For="(() => SingleEvent.Organizer)"></MudTextField>
             <MudTextField Label="Subject" @bind-Value="SingleEvent.Subject"
@@ -24,16 +25,13 @@
             </MudSelect>
         </MudCardContent>
         <MudCardActions>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Update</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Create</MudButton>
         </MudCardActions>
     </MudCard>
 </EditForm>
-<MudIconButton OnClick="DeleteEvent" Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
 <MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@MessageToUser</MudText>
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
     private DateTime? EventDate { get; set; }
     private TimeSpan? EventTime { get; set; }
     private List<EventTypeViewModel> EventTypes { get; set; } = new();
@@ -44,23 +42,22 @@
     protected override async Task OnInitializedAsync()
     {
         EventTypes = await EventService.GetEventTypes();
-        SingleEvent = await EventService.GetEvent(Int32.Parse(Id));
-        EventDate = SingleEvent.Date;
-        EventTime = SingleEvent.Date.TimeOfDay;
     }
 
-    private async Task UpdateEvent()
+    private async Task CreateEvent()
     {
         SingleEvent.Type.Id = EventTypeId;
         SingleEvent.Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault());
-        SingleEvent = await EventService.UpdateEvent(SingleEvent);
+        var createEventResult = await EventService.CreateEvent(SingleEvent);
+        if (createEventResult.Success == false)
+        {
+            MessageToUser = createEventResult.Message;
+        }
+        else if (createEventResult.Success)
+        {
+            SingleEvent = createEventResult.Data;
+            MessageToUser = createEventResult.Message;
+        }
         StateHasChanged();
-    }
-
-    private async Task DeleteEvent()
-    {
-        var deleteResult = await EventService.DeleteEvent(Int32.Parse(Id));
-        if (deleteResult == $"Event {Id} successfully deleted") NavigationManager.NavigateTo("/eventsmanagement");
-        else MessageToUser = deleteResult;
     }
 }

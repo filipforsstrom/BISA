@@ -1,4 +1,7 @@
-﻿namespace BISA.Client.Services.EventService
+﻿using BISA.Shared.DTO;
+using System.Net;
+
+namespace BISA.Client.Services.EventService
 {
     public class EventService : IEventService
     {
@@ -8,9 +11,23 @@
         {
             _http = http;
         }
-        public Task<EventViewModel> CreateEvent(EventViewModel eventToCreate)
+        public async Task<ServiceResponseViewModel<EventViewModel>> CreateEvent(EventViewModel eventToCreate)
         {
-            throw new NotImplementedException();
+            ServiceResponseViewModel<EventViewModel> serviceResponse = new();
+            var response = await _http.PostAsJsonAsync($"api/events", eventToCreate);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<EventViewModel>();
+                serviceResponse.Success = true;
+                serviceResponse.Message = response.ReasonPhrase;
+            }
+            return serviceResponse;
         }
 
         public async Task<string> DeleteEvent(int eventId)

@@ -2,6 +2,10 @@
 {
     public class EventViewModel
     {
+        public EventViewModel()
+        {
+            Type = new EventTypeViewModel();
+        }
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public string? Organizer { get; set; }

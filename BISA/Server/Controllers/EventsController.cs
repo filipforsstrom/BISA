@@ -69,7 +69,7 @@ namespace BISA.Server.Controllers
 
             if (eventResponse.Success)
             {
-                return Ok(eventResponse.Message);
+                return Ok(eventResponse.Data);
             }
             else
             {
