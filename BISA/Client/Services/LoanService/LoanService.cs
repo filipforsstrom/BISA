@@ -2,14 +2,27 @@
 {
     public class LoanService : ILoanService
     {
+        private readonly HttpClient _httpClient;
+
+        public LoanService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
         public async Task<List<LoanViewModel>> GetAllLoans()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<LoanViewModel>> GetMyLoans(int id)
+        public async Task<List<LoanViewModel>> GetMyLoans()
         {
-            throw new NotImplementedException();
+            var httpResponse = await _httpClient.GetAsync("api/loans/user");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                var loanList = await httpResponse.Content.ReadFromJsonAsync<List<LoanViewModel>>();
+                return loanList;
+            }
+
+            return null;
         }
 
         public async Task<List<LoanViewModel>> AddLoan(List<ItemViewModel> items)

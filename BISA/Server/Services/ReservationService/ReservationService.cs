@@ -116,7 +116,7 @@ namespace BISA.Server.Services.ReservationService
             return response;
         }
 
-        public async Task<ServiceResponseDTO<string>> RemoveReservation(int id)
+        public async Task<ServiceResponseDTO<string>> RemoveReservation(int reservationsId)
         {
             var response = new ServiceResponseDTO<string>();
 
@@ -131,7 +131,7 @@ namespace BISA.Server.Services.ReservationService
             }
 
             var reservationToRemove = await _context.LoansReservation
-                .Where(lr => lr.Id == id)
+                .Where(lr => lr.Id == reservationsId)
                 .FirstOrDefaultAsync();
 
             if (reservationToRemove != null)
@@ -142,7 +142,7 @@ namespace BISA.Server.Services.ReservationService
                     await _context.SaveChangesAsync();
 
                     response.Success = true;
-                    response.Data = $"Reservation {id} canceled";
+                    response.Message = $"Reservation {reservationsId} canceled";
                     return response;
                 }
 

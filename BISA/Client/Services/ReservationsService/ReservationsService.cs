@@ -20,8 +20,18 @@ namespace BISA.Client.Services.ReservationsService
                 return reservationsList;
             }
 
-            return new List<LoanReservationViewModel>();
+            return null;
             
+        }
+
+        public async Task<string> RemoveReservation(int reservationId)
+        {
+            var httpResponse = await _httpClient.DeleteAsync($"api/reservations/{reservationId}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return await httpResponse.Content.ReadAsStringAsync();
+            }
+            return await httpResponse.Content.ReadAsStringAsync();
         }
     }
 }

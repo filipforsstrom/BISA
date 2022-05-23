@@ -1,4 +1,6 @@
-﻿namespace BISA.Shared.DTO
+﻿using BISA.Shared.Entities;
+
+namespace BISA.Shared.DTO
 {
     public class LoanDTO
     {
@@ -6,7 +8,7 @@
         public DateTime Date_From { get; set; }
         public DateTime Date_To { get; set; }
         public string? User_Email { get; set; }
-        public int ItemId { get; set; }
+        public ItemEntity? Item { get; set; }
         public int InvItemId { get; set; }
     }
 }

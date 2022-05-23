@@ -4,21 +4,25 @@
 <MudText Align="Align.Center" Typo="Typo.h5">Your Reserved Items</MudText>
 @if(userReservations.Any())
 {
-    @foreach (var item in userReservations)
+    @foreach (var reservation in userReservations)
     {
         <MudCard>
             <MudCardContent>
-                <MudText Typo="Typo.h6"> @item.Item.Title</MudText>
-                <MudText Typo="Typo.body2">@item.Item.Type</MudText>
-                <MudText Typo="Typo.body2">Creator: @item.Item.Creator</MudText>
-                <MudText Typo="Typo.button">Return date: @item.Date_To</MudText>
+                <MudText Typo="Typo.h6"> @reservation.Item.Title</MudText>
+                <MudText Typo="Typo.body2">@reservation.Item.Type</MudText>
+                <MudText Typo="Typo.body2">Creator: @reservation.Item.Creator</MudText>
+                <MudText Typo="Typo.button">Return date: @reservation.Date_To</MudText>
+                <MudCardActions>
+                    <MudButton @onclick="(() => RemoveReservation(reservation.Id))" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Remove reservation</MudButton>
+                </MudCardActions>
+                <MudText Typo="Typo.button" Color="Color.Error">@messageToUser</MudText>
             </MudCardContent>
         </MudCard>
     }
 }
 else
 {
-    <MudText Align="Align.Center" Typo="Typo.body1">Your dont have any reserved items</MudText>
+    <MudText Align="Align.Center" Typo="Typo.body1">Your do not have any reserved items</MudText>
 }
 
     
@@ -27,9 +31,18 @@ else
         
 @code {
     private List<LoanReservationViewModel> userReservations { get; set; } = new();
+    private string messageToUser;
 
     protected override async Task OnInitializedAsync()
     {
         userReservations = await ReservationsService.GetMyReservations();
+        
+    }
+
+    private async Task RemoveReservation(int reservationId)
+    {
+        string responseMessage = await ReservationsService.RemoveReservation(reservationId);
+        messageToUser = responseMessage;
+        
     }
 }
