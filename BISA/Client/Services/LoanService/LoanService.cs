@@ -13,16 +13,22 @@
             throw new NotImplementedException();
         }
 
-        public async Task<List<LoanViewModel>> GetMyLoans()
+        public async Task<ServiceResponseViewModel<List<LoanViewModel>>> GetMyLoans()
         {
+            ServiceResponseViewModel<List<LoanViewModel>> responseViewModel = new();
+
             var httpResponse = await _httpClient.GetAsync("api/loans/user");
             if (httpResponse.IsSuccessStatusCode)
             {
-                var loanList = await httpResponse.Content.ReadFromJsonAsync<List<LoanViewModel>>();
-                return loanList;
+                responseViewModel.Data = await httpResponse.Content.ReadFromJsonAsync<List<LoanViewModel>>();
+                responseViewModel.Success = true;
+
+                return responseViewModel;
             }
 
-            return null;
+            responseViewModel.Message = await httpResponse.Content.ReadAsStringAsync();
+            responseViewModel.Success = false;
+            return responseViewModel;
         }
 
         public async Task<List<LoanViewModel>> AddLoan(List<ItemViewModel> items)

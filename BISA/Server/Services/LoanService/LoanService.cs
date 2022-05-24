@@ -119,7 +119,7 @@ namespace BISA.Server.Services.LoanService
             {
                 var userLoans = await _context.LoansActive
                     .Include(l => l.ItemInventory)
-                    .ThenInclude(inv => inv.Item) ///jag är här
+                    .ThenInclude(inv => inv.Item)
                     .Include(l => l.User)
                     .Where(l => l.UserId == userInDb.Id)
                     .ToListAsync();
@@ -131,7 +131,7 @@ namespace BISA.Server.Services.LoanService
                 return response;
             }
             response.Success = false;
-            response.Message = "No matching user found";
+            response.Message = "You do not have any loans";
             return response;
         }
 

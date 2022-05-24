@@ -95,7 +95,7 @@ namespace BISA.Server.Services.ReservationService
             if (userInDb == null)
             {
                 response.Success = false;
-                response.Message = "No matching user";
+                response.Message = "You do not have any loans";
                 return response;
             }
 
@@ -142,7 +142,7 @@ namespace BISA.Server.Services.ReservationService
                     await _context.SaveChangesAsync();
 
                     response.Success = true;
-                    response.Message = $"Reservation {reservationsId} canceled";
+                    response.Message = $"Reservation was canceled";
                     return response;
                 }
 

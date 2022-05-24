@@ -5,7 +5,7 @@ namespace BISA.Client.Services.ReservationsService
 {
     public interface IReservationsService
     {
-        Task<List<LoanReservationViewModel>> GetMyReservations();
+        Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetMyReservations();
         Task<string> RemoveReservation(int reservationId);
     }
 }

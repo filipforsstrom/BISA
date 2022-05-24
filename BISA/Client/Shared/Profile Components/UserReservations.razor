@@ -1,4 +1,5 @@
 ﻿@inject IReservationsService ReservationsService
+@inject NavigationManager NavigationManager;
 
 
 <MudText Align="Align.Center" Typo="Typo.h5">Your Reserved Items</MudText>
@@ -11,18 +12,19 @@
                 <MudText Typo="Typo.h6"> @reservation.Item.Title</MudText>
                 <MudText Typo="Typo.body2">@reservation.Item.Type</MudText>
                 <MudText Typo="Typo.body2">Creator: @reservation.Item.Creator</MudText>
-                <MudText Typo="Typo.button">Return date: @reservation.Date_To</MudText>
+                <MudText Typo="Typo.subtitle2">Return date: @reservation.Date_To</MudText>
                 <MudCardActions>
-                    <MudButton @onclick="(() => RemoveReservation(reservation.Id))" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Remove reservation</MudButton>
+                    <MudButton Disabled="@hideButton" @onclick="(() => RemoveReservation(reservation.Id))" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Remove reservation</MudButton>
                 </MudCardActions>
-                <MudText Typo="Typo.button" Color="Color.Error">@messageToUser</MudText>
+                <MudText Typo="Typo.subtitle2" Color="Color.Error">@messageToUser</MudText>
             </MudCardContent>
         </MudCard>
+        
     }
 }
-else
+else if(!userReservations.Any())
 {
-    <MudText Align="Align.Center" Typo="Typo.body1">Your do not have any reserved items</MudText>
+    <MudText Align="Align.Center" Typo="Typo.body1">You dont have any reservations</MudText>
 }
 
     
@@ -32,17 +34,34 @@ else
 @code {
     private List<LoanReservationViewModel> userReservations { get; set; } = new();
     private string messageToUser;
+    private bool hideButton = false;
+
+
 
     protected override async Task OnInitializedAsync()
     {
-        userReservations = await ReservationsService.GetMyReservations();
-        
+        var getMyReservationResult = await ReservationsService.GetMyReservations();
+        if (getMyReservationResult.Success)
+        {
+            userReservations = getMyReservationResult.Data;
+        }
+        else
+        {
+            messageToUser = getMyReservationResult.Message;
+        }
+
     }
 
     private async Task RemoveReservation(int reservationId)
     {
-        string responseMessage = await ReservationsService.RemoveReservation(reservationId);
-        messageToUser = responseMessage;
-        
+        var removeReservationResult = await ReservationsService.RemoveReservation(reservationId);
+
+        if(removeReservationResult == "Reservation was canceled")
+        {
+            hideButton = true;
+        }
+        messageToUser = removeReservationResult;
+
     }
+    
 }
