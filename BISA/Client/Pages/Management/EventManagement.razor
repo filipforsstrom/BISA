@@ -45,6 +45,7 @@
     {
         EventTypes = await EventService.GetEventTypes();
         SingleEvent = await EventService.GetEvent(Int32.Parse(Id));
+        EventTypeId = SingleEvent.Type.Id;
         EventDate = SingleEvent.Date;
         EventTime = SingleEvent.Date.TimeOfDay;
     }

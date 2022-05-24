@@ -42,6 +42,8 @@
     protected override async Task OnInitializedAsync()
     {
         EventTypes = await EventService.GetEventTypes();
+        EventTypeId = 1; // default eventtype
+        StateHasChanged();
     }
 
     private async Task CreateEvent()
