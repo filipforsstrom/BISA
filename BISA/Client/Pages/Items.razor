@@ -6,6 +6,7 @@
 @inject ILoanService LoanService
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject ISnackbar Snackbar
 
 <h3>Items</h3>
 @if (Item != null)
@@ -102,13 +103,20 @@
         var loans = await LocalStorage.GetItemAsync<List<CheckoutDTO>>("checkout");
         if (loans != null)
         {
-            loans.Add(new CheckoutDTO
+            if (loans.Any(l => l.ItemId == item.Id))
+            {
+                Snackbar.Add($"{item.Title} is allready added to checkout", Severity.Error, config => { config.ShowCloseIcon = false; });
+            }
+            else
+            {
+                loans.Add(new CheckoutDTO
                 {
                     ItemId = item.Id,
                     Title = item.Title,
                     Description = "Here's a description"
                 });
-            await LocalStorage.SetItemAsync("checkout", loans);
+                await LocalStorage.SetItemAsync("checkout", loans);
+            }
         }
         else
         {

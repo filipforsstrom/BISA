@@ -1,4 +1,6 @@
-﻿namespace BISA.Client.Services.LoanService
+﻿using BISA.Shared.DTO;
+
+namespace BISA.Client.Services.LoanService
 {
     public class LoanService : ILoanService
     {
@@ -31,9 +33,22 @@
             return responseViewModel;
         }
 
-        public async Task<List<LoanViewModel>> AddLoan(List<ItemViewModel> items)
+        public async Task<ServiceResponseViewModel<List<LoanDTO>>> AddLoan(List<CheckoutDTO> items)
         {
-            throw new NotImplementedException();
+            ServiceResponseViewModel<List<LoanDTO>> responseViewModel = new();
+
+            var httpResponse = await _httpClient.PostAsJsonAsync("api/loans", items);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                responseViewModel.Data = await httpResponse.Content.ReadFromJsonAsync<List<LoanDTO>>();
+                responseViewModel.Success = true;
+
+                return responseViewModel;
+            }
+
+            responseViewModel.Message = await httpResponse.Content.ReadAsStringAsync();
+            responseViewModel.Success = false;
+            return responseViewModel;
         }
 
         public async Task<string> ReturnLoan(int id)
