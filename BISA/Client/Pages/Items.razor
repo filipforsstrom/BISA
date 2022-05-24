@@ -5,6 +5,7 @@
 @inject IMovieService MovieService
 @inject ILoanService LoanService
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 <h3>Items</h3>
 @if (Item != null)
@@ -44,7 +45,7 @@
     }
     @if (Available)
     {
-        <MudButton Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
+        <MudButton OnClick="() => AddToLoans(Item)" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
     }
     else
     {
@@ -96,10 +97,31 @@
         }
     }
 
-    private async Task<List<LoanViewModel>> AddLoan(List<ItemViewModel> items)
+    private async Task AddToLoans(ItemViewModel item)
     {
-        var loan = await LoanService.AddLoan(items);
-        return loan;
+        var loans = await LocalStorage.GetItemAsync<List<CheckoutDTO>>("checkout");
+        if (loans != null)
+        {
+            loans.Add(new CheckoutDTO
+                {
+                    ItemId = item.Id,
+                    Title = item.Title,
+                    Description = "Here's a description"
+                });
+            await LocalStorage.SetItemAsync("checkout", loans);
+        }
+        else
+        {
+            var newCheckout = new List<CheckoutDTO>();
+            newCheckout.Add(new CheckoutDTO
+                {
+                    ItemId = item.Id,
+                    Title = item.Title,
+                    Description = "Here's a description"
+                });
+            await LocalStorage.SetItemAsync("checkout", newCheckout);
+        }
+        NavigationManager.NavigateTo("checkout");
     }
 
     private bool CheckIfAvailable(List<ItemInventoryViewModel> inventory)
