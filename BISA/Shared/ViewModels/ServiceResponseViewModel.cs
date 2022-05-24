@@ -1,6 +1,6 @@
-﻿namespace BISA.Shared.DTO
+﻿namespace BISA.Shared.ViewModels
 {
-    public class ServiceResponseDTO<T>
+    public class ServiceResponseViewModel<T>
     {
         public T? Data { get; set; }
         public bool Success { get; set; }
