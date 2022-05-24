@@ -40,6 +40,10 @@
                 <MudText Typo="Typo.body2">@Movie.Creator</MudText>
                 <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+                @foreach (var tag in Movie.Tags)
+                {
+                    <MudLink Href="/search/hej" Typo="Typo.body2">@tag.Tag</MudLink>
+                }
             </MudCardContent>
         </MudCard>
     }

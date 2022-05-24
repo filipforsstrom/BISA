@@ -16,7 +16,7 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<EventTypeEntity> EventType { get; set; }
         public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
         public DbSet<TagEntity> Tags { get; set; }
-
+        public DbSet<ItemTagEntity> ItemTags { get; set; }
 
 
         public BisaDbContext(DbContextOptions<BisaDbContext> options)
@@ -36,6 +36,23 @@ namespace BISA.Server.Data.DbContexts
             modelBuilder.Entity<ItemEntity>()
             .Property(i => i.Type)
             .HasColumnName("Type");
+
+            modelBuilder.Entity<ItemEntity>()
+                .HasMany(p => p.Tags)
+                .WithMany(p => p.Items)
+                .UsingEntity<ItemTagEntity>(
+                    j => j
+                        .HasOne(pt => pt.Tag)
+                        .WithMany(t => t.ItemTags)
+                        .HasForeignKey(pt => pt.TagId),
+                    j => j
+                        .HasOne(pt => pt.Item)
+                        .WithMany(p => p.ItemTags)
+                        .HasForeignKey(pt => pt.ItemId),
+                    j =>
+                    {
+                        j.HasKey(t => new { t.ItemId, t.TagId });
+                    });
 
             modelBuilder.Entity<BookEntity>()
                 .HasData(
@@ -84,6 +101,13 @@ namespace BISA.Server.Data.DbContexts
                 new TagEntity { Id = 5, Tag = "Twilight" }
                 );
 
+            modelBuilder.Entity<ItemTagEntity>()
+                .HasData(
+                    new ItemTagEntity { ItemId = 1, TagId = 1 },
+                    new ItemTagEntity { ItemId = 1, TagId = 2 },
+                    new ItemTagEntity { ItemId = 2, TagId = 3 },
+                    new ItemTagEntity { ItemId = 2, TagId = 4 }
+                    );
 
             modelBuilder.Entity<EventTypeEntity>()
                 .HasData(
