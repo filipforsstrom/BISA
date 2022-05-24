@@ -1,7 +1,78 @@
 ﻿@page "/checkout"
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject ILocalStorageService LocalStorage
 
-<h3>Checkout</h3>
+@attribute [Authorize]
+
+<PageTitle>Checkout</PageTitle>
+
+<MudTable Items="@Items">
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.ItemId</MudTd>
+        <MudTd DataLabel="Type">@context.Title</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd >
+            <MudButton OnClick="() => OnRemoveClick(context.ItemId)" Variant="Variant.Filled" Color="Color.Secondary">Cancel</MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+<div class="d-flex align-center justify-space-between mt-6">
+    <MudButton OnClick="OnLoanClick" Variant="Variant.Filled" Color="Color.Primary">Loan</MudButton>
+</div>
+
 
 @code {
+    public List<CheckoutDTO> Items { get; set; } = new List<CheckoutDTO>();
+    public int UserTotalLoans { get; set; }
+    public int LoansCap = 5;
 
+    protected async override Task OnInitializedAsync()
+    {
+        Items = await GetCheckout();
+        // call userloans, use Count
+        UserTotalLoans = 3;
+
+    }
+
+    private async Task<List<CheckoutDTO>> GetCheckout()
+    {
+        return await LocalStorage.GetItemAsync<List<CheckoutDTO>>("checkout");
+    }
+
+    private async Task OnRemoveClick(int id)
+    {
+        // remove from storage
+        Items = Items.Where(i => i.ItemId != id).ToList();
+        await LocalStorage.SetItemAsync("checkout", Items);
+    }
+
+    private void OnLoanClick()
+    {
+        if (Items.Count > 5)
+        {
+            Snackbar.Add("You can loan a maximum of 5 items at a time.", Severity.Error, config => { config.ShowCloseIcon = false; });
+        }
+        else if (Items.Count > LoansCap - UserTotalLoans)
+        {
+            Snackbar.Add($"You can loan {LoansCap - UserTotalLoans} more items", Severity.Error, config => { config.ShowCloseIcon = false; });
+        }
+        else if (!Items.Any())
+        {
+            Snackbar.Add($"The checkout is empty", Severity.Error, config => { config.ShowCloseIcon = false; });
+        }
+        else
+        {
+            // Call api
+            // clear cart
+            NavigationManager.NavigateTo("/profile");
+        }
+    }
 }
