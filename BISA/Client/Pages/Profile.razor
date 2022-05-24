@@ -1,7 +1,18 @@
 ﻿@page "/profile"
+@attribute [Authorize]
+@using BISA.Client.Shared.Profile_Components
 
-<h3>Profile</h3>
-
+<UserReservations></UserReservations>
+<br />
+<br />
+<UserLoans></UserLoans>
+<br />
+<br />
+<ChangePassword></ChangePassword>
+<br />
+<br />
+<br />
+<br />
 @code {
-
+    
 }

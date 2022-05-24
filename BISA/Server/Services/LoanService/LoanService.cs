@@ -92,6 +92,7 @@ namespace BISA.Server.Services.LoanService
             var loans = await _context.LoansActive
                 .Include(l => l.User)
                 .Include(l => l.ItemInventory)
+                .ThenInclude(inv => inv.Item)
                 .ToListAsync();
 
             if (loans != null)
@@ -116,17 +117,21 @@ namespace BISA.Server.Services.LoanService
 
             if (userInDb != null)
             {
-                var userLoans = _context.LoansActive
+                var userLoans = await _context.LoansActive
                     .Include(l => l.ItemInventory)
+                    .ThenInclude(inv => inv.Item)
                     .Include(l => l.User)
-                    .Where(l => l.UserId == userInDb.Id);
+                    .Where(l => l.UserId == userInDb.Id)
+                    .ToListAsync();
+
+                
 
                 response.Data = ConvertToDTO(userLoans);
                 response.Success = true;
                 return response;
             }
             response.Success = false;
-            response.Message = "No matching user found";
+            response.Message = "You do not have any loans";
             return response;
         }
 
@@ -228,8 +233,10 @@ namespace BISA.Server.Services.LoanService
                         Date_From = loan.Date_From,
                         Date_To = loan.Date_To,
                         User_Email = loan.User?.Email,
-                        ItemId = loan.ItemInventory.ItemId,
+                        Item = loan.ItemInventory.Item,
                         InvItemId = loan.ItemInventoryId
+                        
+                       
                     });
                 }
             }

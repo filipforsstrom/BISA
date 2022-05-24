@@ -1,0 +1,46 @@
+﻿@inject ILoanService LoanService
+
+<MudText Align="Align.Center" Typo="Typo.h5">Your loans:</MudText>
+@if(userLoans.Any())
+{
+    @foreach (var item in userLoans)
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText Typo="Typo.h6"> @item.Item.Title</MudText>
+                <MudText Typo="Typo.body2">@item.Item.Type</MudText>
+                <MudText Typo="Typo.body2">Creator: @item.Item.Creator</MudText>
+                <MudText Typo="Typo.subtitle2">Loan date: @item.DateFrom</MudText>
+                <MudText Typo="Typo.subtitle2">Return date: @item.DateTo</MudText>
+            </MudCardContent>
+        </MudCard>
+        <br />
+        
+    }
+}
+else if(!userLoans.Any())
+{
+    <MudText Align="Align.Center" Typo="Typo.body1">@messageToUser</MudText>
+}
+
+    
+
+              
+        
+@code {
+    private List<LoanViewModel> userLoans { get; set; } = new();
+    string messageToUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getUserLoanResult = await LoanService.GetMyLoans();
+        if (getUserLoanResult.Success)
+        {
+            userLoans = getUserLoanResult.Data;
+        }
+        else
+        {
+            messageToUser = getUserLoanResult.Message;
+        }
+    }
+}

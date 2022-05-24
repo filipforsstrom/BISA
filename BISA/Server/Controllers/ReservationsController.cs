@@ -56,7 +56,7 @@ namespace BISA.Server.Controllers
             var resResponse = await _reservationService.RemoveReservation(id);
             if (resResponse.Success)
             {
-                return NoContent();
+                return Ok(resResponse.Message);
             }
             return BadRequest(resResponse.Message);
         }
