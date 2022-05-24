@@ -38,6 +38,7 @@ namespace BISA.Server.Services.ItemService
             var item = new ItemDTO
             {
                 Id = itemFromDb.Id,
+                Title = itemFromDb.Title,
                 Type = itemFromDb.Type,
                 Inventory = inventory
             };
