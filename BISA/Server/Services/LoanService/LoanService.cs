@@ -33,7 +33,7 @@ namespace BISA.Server.Services.LoanService
                 .Where(l => l.UserId == userInDb.Id)
                 .ToListAsync();
 
-            if (BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count > items.Count)
+            if (BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count >= items.Count)
             {
                 string infoMessage = "Following items could not be loaned:";
                 var loansToAdd = new List<LoanEntity>();
