@@ -65,6 +65,19 @@ namespace BISA.Server.Data.DbContexts
                 .HasData(
                 new MovieEntity { Id = 2, Title = "Hej the movie", RuntimeInMinutes = 120, Creator = "Tolkien", Language = "English" });
 
+            modelBuilder.Entity<EbookEntity>()
+                .HasData(
+                    new EbookEntity
+                    {
+                        Id = 5,
+                        Date = "2022",
+                        Creator = "A. Person",
+                        Language = "eng",
+                        Publisher = "S. Omeone",
+                        Title = "Hej For Dummies",
+                        Url = "https://www.google.com/"
+                    });
+
             modelBuilder.Entity<UserEntity>()
                 .HasData(
                 new UserEntity { Id = 1, Email = "jaf@newton.co.uk", Warnings = 3, UserId = "b74ddd14-6340-4840-95c2-db12554843e6" },
@@ -106,7 +119,8 @@ namespace BISA.Server.Data.DbContexts
                     new ItemTagEntity { ItemId = 1, TagId = 1 },
                     new ItemTagEntity { ItemId = 1, TagId = 2 },
                     new ItemTagEntity { ItemId = 2, TagId = 3 },
-                    new ItemTagEntity { ItemId = 2, TagId = 4 }
+                    new ItemTagEntity { ItemId = 2, TagId = 4 },
+                    new ItemTagEntity { ItemId = 5, TagId = 1 }
                     );
 
             modelBuilder.Entity<EventTypeEntity>()
@@ -129,7 +143,8 @@ namespace BISA.Server.Data.DbContexts
                 new ItemInventoryEntity { Id = 3, ItemId = 2, Available = true },
                 new ItemInventoryEntity { Id = 4, ItemId = 2, Available = false },
                 new ItemInventoryEntity { Id = 5, ItemId = 3, Available = true },
-                new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false }
+                new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false },
+                new ItemInventoryEntity { Id = 7, ItemId = 5, Available = true }
                 );
             modelBuilder.Entity<LoanReservationEntity>()
                 .HasData(
