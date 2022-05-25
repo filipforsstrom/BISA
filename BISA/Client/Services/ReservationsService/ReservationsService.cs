@@ -11,23 +11,46 @@ namespace BISA.Client.Services.ReservationsService
         {
             _httpClient = httpClient;
         }
+
+        public async Task<ServiceResponseViewModel<LoanReservationViewModel>> AddReservation(int itemId)
+        {
+            ServiceResponseViewModel<LoanReservationViewModel> serviceResponse = new();
+
+            var httpResponse = await _httpClient.PostAsJsonAsync($"api/reservations/{itemId}", itemId);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                serviceResponse.Success = true;
+                serviceResponse.Data = await httpResponse.Content.ReadFromJsonAsync<LoanReservationViewModel>();
+
+                return serviceResponse;
+            }
+            serviceResponse.Success = false;
+            serviceResponse.Message = await httpResponse.Content.ReadAsStringAsync();
+
+            return serviceResponse;
+        }
+
+        public Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetItemReservations(int itemId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetMyReservations()
         {
             ServiceResponseViewModel<List<LoanReservationViewModel>> serviceResponse = new();
 
-            var httpReponse = await _httpClient.GetAsync("api/reservations/user");
-            if (httpReponse.IsSuccessStatusCode)
+            var httpResponse = await _httpClient.GetAsync("api/reservations/user");
+            if (httpResponse.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Data = await httpReponse.Content.ReadFromJsonAsync<List<LoanReservationViewModel>>();
-                
+                serviceResponse.Data = await httpResponse.Content.ReadFromJsonAsync<List<LoanReservationViewModel>>();
+
                 return serviceResponse;
             }
             serviceResponse.Success = false;
-            serviceResponse.Message = await httpReponse.Content.ReadAsStringAsync();
+            serviceResponse.Message = await httpResponse.Content.ReadAsStringAsync();
 
             return serviceResponse;
-            
         }
 
         public async Task<string> RemoveReservation(int reservationId)
@@ -39,7 +62,7 @@ namespace BISA.Client.Services.ReservationsService
             {
                 return await httpResponse.Content.ReadAsStringAsync();
             }
-           
+
             return await httpResponse.Content.ReadAsStringAsync();
         }
     }

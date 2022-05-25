@@ -16,7 +16,7 @@ namespace BISA.Server.Data.DbContexts
         public DbSet<EventTypeEntity> EventType { get; set; }
         public DbSet<ItemInventoryEntity> ItemInventory { get; set; }
         public DbSet<TagEntity> Tags { get; set; }
-
+        public DbSet<ItemTagEntity> ItemTags { get; set; }
 
 
         public BisaDbContext(DbContextOptions<BisaDbContext> options)
@@ -37,6 +37,23 @@ namespace BISA.Server.Data.DbContexts
             .Property(i => i.Type)
             .HasColumnName("Type");
 
+            modelBuilder.Entity<ItemEntity>()
+                .HasMany(p => p.Tags)
+                .WithMany(p => p.Items)
+                .UsingEntity<ItemTagEntity>(
+                    j => j
+                        .HasOne(pt => pt.Tag)
+                        .WithMany(t => t.ItemTags)
+                        .HasForeignKey(pt => pt.TagId),
+                    j => j
+                        .HasOne(pt => pt.Item)
+                        .WithMany(p => p.ItemTags)
+                        .HasForeignKey(pt => pt.ItemId),
+                    j =>
+                    {
+                        j.HasKey(t => new { t.ItemId, t.TagId });
+                    });
+
             modelBuilder.Entity<BookEntity>()
                 .HasData(
                 new BookEntity { Id = 1, Title = "Hej", ISBN = "523577987" },
@@ -47,6 +64,19 @@ namespace BISA.Server.Data.DbContexts
             modelBuilder.Entity<MovieEntity>()
                 .HasData(
                 new MovieEntity { Id = 2, Title = "Hej the movie", RuntimeInMinutes = 120, Creator = "Tolkien", Language = "English" });
+
+            modelBuilder.Entity<EbookEntity>()
+                .HasData(
+                    new EbookEntity
+                    {
+                        Id = 5,
+                        Date = "2022",
+                        Creator = "A. Person",
+                        Language = "eng",
+                        Publisher = "S. Omeone",
+                        Title = "Hej For Dummies",
+                        Url = "https://www.google.com/"
+                    });
 
             modelBuilder.Entity<UserEntity>()
                 .HasData(
@@ -84,6 +114,14 @@ namespace BISA.Server.Data.DbContexts
                 new TagEntity { Id = 5, Tag = "Twilight" }
                 );
 
+            modelBuilder.Entity<ItemTagEntity>()
+                .HasData(
+                    new ItemTagEntity { ItemId = 1, TagId = 1 },
+                    new ItemTagEntity { ItemId = 1, TagId = 2 },
+                    new ItemTagEntity { ItemId = 2, TagId = 3 },
+                    new ItemTagEntity { ItemId = 2, TagId = 4 },
+                    new ItemTagEntity { ItemId = 5, TagId = 1 }
+                    );
 
             modelBuilder.Entity<EventTypeEntity>()
                 .HasData(
@@ -105,7 +143,8 @@ namespace BISA.Server.Data.DbContexts
                 new ItemInventoryEntity { Id = 3, ItemId = 2, Available = true },
                 new ItemInventoryEntity { Id = 4, ItemId = 2, Available = false },
                 new ItemInventoryEntity { Id = 5, ItemId = 3, Available = true },
-                new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false }
+                new ItemInventoryEntity { Id = 6, ItemId = 3, Available = false },
+                new ItemInventoryEntity { Id = 7, ItemId = 5, Available = true }
                 );
             modelBuilder.Entity<LoanReservationEntity>()
                 .HasData(

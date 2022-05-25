@@ -16,6 +16,7 @@ namespace BISA.Shared.Entities
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
         public List<TagEntity>? Tags { get; set; }
+        public List<ItemTagEntity> ItemTags { get; set; }
         public List<ItemInventoryEntity> ItemInventory { get; set; }
 
     }
