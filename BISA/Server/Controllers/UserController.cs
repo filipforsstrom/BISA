@@ -13,16 +13,18 @@ namespace BISA.Server.Controllers
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
+        [Authorize(Roles = "Admin, Staff")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id) // string email or user id?
+        public async Task<IActionResult> Get(int id)
         {
-            var userResponse = new ServiceResponseDTO<string>(); // UserViewModel?
+            var userResponse = await _userService.GetUser(id);
             if (userResponse.Success)
             {
                 return Ok(userResponse.Data);
             }
             return BadRequest();
         }
+
         [Authorize]
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePassword)

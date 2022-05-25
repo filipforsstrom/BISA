@@ -1,7 +1,148 @@
 ﻿@page "/usersmanagement"
+@inject ISnackbar Snackbar
+@inject IUserRoleService UserRoleService
+@attribute [Authorize(Roles = "Admin, Staff")]
 
-<h3>UsersManagement</h3>
+<MudGrid>
+    <MudItem xs="6" Class="mt-4">
+        <MudText Typo="Typo.h3">User Management</MudText>
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="User Id" HelperText="Please enter a valid user id"
+                              @bind-Value="User.Id" />
+            </MudCardContent>
+        </MudCard>
+        <MudPaper Class="pa-2 mt-4 mb-4">
+            <MudText Typo="Typo.h5">Staff Rights</MudText>
+            <MudButton OnClick="PromoteToStaff" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Promote</MudButton>
+            <MudButton OnClick="DemoteToUser" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Demote</MudButton>
+            <MudDivider Class="mt-2 mb-2"/>
+            <AuthorizeView Roles="Admin">
+                <MudText Typo="Typo.h5">Admin Rights</MudText>
+                <MudButton OnClick="PromoteToAdmin" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Promote</MudButton>
+                <MudButton OnClick="DemoteAdmin" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Demote</MudButton>
+            </AuthorizeView>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="3" Class="mt-4">
+        <MudText Typo="Typo.h3">Get User</MudText>
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Username" HelperText="Please enter a valid username"
+                              @bind-Value="User.Id" />
+            </MudCardContent>
+        </MudCard>
+        <MudPaper Class="pa-2 mt-4 mb-4">
+            <MudText Typo="Typo.h5">User details</MudText>
+            <MudText Typo="Typo.body2">This is example text with user information</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h3">Delete User</MudText>
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="User Id" HelperText="Please enter a valid user id"
+                              @bind-Value="User.Id" />
+            </MudCardContent>
+        </MudCard>
+        <MudPaper Class="pa-2 mt-4 mb-4">
+            <MudText Typo="Typo.h5">User details</MudText>
+            <MudText Typo="Typo.body2">This is example text with user information</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code {
+    UserRoleDTO User = new UserRoleDTO();
+
+    private async Task PromoteToAdmin()
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.PromoteToAdmin(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task DemoteAdmin()
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.RevokeAdmin(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task PromoteToStaff()
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.PromoteToStaff(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task DemoteToUser()
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.DemoteToUser(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private void CreateMessage(string msg, bool error = false)
+    {
+        var severity = error switch
+        {
+            true => Severity.Error,
+            _ => Severity.Normal
+        };
+        Snackbar.Add(msg, severity, config => { config.ShowCloseIcon = false; });
+    }
 
 }

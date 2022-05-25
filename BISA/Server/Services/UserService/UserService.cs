@@ -46,9 +46,11 @@ namespace BISA.Server.Services.UserService
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponseDTO<UserEntity>> GetUser(int id)
+        public async Task<ServiceResponseDTO<UserEntity>> GetUser(int id)
         {
-            throw new NotImplementedException();
+            var response = new ServiceResponseDTO<UserEntity>();
+            return response;
+            //var userInDb = await 
         }
     }
 }
