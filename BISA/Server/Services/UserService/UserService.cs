@@ -46,11 +46,25 @@ namespace BISA.Server.Services.UserService
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponseDTO<UserEntity>> GetUser(int id)
+        public async Task<ServiceResponseDTO<UserRoleDTO>> GetUser(string username)
         {
-            var response = new ServiceResponseDTO<UserEntity>();
+            var response = new ServiceResponseDTO<UserRoleDTO>();
+
+            var userInDb = await _signInManager.UserManager.FindByNameAsync(username);
+            if (userInDb != null)
+            {
+                response.Data = new UserRoleDTO
+                {
+                    Id = userInDb.Id,
+                    Email = userInDb.Email,
+                    Username = userInDb.UserName
+                };
+                response.Success = true;
+                return response;
+            }
+            response.Success = false;
+            response.Message = "User not found";
             return response;
-            //var userInDb = await 
         }
     }
 }

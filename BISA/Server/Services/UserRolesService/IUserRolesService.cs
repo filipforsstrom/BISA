@@ -6,6 +6,5 @@
         Task<ServiceResponseDTO<string>> PromoteToAdmin(UserRoleDTO user);
         Task<ServiceResponseDTO<string>> DemoteStaff(string id);
         Task<ServiceResponseDTO<string>> DemoteAdmin(string id);
-
     }
 }

@@ -24,17 +24,25 @@
             </AuthorizeView>
         </MudPaper>
     </MudItem>
-    <MudItem xs="3" Class="mt-4">
+    <MudItem xs="5" Class="mt-4">
         <MudText Typo="Typo.h3">Get User</MudText>
         <MudCard>
             <MudCardContent>
                 <MudTextField Label="Username" HelperText="Please enter a valid username"
-                              @bind-Value="User.Id" />
+                              @bind-Value="SearchUser" />
             </MudCardContent>
+            <MudButton OnClick="GetUser">Search</MudButton>
         </MudCard>
         <MudPaper Class="pa-2 mt-4 mb-4">
-            <MudText Typo="Typo.h5">User details</MudText>
-            <MudText Typo="Typo.body2">This is example text with user information</MudText>
+            @if (!string.IsNullOrEmpty(SearchResult.Id))
+            {
+                <MudText Typo="Typo.h5">User details</MudText>
+                <MudText Typo="Typo.body2">
+                    <p>User id: @SearchResult.Id</p>
+                    <p>Username: @SearchResult.Username</p>
+                    <p>User email: @SearchResult.Email</p>
+                </MudText>
+            }
         </MudPaper>
     </MudItem>
     <MudItem xs="6">
@@ -44,16 +52,27 @@
                 <MudTextField Label="User Id" HelperText="Please enter a valid user id"
                               @bind-Value="User.Id" />
             </MudCardContent>
+            <MudCardActions>
+                <MudButton OnClick="RemoveUser" Color="Color.Error">Delete</MudButton>
+            </MudCardActions>
         </MudCard>
-        <MudPaper Class="pa-2 mt-4 mb-4">
-            <MudText Typo="Typo.h5">User details</MudText>
-            <MudText Typo="Typo.body2">This is example text with user information</MudText>
-        </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
     UserRoleDTO User = new UserRoleDTO();
+    UserRoleDTO SearchResult = new UserRoleDTO();
+    string SearchUser { get; set; } = string.Empty;
+
+    private async Task GetUser()
+    {
+        var apiCall = await UserRoleService.SearchUser(SearchUser);
+        if (apiCall.Success)
+        {
+            SearchResult = apiCall.Data;
+        }
+        else CreateMessage(apiCall.Message, true);
+    }
 
     private async Task PromoteToAdmin()
     {

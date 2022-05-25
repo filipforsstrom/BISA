@@ -14,15 +14,15 @@ namespace BISA.Server.Controllers
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
         [Authorize(Roles = "Admin, Staff")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("{username}")]
+        public async Task<IActionResult> Get(string username)
         {
-            var userResponse = await _userService.GetUser(id);
+            var userResponse = await _userService.GetUser(username);
             if (userResponse.Success)
             {
                 return Ok(userResponse.Data);
             }
-            return BadRequest();
+            return BadRequest(userResponse.Message);
         }
 
         [Authorize]

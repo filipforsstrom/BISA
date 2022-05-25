@@ -22,3 +22,9 @@ Authorization: Bearer {{authToken}}
   "newPassword": "admina",
   "validatedPassword": "admina"
 }
+
+###
+
+# @name getUser
+GET {{baseUri}}/user/heff
+Authorization: Bearer {{authToken}}

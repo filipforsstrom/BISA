@@ -8,5 +8,6 @@ namespace BISA.Client.Services.UserRoleService
         Task<ServiceResponseViewModel<string>> DemoteToUser(UserRoleDTO user);
         Task<ServiceResponseViewModel<string>> PromoteToAdmin(UserRoleDTO user);
         Task<ServiceResponseViewModel<string>> RevokeAdmin(UserRoleDTO user);
+        Task<ServiceResponseViewModel<UserRoleDTO>> SearchUser(string username);
     }
 }

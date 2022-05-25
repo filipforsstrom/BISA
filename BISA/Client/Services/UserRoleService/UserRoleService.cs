@@ -81,5 +81,28 @@ namespace BISA.Client.Services.UserRoleService
             response.Message = content;
             return response;
         }
+
+        public async Task<ServiceResponseViewModel<UserRoleDTO>> SearchUser(string username)
+        {
+            var response = new ServiceResponseViewModel<UserRoleDTO>();
+
+            var apiResponse = await _httpClient.GetAsync($"api/user/{username}");
+            
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                var content = await apiResponse.Content.ReadFromJsonAsync<UserRoleDTO>();
+                response.Success = true;
+                response.Data = content;
+                return response;
+            }
+            else
+            {
+                var message = await apiResponse.Content.ReadAsStringAsync();
+                response.Message = message;
+                response.Success = false;
+            }
+            
+            return response;
+        }
     }
 }
