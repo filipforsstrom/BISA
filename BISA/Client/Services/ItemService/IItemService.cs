@@ -4,6 +4,7 @@
     {
         Task<List<ItemViewModel>> GetItems();
         Task<ItemViewModel> GetItem(int id);
-        Task<ItemViewModel> DeleteItem(int id);
+        Task<string> DeleteItem(int id);
+        Task<List<TagViewModel>> GetTags();
     }
 }

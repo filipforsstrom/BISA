@@ -1,7 +1,105 @@
 ﻿@page "/itemsmanagement"
+@inject IItemService ItemService
+@inject IBookService BookService
+@inject IEbookService EbookService
+@inject IMovieService MovieService
+@inject NavigationManager NavManager
 
-<h3>ItemsManagement</h3>
+@if (allItems != null)
+{
+
+    <MudTable Items=allItems Dense="true" Filter="new Func<ItemViewModel,bool>(FilterSearch)" Class="mb-2">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Items</MudText>
+            <MudSpacer></MudSpacer>
+            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Title</MudTh>
+            <MudTh>Creator</MudTh>
+            <MudTh>Type</MudTh>
+            <MudTh>Edit</MudTh>
+            <MudTh>Delete</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Title">@context.Title</MudTd>
+            <MudTd DataLabel="Creator">@context.Creator</MudTd>
+            <MudTd DataLabel="Type">@context.Type</MudTd>
+            <MudTd DataLabel="Edit">
+                <MudIconButton @onclick="(() => EditItem(context.Id))"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+            <MudTd DataLabel="Delete">
+                <MudIconButton @onclick="(() => DeleteItem(context.Id))"
+                           Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[] { 5, 10 }" />
+        </PagerContent>
+    </MudTable>
+}
+else
+{
+    <p>Loading.....</p>
+}
+
+@if (!String.IsNullOrEmpty(MessageToUser))
+{
+    <MudText Typo="Typo.h5">@MessageToUser</MudText>
+}
+
+@*Klicka på antingen edit eller delete item i tabellen (dialog-ruta för bekräftelse)*@
+@*Klicka på edit -> skicka till item-create/update-page och den hittar datan och fyller i formuläret med vilken typ itemet är.*@
+@*Knapp för att skapa ett item här under tabellen också.*@
+@*Formuläret ska ha en select list för vilken type man vill skapa. Formuläret uppdateras utifrån vad man väljer*@
+@**@
+
 
 @code {
+    public ItemViewModel Item { get; set; }
+    public List<ItemViewModel> allItems { get; set; }
+    private string MessageToUser { get; set; }
+    private string searchString { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    private bool FilterSearch(ItemViewModel item)
+    {
+        bool isNumber = int.TryParse(searchString, out int result);
+        if(item.Title.ToLower().Contains(searchString.ToLower()))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private void EditItem(int id)
+    {
+        NavManager.NavigateTo($"/itemcreateupdate/{id}");
+    }
+
+    private async Task DeleteItem(int id)
+    {
+        MessageToUser = await ItemService.DeleteItem(id);
+        await GetItems();
+    }
+
+    private async Task GetItems()
+    {
+        allItems = await ItemService.GetItems();
+    }
+
 
 }

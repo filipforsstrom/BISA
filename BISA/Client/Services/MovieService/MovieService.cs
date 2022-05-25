@@ -18,5 +18,19 @@
             }
             else return null;
         }
+        public async Task<MovieViewModel> CreateMovie(MovieViewModel movieToCreate)
+        {
+            var response = await _http.PostAsJsonAsync("api/movies", movieToCreate);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<MovieViewModel>();
+            }
+            else return null;
+        }
+
+        public Task<MovieViewModel> UpdateMovie(MovieViewModel movieToUpdate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

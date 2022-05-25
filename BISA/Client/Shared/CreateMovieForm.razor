@@ -1,0 +1,19 @@
+﻿<MudTextField Label="Title" HelperText="Max. 8 characters"
+                              @bind-Value="movie.Title" For="@(() => movie.Title)"/>
+                <MudTextField Label="Language" Class="mt-3"
+                              @bind-Value="movie.Language" For="@(() => movie.Language)"/>
+                <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"
+                              @bind-Value="movie.Date" For="@(() => movie.Date)" InputType="InputType.Date"/>
+                <MudTextField Label="Publisher" HelperText="Publisher" Class="mt-3"
+                              @bind-Value="movie.Publisher" For="@(() => movie.Publisher)" InputType="InputType.Text"/>
+                              <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
+                              @bind-Value="movie.Creator" For="@(() => movie.Creator)" InputType="InputType.Text"/>
+                              <MudTextField Label="RunTime" HelperText="Creator" Class="mt-3"
+                              @bind-Value="movie.RuntimeInMinutes" For="@(() => movie.RuntimeInMinutes)" InputType="InputType.Number"/>
+@code {
+    [Parameter]
+    public MovieViewModel movie { get; set; }
+
+    
+
+}

@@ -9,9 +9,10 @@
             _http = http;
         }
 
-        public Task<ItemViewModel> DeleteItem(int id)
+        public async Task<string> DeleteItem(int id)
         {
-            throw new NotImplementedException();
+            var response = await _http.DeleteAsync($"api/items/{id}");
+            return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<ItemViewModel> GetItem(int id)
@@ -24,9 +25,26 @@
             else return null;
         }
 
-        public Task<List<ItemViewModel>> GetItems()
+        public async Task<List<ItemViewModel>> GetItems()
         {
-            throw new NotImplementedException();
+            var response = await _http.GetAsync("api/items");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<ItemViewModel>>();
+            }
+            else return null;
+
+            
+        }
+
+        public async Task<List<TagViewModel>> GetTags()
+        {
+            var response = await _http.GetAsync("api/items/tags");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<TagViewModel>>();
+            }
+            else return null;
         }
     }
 }

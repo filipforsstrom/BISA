@@ -1,0 +1,115 @@
+﻿@page "/itemcreateupdate"
+@page "/itemcreateupdate/{itemToUpdate:int}"
+@inject IItemService ItemService
+@inject IMovieService MovieService
+
+<MudText Typo="Typo.h6">@(IsNew ? "Create" : "Update") item</MudText>
+
+@if(IsNew)
+{
+        <MudSelect T="string" SelectedValuesChanged="(() => InitializeEditContext())" @bind-Value="@mediaType" Label="Media Type" AnchorOrigin="Origin.BottomCenter">
+        <MudSelectItem Value="@("Book")" />
+        <MudSelectItem Value="@("Ebook")" />
+        <MudSelectItem Value="@("Movie")"/>
+        </MudSelect>
+}
+
+@if (dataIsLoaded)
+{
+    <EditForm EditContext=@EditContext OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator/>
+
+        <MudGrid>
+        @if (mediaType.Equals("Movie"))
+        {
+            <CreateMovieForm movie=movie></CreateMovieForm>
+        }
+
+        @if (mediaType.Equals("Book"))
+        {
+            <p>book</p>
+        }
+
+        @if (mediaType.Equals("Ebook"))
+        {
+            <p>ebook</p>
+        }
+         
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
+        </MudGrid>
+        
+    </EditForm>
+}
+else { <p>Loading form....</p>}
+
+
+@code {
+    [Parameter]
+    public int itemToUpdate { get; set; }
+    private bool dataIsLoaded { get; set; }
+    private bool IsNew { get; set; }
+    private string? mediaType { get; set; } = "Book";
+    private MovieViewModel movie = new();
+    private EbookViewModel ebook  = new();
+    private BookViewModel book  = new();
+    private bool createMovie { get; set; } = false;
+    private bool createBook { get; set; } = true;
+    private bool createEbook { get; set; } = false;
+    private EditContext EditContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //EditForm needs initialized model straight away. Template form model will be book.
+        EditContext = new EditContext(book);
+
+        //Check if form is used for updating current item, or to create a new one.
+        IsNew = itemToUpdate == 0 ? true : false;
+
+        //Check what type of item is going to be updated so the form has correct validation parameters.
+        await InitializeEditContext();
+
+        //When initial data has been processed, show form.
+        dataIsLoaded = true;
+    }
+
+    private async Task InitializeEditContext()
+    {
+        if(!IsNew)
+        {
+            mediaType = await GetItemType(itemToUpdate);
+        }
+
+        if(mediaType == "Book")
+        {
+            EditContext = new EditContext(book);
+        }
+        if(mediaType == "Ebook")
+        {
+            EditContext = new EditContext(ebook);
+        }
+        if(mediaType == "Movie")
+        {
+            EditContext = new EditContext(movie);
+        }
+
+    }
+
+    private async Task<string> GetItemType(int id)
+    {
+        var item = await ItemService.GetItem(id);
+        return item.Type;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (IsNew)
+        {
+            if(mediaType.Equals("Movie"))
+            {
+                await MovieService.CreateMovie(movie);
+            }
+        }
+
+    }
+
+}

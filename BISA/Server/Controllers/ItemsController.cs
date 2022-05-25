@@ -43,6 +43,21 @@ namespace BISA.Server.Controllers
             }
         }
 
+        [HttpGet("tags")]
+        public async Task<IActionResult> GetTags()
+        {
+            var tagResponse = await _itemService.GetTags();
+
+            if (tagResponse.Success)
+            {
+                return Ok(tagResponse.Data);
+            }
+            else
+            {
+                return BadRequest(tagResponse.Message);
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 
         {
@@ -50,7 +65,7 @@ namespace BISA.Server.Controllers
 
             if (deleteResponse.Success)
             {
-                return NoContent();
+                return NotFound(deleteResponse.Message);
             }
 
             return BadRequest(deleteResponse.Message);

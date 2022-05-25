@@ -8,6 +8,7 @@ namespace BISA.Server.Services.ItemService
         Task<ServiceResponseDTO<ItemDTO>> GetItem(int itemId);
 
         Task<ServiceResponseDTO<ItemDTO>> DeleteItem(int itemId);
+        Task<ServiceResponseDTO<List<TagDTO>>> GetTags();
 
     }
 }
