@@ -79,7 +79,6 @@ namespace BISA.Server.Services.MovieService
 
             return responseDTO;
 
-
         }
 
         public async Task<ServiceResponseDTO<MovieDTO>> GetMovie(int itemId)

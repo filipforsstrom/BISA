@@ -4,6 +4,6 @@
     {
         Task<MovieViewModel> GetMovie(int itemId);
         Task<MovieViewModel> UpdateMovie(MovieViewModel movieToUpdate);
-        Task<MovieViewModel> CreateMovie(MovieViewModel movieToAdd);
+        Task<string> CreateMovie(MovieViewModel movieToAdd);
     }
 }

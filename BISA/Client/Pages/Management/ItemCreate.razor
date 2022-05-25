@@ -60,6 +60,11 @@
 }
 else { <p>Loading form....</p>}
 
+@if (!String.IsNullOrEmpty(MessageToUser))
+{
+    <MudText Typo="Typo.h5">@MessageToUser</MudText>
+}
+
 
 @code {
     [Parameter]
@@ -68,6 +73,7 @@ else { <p>Loading form....</p>}
     private bool IsNew { get; set; }
     private string? mediaType { get; set; } = "Book";
     private int itemInventory { get; set; }
+    private string? MessageToUser { get; set; }
     private MovieViewModel movie = new();
     private EbookViewModel ebook = new();
     private BookViewModel book  = new();
@@ -131,7 +137,7 @@ else { <p>Loading form....</p>}
             {
                 movie.Tags = tagsForItem.ToList();
                 movie.ItemInventory = itemInventory;
-                await MovieService.CreateMovie(movie);
+                MessageToUser = await MovieService.CreateMovie(movie);
             }
             if (mediaType.Equals("Book"))
             {

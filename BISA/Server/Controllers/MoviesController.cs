@@ -41,7 +41,7 @@ namespace BISA.Server.Controllers
 
             if (movieResponse.Success)
             {
-                return Ok(movieResponse.Data);
+                return Ok(movieResponse.Message);
             }
             else
             {

@@ -20,15 +20,11 @@ namespace BISA.Client.Services.MovieService
             }
             else return null;
         }
-        public async Task<MovieViewModel> CreateMovie(MovieViewModel movieToCreate)
+        public async Task<string> CreateMovie(MovieViewModel movieToCreate)
         {
             var response = await _http.PostAsJsonAsync("api/movies", movieToCreate);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<MovieViewModel>();
-            }
-            else return null;
+                return await response.Content.ReadAsStringAsync();
         }
 
         public Task<MovieViewModel> UpdateMovie(MovieViewModel movieToUpdate)
