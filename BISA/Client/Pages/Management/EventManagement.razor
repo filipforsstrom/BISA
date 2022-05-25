@@ -1,0 +1,67 @@
+﻿@page "/eventmanagement/{id}"
+@inject IEventService EventService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="SingleEvent" OnValidSubmit="UpdateEvent">
+    <MudCard>
+        <MudText Align="Align.Center" Typo="Typo.h3">Update event @SingleEvent.Id</MudText>
+        <MudCardContent>
+            <MudDatePicker Label="Date" @bind-Date="EventDate"/>
+            <MudTimePicker Label="Time" @bind-Time="EventTime"/>
+            <MudTextField Label="Organizer" @bind-Value="SingleEvent.Organizer"
+                          For="(() => SingleEvent.Organizer)"></MudTextField>
+            <MudTextField Label="Subject" @bind-Value="SingleEvent.Subject"
+                          For="(() => SingleEvent.Subject)"></MudTextField>
+            <MudTextField Label="Location" @bind-Value="SingleEvent.Location"
+                          For="(() => SingleEvent.Location)"></MudTextField>
+            <MudTextField Label="Description" @bind-Value="SingleEvent.Description"
+                          For="(() => SingleEvent.Description)"></MudTextField>
+            <MudSelect Label="Type" @bind-Value="EventTypeId">
+                @foreach (var type in EventTypes)
+                {
+                    <MudSelectItem T="int" Value="type.Id">@type.Type</MudSelectItem>
+                }
+            </MudSelect>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Update</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+<MudIconButton OnClick="DeleteEvent" Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
+<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@MessageToUser</MudText>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private DateTime? EventDate { get; set; }
+    private TimeSpan? EventTime { get; set; }
+    private List<EventTypeViewModel> EventTypes { get; set; } = new();
+    private EventViewModel SingleEvent { get; set; } = new();
+    private int EventTypeId { get; set; }
+    private string MessageToUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EventTypes = await EventService.GetEventTypes();
+        SingleEvent = await EventService.GetEvent(Int32.Parse(Id));
+        EventTypeId = SingleEvent.Type.Id;
+        EventDate = SingleEvent.Date;
+        EventTime = SingleEvent.Date.TimeOfDay;
+    }
+
+    private async Task UpdateEvent()
+    {
+        SingleEvent.Type.Id = EventTypeId;
+        SingleEvent.Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault());
+        SingleEvent = await EventService.UpdateEvent(SingleEvent);
+        StateHasChanged();
+    }
+
+    private async Task DeleteEvent()
+    {
+        var deleteResult = await EventService.DeleteEvent(Int32.Parse(Id));
+        if (deleteResult == $"Event {Id} successfully deleted") NavigationManager.NavigateTo("/eventsmanagement");
+        else MessageToUser = deleteResult;
+    }
+}

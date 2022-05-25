@@ -14,6 +14,7 @@ namespace BISA.Shared.Entities
         public string? Organizer { get; set; }
         public string? Subject { get; set; }
         public string? Location { get; set; }
+        public string? Description { get; set; }
 
         [ForeignKey(nameof(EventType))]
         public int EventTypeId { get; set; }

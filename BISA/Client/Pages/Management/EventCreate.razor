@@ -1,0 +1,65 @@
+﻿@page "/eventcreate"
+@using System.Security
+@inject IEventService EventService
+@inject NavigationManager NavigationManager
+
+<EditForm Model="SingleEvent" OnValidSubmit="CreateEvent">
+    <MudCard>
+        <MudText Align="Align.Center" Typo="Typo.h3">Create event</MudText>
+        <MudCardContent>
+            <MudDatePicker Label="Date" @bind-Date="EventDate" />
+            <MudTimePicker Label="Time" @bind-Time="EventTime" />
+            <MudTextField Label="Organizer" @bind-Value="SingleEvent.Organizer"
+                          For="(() => SingleEvent.Organizer)"></MudTextField>
+            <MudTextField Label="Subject" @bind-Value="SingleEvent.Subject"
+                          For="(() => SingleEvent.Subject)"></MudTextField>
+            <MudTextField Label="Location" @bind-Value="SingleEvent.Location"
+                          For="(() => SingleEvent.Location)"></MudTextField>
+            <MudTextField Label="Description" @bind-Value="SingleEvent.Description"
+                          For="(() => SingleEvent.Description)"></MudTextField>
+            <MudSelect Label="Type" @bind-Value="EventTypeId">
+                @foreach (var type in EventTypes)
+                {
+                    <MudSelectItem T="int" Value="type.Id">@type.Type</MudSelectItem>
+                }
+            </MudSelect>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Create</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@MessageToUser</MudText>
+
+@code {
+    private DateTime? EventDate { get; set; }
+    private TimeSpan? EventTime { get; set; }
+    private List<EventTypeViewModel> EventTypes { get; set; } = new();
+    private EventViewModel SingleEvent { get; set; } = new();
+    private int EventTypeId { get; set; }
+    private string MessageToUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EventTypes = await EventService.GetEventTypes();
+        EventTypeId = 1; // default eventtype
+        StateHasChanged();
+    }
+
+    private async Task CreateEvent()
+    {
+        SingleEvent.Type.Id = EventTypeId;
+        SingleEvent.Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault());
+        var createEventResult = await EventService.CreateEvent(SingleEvent);
+        if (createEventResult.Success == false)
+        {
+            MessageToUser = createEventResult.Message;
+        }
+        else if (createEventResult.Success)
+        {
+            SingleEvent = createEventResult.Data;
+            MessageToUser = createEventResult.Message;
+        }
+        StateHasChanged();
+    }
+}

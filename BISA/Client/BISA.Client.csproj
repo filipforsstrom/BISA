@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Shared\BISA.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\" />
+  </ItemGroup>
+
 </Project>

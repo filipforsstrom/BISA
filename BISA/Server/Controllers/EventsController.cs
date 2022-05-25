@@ -69,7 +69,7 @@ namespace BISA.Server.Controllers
 
             if (eventResponse.Success)
             {
-                return Ok(eventResponse.Message);
+                return Created($"/events/{eventResponse.Data.Id}", eventResponse.Data);
             }
             else
             {
@@ -80,8 +80,7 @@ namespace BISA.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToUpdate)
         {
-            eventToUpdate.Id = id;
-            var eventResponse = await _eventService.UpdateEvent(eventToUpdate);
+            var eventResponse = await _eventService.UpdateEvent(id, eventToUpdate);
 
             if (eventResponse.Success)
             {

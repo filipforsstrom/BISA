@@ -1,0 +1,67 @@
+﻿@inject IReservationsService ReservationsService
+@inject NavigationManager NavigationManager;
+
+
+<MudText Align="Align.Center" Typo="Typo.h5">Your Reserved Items</MudText>
+@if(userReservations.Any())
+{
+    @foreach (var reservation in userReservations)
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText Typo="Typo.h6"> @reservation.Item.Title</MudText>
+                <MudText Typo="Typo.body2">@reservation.Item.Type</MudText>
+                <MudText Typo="Typo.body2">Creator: @reservation.Item.Creator</MudText>
+                <MudText Typo="Typo.subtitle2">Return date: @reservation.Date_To</MudText>
+                <MudCardActions>
+                    <MudButton Disabled="@hideButton" @onclick="(() => RemoveReservation(reservation.Id))" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Remove reservation</MudButton>
+                </MudCardActions>
+                <MudText Typo="Typo.subtitle2" Color="Color.Error">@messageToUser</MudText>
+            </MudCardContent>
+        </MudCard>
+        
+    }
+}
+else if(!userReservations.Any())
+{
+    <MudText Align="Align.Center" Typo="Typo.body1">You dont have any reservations</MudText>
+}
+
+    
+
+              
+        
+@code {
+    private List<LoanReservationViewModel> userReservations { get; set; } = new();
+    private string messageToUser;
+    private bool hideButton = false;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getMyReservationResult = await ReservationsService.GetMyReservations();
+        if (getMyReservationResult.Success)
+        {
+            userReservations = getMyReservationResult.Data;
+        }
+        else
+        {
+            messageToUser = getMyReservationResult.Message;
+        }
+
+    }
+
+    private async Task RemoveReservation(int reservationId)
+    {
+        var removeReservationResult = await ReservationsService.RemoveReservation(reservationId);
+
+        if(removeReservationResult == "Reservation was canceled")
+        {
+            hideButton = true;
+        }
+        messageToUser = removeReservationResult;
+
+    }
+    
+}

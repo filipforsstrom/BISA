@@ -16,11 +16,11 @@
         <MudCardActions>
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="ml-auto">Log in</MudButton>
         </MudCardActions>
-        
+        <MudLink Href="/register" Typo="Typo.body2" Class="ml-2">Not a member? Register here</MudLink>
     </MudCard>
     
 </EditForm>
-<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@messageToUser</MudText>
+<MudText Align="Align.Center" Color="Color.Error" Typo="Typo.h4">@messageToUser</MudText>
 
 @code {
     private UserLoginViewModel User { get; set; } = new();

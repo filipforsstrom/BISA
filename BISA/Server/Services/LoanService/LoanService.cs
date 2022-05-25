@@ -16,11 +16,11 @@ namespace BISA.Server.Services.LoanService
 
         public async Task<ServiceResponseDTO<List<LoanDTO>>> AddLoan(List<CheckoutDTO> items)
         {
-            int maxLoans = 5;
             var response = new ServiceResponseDTO<List<LoanDTO>>();
 
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userId);
+            var userInDb = await _context.Users
+                .FirstOrDefaultAsync(user => user.UserId == userId);
 
             if (userInDb == null)
             {
@@ -28,11 +28,12 @@ namespace BISA.Server.Services.LoanService
                 response.Message = "Could not find matching user";
                 return response;
             }
+
             var currentUserLoans = await _context.LoansActive
                 .Where(l => l.UserId == userInDb.Id)
                 .ToListAsync();
 
-            if (maxLoans - currentUserLoans.Count > items.Count)
+            if (BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count >= items.Count)
             {
                 string infoMessage = "Following items could not be loaned:";
                 var loansToAdd = new List<LoanEntity>();
@@ -40,6 +41,7 @@ namespace BISA.Server.Services.LoanService
                 foreach (var item in items)
                 {
                     var freeInvItem = await _context.ItemInventory
+                        .Include(i => i.Item)
                         .Where(i => i.ItemId == item.ItemId)
                         .FirstOrDefaultAsync(it => it.Available);
 
@@ -49,10 +51,8 @@ namespace BISA.Server.Services.LoanService
                         {
                             UserId = userInDb.Id,
                             Date_From = DateTime.Now,
-                            Date_To = DateTime.Now.AddDays(20),
+                            Date_To = DateTime.Now.AddDays(GetItemLoanTime(freeInvItem.Item.Type)),
                             ItemInventoryId = freeInvItem.Id,
-                            ItemInventory = freeInvItem,
-                            User = userInDb,
                         });
 
                         freeInvItem.Available = false;
@@ -81,7 +81,7 @@ namespace BISA.Server.Services.LoanService
                 return response;
             }
             response.Success = false;
-            response.Message = $"You're only eligible for {maxLoans - currentUserLoans.Count} more loans";
+            response.Message = $"User only eligible for {BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count} more loans";
             return response;
         }
 
@@ -92,6 +92,7 @@ namespace BISA.Server.Services.LoanService
             var loans = await _context.LoansActive
                 .Include(l => l.User)
                 .Include(l => l.ItemInventory)
+                .ThenInclude(inv => inv.Item)
                 .ToListAsync();
 
             if (loans != null)
@@ -101,7 +102,7 @@ namespace BISA.Server.Services.LoanService
                 return response;
             }
             response.Success = false;
-            response.Message = "No loans in database";
+            response.Message = "Error calling the database";
             return response;
         }
 
@@ -116,17 +117,21 @@ namespace BISA.Server.Services.LoanService
 
             if (userInDb != null)
             {
-                var userLoans = _context.LoansActive
+                var userLoans = await _context.LoansActive
                     .Include(l => l.ItemInventory)
+                    .ThenInclude(inv => inv.Item)
                     .Include(l => l.User)
-                    .Where(l => l.UserId == userInDb.Id);
+                    .Where(l => l.UserId == userInDb.Id)
+                    .ToListAsync();
+
+                
 
                 response.Data = ConvertToDTO(userLoans);
                 response.Success = true;
                 return response;
             }
             response.Success = false;
-            response.Message = "No matching user found";
+            response.Message = "You do not have any loans";
             return response;
         }
 
@@ -135,6 +140,7 @@ namespace BISA.Server.Services.LoanService
             var response = new ServiceResponseDTO<string>();
 
             var loanToRemove = await _context.LoansActive
+                .Include(loan => loan.ItemInventory)
                 .FirstOrDefaultAsync(l => l.Id == id);
 
             if (loanToRemove != null)
@@ -143,20 +149,74 @@ namespace BISA.Server.Services.LoanService
                 _context.LoansActive.Remove(loanToRemove);
                 await _context.SaveChangesAsync();
 
-                // toggle available
-                var invItem = await _context.ItemInventory
-                    .FirstOrDefaultAsync(i => i.Id == loanToRemove.ItemInventoryId);
+                // Check if item has pending reservations
+                var checkReservations = await GetFirstItemReservation(loanToRemove.ItemInventory.ItemId);
 
-                invItem.Available = true;
-                _context.Update(invItem);
-                await _context.SaveChangesAsync();
+                if (GetFirstItemReservation != null)
+                {
+                    await RemoveReservation(checkReservations.Id);
+                    // Move reservation to active loan
+                    await MoveReservationToLoan(checkReservations, loanToRemove.ItemInventoryId);
+                }
+                else
+                {
+                    // toggle invItem available
+                    var invItem = await _context.ItemInventory
+                        .FirstOrDefaultAsync(i => i.Id == loanToRemove.ItemInventoryId);
 
+                    invItem.Available = true;
+                    _context.Update(invItem);
+                    await _context.SaveChangesAsync();
+                }
+                
                 response.Success = true;
                 return response;
             }
             response.Success = false;
             response.Message = "No matching loan found";
             return response;
+        }
+
+        private double GetItemLoanTime(string itemType) => itemType switch
+        {
+            "Ebook" => BusinessRulesDTO.EbookLoanTime,
+            "Movie" => BusinessRulesDTO.MovieLoanTime,
+            _ => BusinessRulesDTO.BookLoanTime
+        };
+
+        private async Task RemoveReservation(int reservationId)
+        {
+            var reservationToRemove = await _context.LoansReservation
+                .FirstOrDefaultAsync(res => res.Id == reservationId);
+            _context.LoansReservation.Remove(reservationToRemove);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task MoveReservationToLoan(LoanReservationEntity reservationToMove, int invItemId)
+        {
+            var newLoan = new LoanEntity
+            {
+                UserId = reservationToMove.UserId,
+                ItemInventoryId = invItemId,
+                Date_From = DateTime.Now,
+                Date_To = DateTime.Now.AddDays(GetItemLoanTime(reservationToMove.Item.Type))
+            };
+            _context.LoansActive.Add(newLoan);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<LoanReservationEntity> GetFirstItemReservation(int itemId)
+        {
+            // ta reservation på plats 1 i kön
+            var itemReservation = await _context.LoansReservation
+                .Include(reservation => reservation.Item)
+                .FirstOrDefaultAsync(lr => lr.ItemId == itemId);
+            
+            if (itemReservation != null)
+            {
+                return itemReservation;
+            }
+            return null;
         }
 
         private List<LoanDTO>? ConvertToDTO(IEnumerable<LoanEntity> loans)
@@ -173,8 +233,10 @@ namespace BISA.Server.Services.LoanService
                         Date_From = loan.Date_From,
                         Date_To = loan.Date_To,
                         User_Email = loan.User?.Email,
-                        ItemId = loan.ItemInventory.ItemId,
+                        Item = loan.ItemInventory.Item,
                         InvItemId = loan.ItemInventoryId
+                        
+                       
                     });
                 }
             }

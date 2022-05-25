@@ -87,15 +87,15 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<EventTypeEntity>()
                 .HasData(
-                new EventTypeEntity { Id = 1, Capacity = 500, Description = "Tjena hallå", Image = "Katt", Type = "Högläsning för barn" },
-                new EventTypeEntity { Id = 2, Capacity = 300, Description = "Kom hit och fiska", Image = "Hund", Type = "Konsert" }
+                new EventTypeEntity { Id = 1, Capacity = 500, Description = "Barnaktivitet", Image = "högläsning.img", Type = "Högläsning för barn" },
+                new EventTypeEntity { Id = 2, Capacity = 300, Description = "Musikevenemang", Image = "musik.img", Type = "Konsert" }
                 );
 
 
             modelBuilder.Entity<EventEntity>()
                 .HasData(
-                new EventEntity { Id = 1, Date = DateTime.Now, Location = "Malmö", Organizer = "Kalle-Staffan", Subject = "Staffans kalle", EventTypeId = 1 },
-                new EventEntity { Id = 2, Date = DateTime.Now, Location = "Tranås", Organizer = "Fora", Subject = "Diskutera i forum", EventTypeId = 1 }
+                new EventEntity { Id = 1, Date = DateTime.Now, Location = "Malmö", Organizer = "Kalle-Staffan", Subject = "Djur", EventTypeId = 1, Description = "Kalle-Staffan läser från sin bok 'Dom vilda djuren'." },
+                new EventEntity { Id = 2, Date = DateTime.Now, Location = "Tranås", Organizer = "Fora", Subject = "Yttrandefrihet", EventTypeId = 2, Description = "Fora besöker vårt bibliotek för att diskutera yttrandefrihet." }
                 );
 
             modelBuilder.Entity<ItemInventoryEntity>()
@@ -110,8 +110,9 @@ namespace BISA.Server.Data.DbContexts
             modelBuilder.Entity<LoanReservationEntity>()
                 .HasData(
                     new LoanReservationEntity { Id = 1, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(2), ItemId = 1, UserId = 3 },
-                    new LoanReservationEntity { Id = 2, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(1), ItemId = 1, UserId = 4 });
-
+                    new LoanReservationEntity { Id = 2, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(1), ItemId = 1, UserId = 4 },
+                    new LoanReservationEntity { Id = 3, Date_From = DateTime.Now, Date_To = DateTime.Now.AddDays(2), ItemId = 2, UserId = 1 }
+                    );
         }
     }
 }

@@ -6,8 +6,8 @@ namespace BISA.Client.Services.EventService
         Task<List<EventViewModel>> GetEvents();
         Task<List<EventTypeViewModel>> GetEventTypes();
         Task<EventViewModel> GetEvent(int eventId);
-        Task<EventViewModel> CreateEvent(EventViewModel eventToCreate);
+        Task<ServiceResponseViewModel<EventViewModel>> CreateEvent(EventViewModel eventToCreate);
         Task<EventViewModel> UpdateEvent(EventViewModel eventToUpdate);
-        Task<EventViewModel> DeleteEvent(int eventId);
+        Task<string> DeleteEvent(int eventId);
     }
 }

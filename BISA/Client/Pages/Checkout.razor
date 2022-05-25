@@ -1,7 +1,108 @@
 ﻿@page "/checkout"
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject ILocalStorageService LocalStorage
+@inject ILoanService LoanService
 
-<h3>Checkout</h3>
+@attribute [Authorize]
+
+<PageTitle>Checkout</PageTitle>
+@if (Items != null && Items.Any())
+{
+    <MudTable Items="@Items">
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Title</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Title">@context.ItemId</MudTd>
+            <MudTd DataLabel="Type">@context.Title</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudTd>
+                <MudButton OnClick="() => OnRemoveClick(context.ItemId)" Variant="Variant.Filled" Color="Color.Secondary">Cancel</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+    <div class="d-flex align-center justify-space-between mt-6">
+        <MudButton OnClick="OnLoanClick" Variant="Variant.Filled" Color="Color.Primary">Loan</MudButton>
+    </div>
+} else
+{
+    <MudGrid>
+        <MudItem xs="12"></MudItem>
+        <MudItem xs="4"></MudItem>
+        <MudItem xs="4">
+            <MudText Typo="Typo.h5">No items in checkout</MudText>
+            <MudLink Href="/search">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Search for items</MudButton>
+            </MudLink>
+        </MudItem>
+        <MudItem xs="4"></MudItem>
+        <MudItem xs="12"></MudItem>
+    </MudGrid>
+}
+
+
 
 @code {
+    public List<CheckoutDTO> Items { get; set; } = new List<CheckoutDTO>();
+    public int UserTotalLoans { get; set; }
+    public int LoansCap = 5;
 
+    protected async override Task OnInitializedAsync()
+    {
+        Items = await GetCheckout();
+        var userLoans = await LoanService.GetMyLoans();
+        if (userLoans.Success)
+        {
+            UserTotalLoans = userLoans.Data.Count;
+        } 
+        else
+        {
+            UserTotalLoans = 0;    
+        }
+    }
+
+    private async Task<List<CheckoutDTO>> GetCheckout()
+    {
+        return await LocalStorage.GetItemAsync<List<CheckoutDTO>>("checkout");
+    }
+
+    private async Task OnRemoveClick(int id)
+    {
+        Items = Items.Where(i => i.ItemId != id).ToList();
+        await LocalStorage.SetItemAsync("checkout", Items);
+    }
+
+    private async Task OnLoanClick()
+    {
+        if (Items.Count > 5)
+        {
+            Snackbar.Add("You can loan a maximum of 5 items at a time.", Severity.Error, config => { config.ShowCloseIcon = false; });
+        }
+        else if (Items.Count > LoansCap - UserTotalLoans)
+        {
+            Snackbar.Add($"You can loan {LoansCap - UserTotalLoans} more items", Severity.Error, config => { config.ShowCloseIcon = false; });
+        }
+        else if (!Items.Any())
+        {
+            Snackbar.Add("The checkout is empty", Severity.Error, config => { config.ShowCloseIcon = false; });
+        }
+        else
+        {
+            var apiResponse = await LoanService.AddLoan(Items);
+            if (apiResponse.Success)
+            {
+                await LocalStorage.RemoveItemAsync("checkout");
+                NavigationManager.NavigateTo("/profile");
+            }
+            else
+            {
+                Snackbar.Add($"Error: {apiResponse.Message}", Severity.Error, config => { config.ShowCloseIcon = false; });
+            }
+        }
+    }
 }
