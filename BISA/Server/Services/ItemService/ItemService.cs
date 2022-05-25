@@ -64,6 +64,13 @@ namespace BISA.Server.Services.ItemService
                 return responseDTO;
             }
 
+           if(itemToDelete.ItemInventory.Any(i => i.Available == false))
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "Item requested for deletion doesn't have all copies in stock.";
+                return responseDTO;
+            }
+
             itemToDelete.ItemInventory.Clear();
             itemToDelete.Tags.Clear();
             _context.Items.Remove(itemToDelete);

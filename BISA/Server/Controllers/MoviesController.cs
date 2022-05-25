@@ -35,9 +35,8 @@ namespace BISA.Server.Controllers
 
         // POST api/<MoviesController>
         [HttpPost]
-        public async Task<IActionResult> Post(MovieCreateDTO movieToCreate)
+        public async Task<IActionResult> Post([FromBody] MovieCreateDTO movieToCreate)
         {
-            
             var movieResponse = await _movieService.CreateMovie(movieToCreate);
 
             if (movieResponse.Success)

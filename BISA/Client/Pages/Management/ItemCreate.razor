@@ -20,22 +20,40 @@
         <DataAnnotationsValidator/>
 
         <MudGrid>
-        @if (mediaType.Equals("Movie"))
-        {
-            <CreateMovieForm movie=movie></CreateMovieForm>
-        }
+            <MudItem xs=12 Class="mt-3">
+                <MudCard>
+                    <MudCardContent>
 
-        @if (mediaType.Equals("Book"))
-        {
-            <p>book</p>
-        }
+            @if (mediaType.Equals("Movie"))
+            {
+                <CreateMovieForm movie=movie></CreateMovieForm>
+            }
 
-        @if (mediaType.Equals("Ebook"))
-        {
-            <p>ebook</p>
-        }
-         
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
+            @if (mediaType.Equals("Book"))
+            {
+                <CreateBookForm book=book></CreateBookForm>
+            }
+
+            @if (mediaType.Equals("Ebook"))
+            {
+                <CreateEbookForm ebook=ebook></CreateEbookForm>
+            }
+
+        <MudSelect T="TagViewModel" ToStringFunc="@(t=> t == null ? null : $"{t.Tag}")" Label="Tags" Required="true" MultiSelection="true" @bind-SelectedValues="@tagsForItem">
+            @foreach (var tag in tags)
+            {
+                <MudSelectItem T="TagViewModel" Value="@tag">@tag.Tag</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudNumericField Label="Add Copies" @bind-Value=itemInventory></MudNumericField>
+
+            </MudCardContent>
+         <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
         </MudGrid>
         
     </EditForm>
@@ -49,9 +67,12 @@ else { <p>Loading form....</p>}
     private bool dataIsLoaded { get; set; }
     private bool IsNew { get; set; }
     private string? mediaType { get; set; } = "Book";
+    private int itemInventory { get; set; }
     private MovieViewModel movie = new();
-    private EbookViewModel ebook  = new();
+    private EbookViewModel ebook = new();
     private BookViewModel book  = new();
+    private List<TagViewModel> tags = new();
+    private IEnumerable<TagViewModel> tagsForItem { get; set; } = new HashSet<TagViewModel>();
     private bool createMovie { get; set; } = false;
     private bool createBook { get; set; } = true;
     private bool createEbook { get; set; } = false;
@@ -67,6 +88,8 @@ else { <p>Loading form....</p>}
 
         //Check what type of item is going to be updated so the form has correct validation parameters.
         await InitializeEditContext();
+
+        tags = await ItemService.GetTags();
 
         //When initial data has been processed, show form.
         dataIsLoaded = true;
@@ -106,7 +129,21 @@ else { <p>Loading form....</p>}
         {
             if(mediaType.Equals("Movie"))
             {
+                movie.Tags = tagsForItem.ToList();
+                movie.ItemInventory = itemInventory;
                 await MovieService.CreateMovie(movie);
+            }
+            if (mediaType.Equals("Book"))
+            {
+                book.Tags = tagsForItem.ToList();
+                book.ItemInventory = itemInventory;
+                //await BookService.CreateBook(book);
+            }
+            if (mediaType.Equals("Ebook"))
+            {
+                ebook.Tags = tagsForItem.ToList();
+                ebook.ItemInventory = itemInventory;
+                //await EBookService.CreateEbook(book);
             }
         }
 

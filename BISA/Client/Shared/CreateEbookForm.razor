@@ -1,0 +1,17 @@
+﻿                <MudTextField Label="Title" 
+                              @bind-Value="ebook.Title" For="@(() => ebook.Title)"/>
+                <MudTextField Label="Language" Class="mt-3"
+                              @bind-Value="ebook.Language" For="@(() => ebook.Language)"/>
+                <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"
+                              @bind-Value="ebook.Date" For="@(() => ebook.Date)" InputType="InputType.Date"/>
+                <MudTextField Label="Publisher" HelperText="Publisher" Class="mt-3"
+                              @bind-Value="ebook.Publisher" For="@(() => ebook.Publisher)" InputType="InputType.Text"/>
+                              <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
+                              @bind-Value="ebook.Creator" For="@(() => ebook.Creator)" InputType="InputType.Text"/>
+                              <MudTextField Label="Url" HelperText="Url" Class="mt-3"
+                              @bind-Value="ebook.Url" For="@(() => ebook.Url)" InputType="InputType.Url"/>
+
+@code {
+    [Parameter]
+    public EbookViewModel ebook { get; set; }
+}

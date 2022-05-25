@@ -19,11 +19,11 @@ namespace BISA.Server.Services.MovieService
             var allMovies = await _context.Movies.ToListAsync();
 
             var foundDuplicate = allMovies
-                .Any(m => m.Creator.ToLower() == movieToCreate.Creator.ToLower()
-                && m.Date.Equals(movieToCreate.Date)
-                && m.Publisher.ToLower() == movieToCreate.Publisher.ToLower()
-                && m.Language.ToLower() == movieToCreate.Language.ToLower()
-                && m.Title.ToLower() == movieToCreate.Title.ToLower()
+                .Any(m => m.Creator?.ToLower() == movieToCreate.Creator?.ToLower()
+                && m.Date == movieToCreate.Date
+                && m.Publisher?.ToLower() == movieToCreate.Publisher?.ToLower()
+                && m.Language?.ToLower() == movieToCreate.Language?.ToLower()
+                && m.Title?.ToLower() == movieToCreate.Title?.ToLower()
                 && m.RuntimeInMinutes.Equals(movieToCreate.RuntimeInMinutes));
 
             if (foundDuplicate)
@@ -35,15 +35,15 @@ namespace BISA.Server.Services.MovieService
 
             }
 
-            List<TagEntity> tagsFoMovie = new List<TagEntity>();
+            List<TagEntity> tagsForMovie = new List<TagEntity>();
 
-            if (movieToCreate.Tags != null)
+            if (movieToCreate.Tags.Any())
             {
                 foreach (var tag in movieToCreate.Tags)
                 {
                     try
                     {
-                        tagsFoMovie.Add(_context.Tags.Single(m => m.Id == tag));
+                        tagsForMovie.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {
@@ -60,7 +60,7 @@ namespace BISA.Server.Services.MovieService
                 Date = movieToCreate.Date,
                 Publisher = movieToCreate.Publisher,
                 Creator = movieToCreate.Creator,
-                Tags = tagsFoMovie,
+                Tags = tagsForMovie,
                 RuntimeInMinutes = movieToCreate.RuntimeInMinutes
 
             };

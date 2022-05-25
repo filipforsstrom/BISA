@@ -1,4 +1,6 @@
-﻿namespace BISA.Client.Services.MovieService
+﻿using BISA.Shared.DTO;
+
+namespace BISA.Client.Services.MovieService
 {
     public class MovieService : IMovieService
     {
@@ -21,6 +23,7 @@
         public async Task<MovieViewModel> CreateMovie(MovieViewModel movieToCreate)
         {
             var response = await _http.PostAsJsonAsync("api/movies", movieToCreate);
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<MovieViewModel>();
