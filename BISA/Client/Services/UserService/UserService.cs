@@ -24,7 +24,7 @@
         {
             var response = new ServiceResponseViewModel<string>();
 
-            var httpResponse = await _httpClient.DeleteAsync($"api/users/${id}");
+            var httpResponse = await _httpClient.DeleteAsync($"api/user/{id}");
             if (httpResponse.IsSuccessStatusCode)
             {
                 response.Success = true;
