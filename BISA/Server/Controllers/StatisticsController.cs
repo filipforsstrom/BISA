@@ -40,7 +40,7 @@ namespace BISA.Server.Controllers
             return BadRequest(statResponse.Message);
         }
 
-        [HttpGet("author")]
+        [HttpGet("authors")]
         public async Task<IActionResult> GetMostPopularAuthor()
         {
             var statResponse = await _statisticsService.GetMostPopularAuthor();

@@ -108,6 +108,7 @@ namespace BISA.Server.Services.StatisticsService
             mostPopularItemDTO.Language = itemEntity.Language;
             mostPopularItemDTO.Date = itemEntity.Date;
             mostPopularItemDTO.Tags = ConvertTagToDTO(itemEntity.Tags);
+            mostPopularItemDTO.Type = itemEntity.Type.ToLower();
 
             //mostPopularItemDTO.ItemInventory = itemEntity.ItemInventory.Count();
 

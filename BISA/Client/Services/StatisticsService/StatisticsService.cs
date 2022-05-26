@@ -48,7 +48,7 @@ namespace BISA.Client.Services.StatisticsService
         {
             ServiceResponseViewModel<MostPopularAuthorViewModel> responseViewModel = new();
 
-            var httpClientResponse = _httpClient.GetAsync("api/statistics/author").Result;
+            var httpClientResponse = await _httpClient.GetAsync("api/statistics/authors");
 
             if (httpClientResponse.IsSuccessStatusCode)
             {

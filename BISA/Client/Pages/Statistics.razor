@@ -7,8 +7,8 @@
 {
     <MudCard>
     <MudCardContent>
-        <MudText Align="Align.Center" Typo="Typo.h6">Our most popular book is: @MostPopularItem.Title</MudText>
-        <MudText Align="Align.Center" Typo="Typo.body2">Written by: @MostPopularItem.Creator</MudText>
+        <MudText Align="Align.Center" Typo="Typo.h6">Our most popular item is the @MostPopularItem.Type: @MostPopularItem.Title</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2">Created by: @MostPopularItem.Creator</MudText>
     </MudCardContent>
     </MudCard>
 }
@@ -21,7 +21,7 @@ else
     <MudCard>
     <MudCardContent>
         <MudText Align="Align.Center" Typo="Typo.h6">The user with most loans is : @UserWithMostLoans.Email</MudText>
-        <MudText Align="Align.Center" Typo="Typo.body2">This user has used our library services @UserWithMostLoans.NumberOfLoans number of times</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2">This user has used our library services @UserWithMostLoans.NumberOfLoans times</MudText>
     </MudCardContent>
     </MudCard>
 }
@@ -30,7 +30,19 @@ else
     <MudText>@userWarning</MudText>
 }
 
-
+@if(MostPopularAuthor != null)
+{
+    <MudCard>
+    <MudCardContent>
+        <MudText Align="Align.Center" Typo="Typo.h6">The most popular author is: @MostPopularAuthor.Name</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2">Number of loans: @MostPopularAuthor.NumberOfLoans</MudText>
+    </MudCardContent>
+    </MudCard>
+}
+else
+{
+    <MudText>@authorWarning</MudText>
+}
 
 
 
