@@ -57,7 +57,7 @@ namespace BISA.Server.Services.ReservationService
                 }
 
                 response.Success = false;
-                response.Message = $"Item with id: {itemId} allready reserved by user";
+                response.Message = $"Item with id: {itemId} already reserved by user";
                 return response;
             }
 

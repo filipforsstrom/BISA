@@ -13,5 +13,7 @@ namespace BISA.Shared.Entities
         public string? Tag { get; set; }
         [JsonIgnore]
         public List<ItemEntity>? Items { get; set; }
+        public List<ItemTagEntity> ItemTags { get; set; }
+
     }
 }

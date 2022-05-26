@@ -1,11 +1,14 @@
 ﻿@page "/items/{id}"
 @inject IItemService ItemService
+@inject IReservationsService ReservationsService
 @inject IBookService BookService
 @inject IEbookService EbookService
 @inject IMovieService MovieService
 @inject ILoanService LoanService
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <h3>Items</h3>
 @if (Item != null)
@@ -18,6 +21,10 @@
                 <MudText Typo="Typo.body2">@Book.Creator</MudText>
                 <MudText Typo="Typo.body2">@Book.ISBN</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+                @foreach (var tag in Book.Tags)
+                {
+                    <MudLink href="@($"search/{tag.Tag}")" Typo="Typo.body2">@tag.Tag</MudLink>
+                }
             </MudCardContent>
         </MudCard>
     }
@@ -29,6 +36,10 @@
                 <MudText Typo="Typo.body2">@Ebook.Creator</MudText>
                 <MudText Typo="Typo.body2">@Ebook.Url</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+                @foreach (var tag in Ebook.Tags)
+                {
+                    <MudLink href="@($"search/{tag.Tag}")" Typo="Typo.body2">@tag.Tag</MudLink>
+                }
             </MudCardContent>
         </MudCard>
     }
@@ -40,6 +51,10 @@
                 <MudText Typo="Typo.body2">@Movie.Creator</MudText>
                 <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+                @foreach (var tag in Movie.Tags)
+                {
+                    <MudLink href="@($"search/{tag.Tag}")" Typo="Typo.body2">@tag.Tag</MudLink>
+                }
             </MudCardContent>
         </MudCard>
     }
@@ -49,7 +64,7 @@
     }
     else
     {
-        <MudButton Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
+        <MudButton OnClick="@((e) => Reserve(Item))" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
     }
     @if (NoStock)
     {
@@ -102,13 +117,20 @@
         var loans = await LocalStorage.GetItemAsync<List<CheckoutDTO>>("checkout");
         if (loans != null)
         {
-            loans.Add(new CheckoutDTO
+            if (loans.Any(l => l.ItemId == item.Id))
+            {
+                Snackbar.Add($"{item.Title} is allready added to checkout", Severity.Error, config => { config.ShowCloseIcon = false; });
+            }
+            else
+            {
+                loans.Add(new CheckoutDTO
                 {
                     ItemId = item.Id,
                     Title = item.Title,
                     Description = "Here's a description"
                 });
-            await LocalStorage.SetItemAsync("checkout", loans);
+                await LocalStorage.SetItemAsync("checkout", loans);
+            }
         }
         else
         {
@@ -122,6 +144,19 @@
             await LocalStorage.SetItemAsync("checkout", newCheckout);
         }
         NavigationManager.NavigateTo("checkout");
+    }
+
+    private async Task Reserve(ItemViewModel item)
+    {
+        var parameters = new DialogParameters { ["Item"]=item };
+
+        var dialog = DialogService.Show<ReserveDialog>("Reserve", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            
+        }
     }
 
     private bool CheckIfAvailable(List<ItemInventoryViewModel> inventory)
