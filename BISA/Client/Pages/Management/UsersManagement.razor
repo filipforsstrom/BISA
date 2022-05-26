@@ -64,6 +64,16 @@
     UserRoleDTO SearchResult = new UserRoleDTO();
     string SearchUser { get; set; } = string.Empty;
 
+    private async Task RemoveUser()
+    {
+        //var apiCall;
+        //if (apiCall.Success)
+        //{
+        //    CreateMessage("User deleted.");
+        //}
+        //else CreateMessage(apiCall.Message, true);
+    }
+
     private async Task GetUser()
     {
         var apiCall = await UserRoleService.SearchUser(SearchUser);

@@ -28,3 +28,9 @@ Authorization: Bearer {{authToken}}
 # @name getUser
 GET {{baseUri}}/user/heff
 Authorization: Bearer {{authToken}}
+
+###
+
+# @name deleteUser
+DELETE {{baseUri}}/user/d0a28f52-5a5f-42cf-8461-05dc7ddae29a
+Authorization: Bearer {{authToken}}

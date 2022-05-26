@@ -6,6 +6,6 @@ namespace BISA.Server.Services.UserService
     {
         Task<ServiceResponseDTO<UserRoleDTO>> GetUser(string id);
         Task<ServiceResponseDTO<string>> ChangePassword(UserChangePasswordDTO userChangePassword);
-        Task<ServiceResponseDTO<UserEntity>> DeleteUser(int id);
+        Task<ServiceResponseDTO<string>> DeleteUser(string id);
     }
 }

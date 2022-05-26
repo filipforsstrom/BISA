@@ -41,5 +41,17 @@ namespace BISA.Server.Controllers
             }
 
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var userResponse = await _userService.DeleteUser(id);
+            if (userResponse.Success)
+            {
+                return NoContent();
+            }
+            return BadRequest(userResponse.Message);
+        }
     }
 }
