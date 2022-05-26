@@ -19,5 +19,23 @@
 
             return await httpResponse.Content.ReadAsStringAsync();
         }
+
+        public async Task<ServiceResponseViewModel<string>> DeleteUser(string id)
+        {
+            var response = new ServiceResponseViewModel<string>();
+
+            var httpResponse = await _httpClient.DeleteAsync($"api/users/${id}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                response.Success = true;
+                response.Message = "User deleted"; 
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = await httpResponse.Content.ReadAsStringAsync();
+            }
+            return response;
+        }
     }
 }

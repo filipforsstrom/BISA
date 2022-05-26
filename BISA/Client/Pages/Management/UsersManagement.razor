@@ -1,6 +1,7 @@
 ﻿@page "/usersmanagement"
 @inject ISnackbar Snackbar
 @inject IUserRoleService UserRoleService
+@inject IUserService UserService
 @attribute [Authorize(Roles = "Admin, Staff")]
 
 <MudGrid>
@@ -50,7 +51,7 @@
         <MudCard>
             <MudCardContent>
                 <MudTextField Label="User Id" HelperText="Please enter a valid user id"
-                              @bind-Value="User.Id" />
+                              @bind-Value="DeleteUserId" />
             </MudCardContent>
             <MudCardActions>
                 <MudButton OnClick="RemoveUser" Color="Color.Error">Delete</MudButton>
@@ -63,15 +64,16 @@
     UserRoleDTO User = new UserRoleDTO();
     UserRoleDTO SearchResult = new UserRoleDTO();
     string SearchUser { get; set; } = string.Empty;
+    string DeleteUserId { get; set; } = string.Empty;
 
     private async Task RemoveUser()
     {
-        //var apiCall;
-        //if (apiCall.Success)
-        //{
-        //    CreateMessage("User deleted.");
-        //}
-        //else CreateMessage(apiCall.Message, true);
+        var apiCall = await UserService.DeleteUser(DeleteUserId);
+        if (apiCall.Success)
+        {
+            CreateMessage("User deleted.");
+        }
+        else CreateMessage(apiCall.Message, true);
     }
 
     private async Task GetUser()
