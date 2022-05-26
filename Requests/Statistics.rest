@@ -13,4 +13,12 @@ Content-Type: application/json
 
 ###
 # @name statistics
-GET {{baseUri}}/statistics
+GET {{baseUri}}/statistics/popular
+
+###
+# @name statistics
+GET {{baseUri}}/statistics/users
+
+###
+# @name statistics
+GET {{baseUri}}/statistics/author
