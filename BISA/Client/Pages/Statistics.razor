@@ -1,7 +1,93 @@
 ﻿@page "/statistics"
+@inject IStatisticsService StatisticsService
 
-<h3>Statistics</h3>
+<MudText Align="Align.Center" Typo="Typo.h5">BISA statistics</MudText>
+<br />
+@if(MostPopularItem != null)
+{
+    <MudCard>
+    <MudCardContent>
+        <MudText Align="Align.Center" Typo="Typo.h6">Our most popular item is the @MostPopularItem.Type: @MostPopularItem.Title</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2">Created by: @MostPopularItem.Creator</MudText>
+    </MudCardContent>
+    </MudCard>
+}
+else
+{
+    <MudText>@itemWarning</MudText>
+}
+@if(UserWithMostLoans != null)
+{
+    <MudCard>
+    <MudCardContent>
+        <MudText Align="Align.Center" Typo="Typo.h6">The user with most loans is : @UserWithMostLoans.Email</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2">This user has used our library services @UserWithMostLoans.NumberOfLoans times</MudText>
+    </MudCardContent>
+    </MudCard>
+}
+else
+{
+    <MudText>@userWarning</MudText>
+}
+
+@if(MostPopularAuthor != null)
+{
+    <MudCard>
+    <MudCardContent>
+        <MudText Align="Align.Center" Typo="Typo.h6">The most popular author is: @MostPopularAuthor.Name</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2">Number of loans: @MostPopularAuthor.NumberOfLoans</MudText>
+    </MudCardContent>
+    </MudCard>
+}
+else
+{
+    <MudText>@authorWarning</MudText>
+}
+
+
 
 @code {
 
+    private ItemViewModel MostPopularItem { get; set; } = new();
+    private UserStatisticsViewModel UserWithMostLoans { get; set; } = new(); // ändra namn
+    private MostPopularAuthorViewModel MostPopularAuthor { get; set; } = new(); // ändra namn
+    private string itemWarning;
+    private string userWarning;
+    private string authorWarning;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var itemResponse = await StatisticsService.GetMostPopularItem();
+        if (itemResponse.Success)
+        {
+            MostPopularItem = itemResponse.Data;
+        }
+        else
+        {
+            itemWarning = itemResponse.Message;
+            MostPopularItem = itemResponse.Data;
+        }
+
+        var userResponse = await StatisticsService.GetMostActiveUser();
+        if (userResponse.Success)
+        {
+            UserWithMostLoans = userResponse.Data;
+        }
+        else
+        {
+            userWarning = userResponse.Message;
+            UserWithMostLoans = userResponse.Data;
+        }
+
+        var authorResponse = await StatisticsService.GetMostPopularAuthor();
+        if (authorResponse.Success)
+        {
+            MostPopularAuthor = authorResponse.Data;
+        }
+        else
+        {
+            authorWarning = authorResponse.Message;
+            MostPopularAuthor = authorResponse.Data;    
+        }
+    }
 }

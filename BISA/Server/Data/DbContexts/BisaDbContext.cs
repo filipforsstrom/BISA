@@ -56,9 +56,9 @@ namespace BISA.Server.Data.DbContexts
 
             modelBuilder.Entity<BookEntity>()
                 .HasData(
-                new BookEntity { Id = 1, Title = "Hej", ISBN = "523577987" },
-                new BookEntity { Id = 3, Title = "Dune", ISBN = "523577988" },
-                new BookEntity { Id = 4, Title = "Lord of the Rings", ISBN = "523577989" }
+                new BookEntity { Id = 1, Title = "Hej", ISBN = "523577987", Creator = "Hej Hejsson" },
+                new BookEntity { Id = 3, Title = "Dune", ISBN = "523577988", Creator = "Stephen King" },
+                new BookEntity { Id = 4, Title = "Lord of the Rings", ISBN = "523577989", Creator = "Tolkien" }
                 );
 
             modelBuilder.Entity<MovieEntity>()
@@ -98,11 +98,12 @@ namespace BISA.Server.Data.DbContexts
                 .HasData(
                     new LoanHistoryEntity { Id = 5, ItemInventoryId = 1, UserId = 1 },
                     new LoanHistoryEntity { Id = 6, ItemInventoryId = 6, UserId = 1 },
-                    new LoanHistoryEntity { Id = 7, ItemInventoryId = 4, UserId = 2 },
+                    new LoanHistoryEntity { Id = 7, ItemInventoryId = 3, UserId = 2 },
                     new LoanHistoryEntity { Id = 8, ItemInventoryId = 6, UserId = 3 },
                     new LoanHistoryEntity { Id = 9, ItemInventoryId = 6, UserId = 1 },
                     new LoanHistoryEntity { Id = 10, ItemInventoryId = 1, UserId = 4 },
-                    new LoanHistoryEntity { Id = 11, ItemInventoryId = 6, UserId = 2 }
+                    new LoanHistoryEntity { Id = 11, ItemInventoryId = 6, UserId = 2 },
+                    new LoanHistoryEntity { Id = 12, ItemInventoryId = 3, UserId = 1 }
                 );
 
             modelBuilder.Entity<TagEntity>()
