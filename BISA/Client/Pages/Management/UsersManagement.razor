@@ -1,7 +1,172 @@
 ﻿@page "/usersmanagement"
+@using BISA.Client.Shared.UserManagement_Components
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IUserRoleService UserRoleService
+@inject IUserService UserService
+@attribute [Authorize(Roles = "Admin, Staff")]
 
-<h3>UsersManagement</h3>
+<MudGrid>
+    <MudItem xs="6" Class="mt-4">
+        <ToggleUserRightsForm
+            Title="User Management"
+            Identifier="User id"
+            OnPromote="PromoteToStaff"
+            OnDemote="DemoteToUser"
+            OnAdminPromote="PromoteToAdmin"
+            OnAdminDemote="DemoteAdmin"
+        />
+    </MudItem>
+    <MudItem xs="5" Class="mt-4">
+        <UserForm Title="Get User" OnButtonClick="GetUser" ButtonText="Search" SearchParameter="Username"/>
+        <ShowUserContainer User="SearchResult" />
+    </MudItem>
+    <MudItem xs="6">
+        <UserForm Title="Delete User" OnButtonClick="RemoveUser" ButtonText="Delete" SearchParameter="User Id"/>
+    </MudItem>
+</MudGrid>
 
 @code {
+    UserRoleDTO SearchResult = new UserRoleDTO();
 
+    private async Task RemoveUser(string DeleteUserId)
+    {
+        if (!string.IsNullOrEmpty(DeleteUserId))
+        {            
+            if (await ConfirmDialog())
+            {
+                var apiCall = await UserService.DeleteUser(DeleteUserId);
+                if (apiCall.Success)
+                {
+                    CreateMessage("User deleted.");
+                }
+                else
+                {
+                    CreateMessage(apiCall.Message, true);
+                }
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task GetUser(string username)
+    {
+        if (!string.IsNullOrEmpty(username))
+        {
+            var apiCall = await UserRoleService.SearchUser(username);
+            if (apiCall.Success)
+            {
+                SearchResult = apiCall.Data;
+            }
+            else CreateMessage(apiCall.Message, true);
+        } else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task PromoteToAdmin(UserRoleDTO User)
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.PromoteToAdmin(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task DemoteAdmin(UserRoleDTO User)
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.RevokeAdmin(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task PromoteToStaff(UserRoleDTO User)
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.PromoteToStaff(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private async Task DemoteToUser(UserRoleDTO User)
+    {
+        if (!string.IsNullOrEmpty(User.Id))
+        {
+            var apiCall = await UserRoleService.DemoteToUser(User);
+            if (apiCall.Success)
+            {
+                CreateMessage(apiCall.Message);
+            }
+            else
+            {
+                CreateMessage(apiCall.Message, true);
+            }
+        }
+        else
+        {
+            CreateMessage("Please enter a valid string", true);
+        }
+    }
+
+    private void CreateMessage(string msg, bool error = false)
+    {
+        var severity = error switch
+        {
+            true => Severity.Error,
+            _ => Severity.Normal
+        };
+        Snackbar.Add(msg, severity, config => { config.ShowCloseIcon = false; });
+    }
+    private async Task<bool> ConfirmDialog()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
+        parameters.Add("ButtonText", "Delete");
+        parameters.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        var dialog = DialogService.Show<DeleteUserDialog>("Delete", parameters, options);
+        var result = await dialog.Result;
+        return !result.Cancelled;
+    }
 }

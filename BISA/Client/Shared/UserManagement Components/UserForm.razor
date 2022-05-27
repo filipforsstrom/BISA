@@ -1,0 +1,34 @@
+﻿@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+<MudText Typo="Typo.h3">@Title</MudText>
+<MudCard>
+    <MudCardContent>
+        <MudTextField Label="@($"{SearchParameter}")" HelperText="@($"Please enter a valid {SearchParameter}")"
+                      @bind-Value="DeleteUserId" />
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton OnClick="ClickDelete" Color="Color.Error">@ButtonText</MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public string ButtonText { get; set; } = "default";
+    [Parameter]
+    public string SearchParameter { get; set; } = "default search parameter";
+
+    [Parameter]
+    public EventCallback<string> OnButtonClick { get; set; }
+
+    public string? DeleteUserId { get; set; }
+
+    private async Task ClickDelete()
+    {
+        await OnButtonClick.InvokeAsync(DeleteUserId);
+        DeleteUserId = string.Empty;
+    }    
+}
