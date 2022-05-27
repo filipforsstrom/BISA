@@ -3,7 +3,7 @@
     public interface IEbookService
     {
         Task<EbookViewModel> GetEbook(int itemId);
-        //Task<EbookViewModel> UpdateEbook(EbookUpdateDTO EbookToUpdate);
-        //Task<EbookViewModel> CreateEbook(EbookCreateDTO EbookToAdd);
+        Task<string> UpdateEbook(EbookViewModel ebookToUpdate);
+        Task<string> CreateEbook(EbookViewModel ebookToCreate);
     }
 }

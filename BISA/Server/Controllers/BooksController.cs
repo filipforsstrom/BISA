@@ -40,7 +40,7 @@ namespace BISA.Server.Controllers
 
             if (bookResponse.Success)
             {
-                return Ok(bookResponse.Data);
+                return Ok(bookResponse.Message);
             }
             else
             {

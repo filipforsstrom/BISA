@@ -39,13 +39,13 @@ namespace BISA.Server.Services.BookService
             //search for the tags in the Tags-table and add them to a list.
             List<TagEntity> tagsForBookToBeCreated = new();
 
-            if (bookToCreate.Tags != null && bookToCreate.Tags[0] != 0)
+            if (bookToCreate.Tags.Any())
             {
-                foreach (var tagIds in bookToCreate.Tags)
+                foreach (var tag in bookToCreate.Tags)
                 {
                     try
                     {
-                        tagsForBookToBeCreated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                        tagsForBookToBeCreated.Add(_context.Tags.Single(t => t.Id == tag.Id));
                     }
                     catch (Exception)
                     {

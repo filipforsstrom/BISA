@@ -36,13 +36,13 @@ namespace BISA.Server.Services.EbookService
 
             List<TagEntity> tagsForEbook = new List<TagEntity>();
 
-            if (ebookToCreate.Tags != null)
+            if (ebookToCreate.Tags.Any())
             {
-                foreach (var tagId in ebookToCreate.Tags)
+                foreach (var tag in ebookToCreate.Tags)
                 {
                     try
                     {
-                        tagsForEbook.Add(_context.Tags.Single(t => t.Id == tagId));
+                        tagsForEbook.Add(_context.Tags.Single(t => t.Id == tag.Id));
                     }
                     catch (Exception)
                     {
