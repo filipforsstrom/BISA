@@ -40,7 +40,10 @@
                 {
                     CreateMessage("User deleted.");
                 }
-                else CreateMessage(apiCall.Message, true);
+                else
+                {
+                    CreateMessage(apiCall.Message, true);
+                }
             }
         }
         else
