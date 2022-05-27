@@ -1,0 +1,32 @@
+﻿@inject IReservationsService ReservationsService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        Do you want to reserve @Item.Title?
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Reserve">Yes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public ItemViewModel Item{ get; set; }
+
+    async Task Reserve()
+    {
+        var result = await ReservationsService.AddReservation(Item.Id);
+        if (!result.Success)
+        {
+            Snackbar.Add($"{result.Message}", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add($"Reservation completed", Severity.Success);
+        }
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+    void Cancel() => MudDialog.Cancel();
+}
