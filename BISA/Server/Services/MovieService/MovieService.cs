@@ -129,10 +129,11 @@ namespace BISA.Server.Services.MovieService
 
         }
 
-        public async Task<ServiceResponseDTO<MovieUpdateDTO>> UpdateMovie(MovieUpdateDTO updatedMovie)
+        public async Task<ServiceResponseDTO<MovieUpdateDTO>> UpdateMovie(int id, MovieUpdateDTO updatedMovie)
         {
+
             var movieToUpdate = await _context.Movies
-                .Where(m => m.Id == updatedMovie.Id)
+                .Where(m => m.Id == id)
                 .Include(m => m.Tags)
                 .FirstOrDefaultAsync();
 
@@ -145,17 +146,20 @@ namespace BISA.Server.Services.MovieService
                 return responseDTO;
             }
 
-            movieToUpdate.Tags.Clear();
+            if (movieToUpdate.Tags.Any())
+            {
+                movieToUpdate.Tags.Clear();
+            }
 
             List<TagEntity> tagsForMovie = new List<TagEntity>();
 
-            if (updatedMovie.Tags != null)
+            if (updatedMovie.Tags.Any())
             {
                 foreach (var tag in updatedMovie.Tags)
                 {
                     try
                     {
-                        tagsForMovie.Add(_context.Tags.Single(m => m.Id == tag));
+                        tagsForMovie.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {

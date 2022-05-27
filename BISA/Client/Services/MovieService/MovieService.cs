@@ -27,9 +27,10 @@ namespace BISA.Client.Services.MovieService
                 return await response.Content.ReadAsStringAsync();
         }
 
-        public Task<MovieViewModel> UpdateMovie(MovieViewModel movieToUpdate)
+        public async Task<string> UpdateMovie(MovieViewModel movieToUpdate)
         {
-            throw new NotImplementedException();
+            var response = await _http.PutAsJsonAsync($"api/movies/{movieToUpdate.Id}", movieToUpdate);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

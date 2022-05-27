@@ -25,9 +25,10 @@
             else return null;
         }
 
-        public Task<string> UpdateEbook(EbookViewModel EbookToUpdate)
+        public async Task<string> UpdateEbook(EbookViewModel ebookToUpdate)
         {
-            throw new NotImplementedException();
+            var response = await _http.PutAsJsonAsync($"api/ebooks/{ebookToUpdate.Id}", ebookToUpdate);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

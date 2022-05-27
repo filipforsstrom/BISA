@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BISA.Shared.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace BISA.Shared.DTO
         public string? Date { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
-        public List<int>? Tags { get; set; }
+        public List<TagViewModel>? Tags { get; set; }
         public int ItemInventory { get; set; }
         public string? ISBN { get; set; }
     }

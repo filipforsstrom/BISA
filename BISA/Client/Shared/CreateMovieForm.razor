@@ -1,5 +1,5 @@
 ﻿            <MudTextField Label="Title" 
-                              @bind-Value="movie.Title" For="@(() => movie.Title)"/>
+                              @bind-Value="movie.Title" For="@(() => movie.Title)" Required=true RequiredError="Title is required!" />
                 <MudTextField Label="Language" Class="mt-3"
                               @bind-Value="movie.Language" For="@(() => movie.Language)"/>
                 <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"

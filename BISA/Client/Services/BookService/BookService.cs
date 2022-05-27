@@ -25,9 +25,10 @@
             else return null;
         }
 
-        public Task<BookViewModel> UpdateBook(BookViewModel bookToUpdate)
+        public async Task<string> UpdateBook(BookViewModel bookToUpdate)
         {
-            throw new NotImplementedException();
+            var response = await _http.PutAsJsonAsync($"api/books/{bookToUpdate.Id}", bookToUpdate);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

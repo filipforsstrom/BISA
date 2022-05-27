@@ -150,13 +150,13 @@ namespace BISA.Server.Services.EbookService
 
             List<TagEntity> tagsForEbook = new List<TagEntity>();
 
-            if (updatedEbook.Tags != null)
+            if (updatedEbook.Tags.Any())
             {
-                foreach (var tagId in updatedEbook.Tags)
+                foreach (var tag in updatedEbook.Tags)
                 {
                     try
                     {
-                        tagsForEbook.Add(_context.Tags.Single(m => m.Id == tagId));
+                        tagsForEbook.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {

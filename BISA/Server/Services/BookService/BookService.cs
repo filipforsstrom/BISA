@@ -155,13 +155,13 @@ namespace BISA.Server.Services.BookService
             bookEntity.Tags.Clear();
 
             //Add the new tags.
-            if (bookToUpdate.Tags != null)
+            if (bookToUpdate.Tags.Any())
             {
-                foreach (var tagIds in bookToUpdate.Tags)
+                foreach (var tag in bookToUpdate.Tags)
                 {
                     try
                     {
-                        tagsForBookToBeUpdated.Add(_context.Tags.Single(t => t.Id == tagIds));
+                        tagsForBookToBeUpdated.Add(_context.Tags.Single(t => t.Id == tag.Id));
                     }
                     catch (Exception)
                     {

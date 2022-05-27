@@ -18,7 +18,7 @@
 
 @if (dataIsLoaded)
 {
-    <EditForm EditContext=@EditContext OnValidSubmit="@HandleSubmit">
+    <EditForm OnValidSubmit="@HandleSubmit" EditContext=@EditContext>
         <DataAnnotationsValidator/>
 
         <MudGrid>
@@ -48,16 +48,21 @@
             }
         </MudSelect>
 
-        <MudNumericField Label="Add Copies" @bind-Value=itemInventory></MudNumericField>
+            @if (IsNew)
+             {
+                <MudNumericField Label="Add Copies" @bind-Value=itemInventory></MudNumericField>
+             }
 
             </MudCardContent>
+            
          <MudCardActions>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@(IsNew ? "Create" : "Update")</MudButton>
                     </MudCardActions>
                 </MudCard>
             </MudItem>
         </MudGrid>
-        
+
+        <ValidationSummary />
     </EditForm>
 }
 else { <p>Loading form....</p>}
@@ -72,6 +77,7 @@ else { <p>Loading form....</p>}
     [Parameter]
     public int itemToUpdate { get; set; }
     private bool dataIsLoaded { get; set; }
+    private bool success { get; set; } = false;
     private bool IsNew { get; set; }
     private string? mediaType { get; set; } = "Book";
     private int itemInventory { get; set; }
@@ -112,14 +118,28 @@ else { <p>Loading form....</p>}
 
         if(mediaType == "Book")
         {
+            if (!IsNew)
+            {
+                book = await BookService.GetBook(itemToUpdate);
+            }
             EditContext = new EditContext(book);
         }
+
         if(mediaType == "Ebook")
         {
+            if (!IsNew)
+            {
+                ebook = await EbookService.GetEbook(itemToUpdate);
+            }
             EditContext = new EditContext(ebook);
         }
+
         if(mediaType == "Movie")
         {
+            if (!IsNew)
+            {
+                movie = await MovieService.GetMovie(itemToUpdate);
+            }
             EditContext = new EditContext(movie);
         }
 
@@ -152,6 +172,25 @@ else { <p>Loading form....</p>}
                 ebook.Tags = tagsForItem.ToList();
                 ebook.ItemInventory = itemInventory;
                 MessageToUser = await EbookService.CreateEbook(ebook);
+            }
+        }
+
+        if (!IsNew)
+        {
+            if(mediaType.Equals("Movie"))
+            {
+                movie.Tags = tagsForItem.ToList();
+                MessageToUser = await MovieService.UpdateMovie(movie);
+            }
+            if (mediaType.Equals("Book"))
+            {
+                book.Tags = tagsForItem.ToList();
+                MessageToUser = await BookService.UpdateBook(book);
+            }
+            if (mediaType.Equals("Ebook"))
+            {
+                ebook.Tags = tagsForItem.ToList();
+                MessageToUser = await EbookService.UpdateEbook(ebook);
             }
         }
 
