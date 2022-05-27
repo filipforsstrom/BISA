@@ -10,6 +10,6 @@
         public string Publisher { get; set; }
         public string Date { get; set; }
         public string Language { get; set; }
-
+        public string Url { get; set; }
     }
 }
