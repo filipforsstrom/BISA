@@ -8,55 +8,26 @@
 
 <MudGrid>
     <MudItem xs="6" Class="mt-4">
-        <MudText Typo="Typo.h3">User Management</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="User Id" HelperText="Please enter a valid user id"
-                              @bind-Value="User.Id" />
-            </MudCardContent>
-        </MudCard>
-        <MudPaper Class="pa-2 mt-4 mb-4">
-            <MudText Typo="Typo.h5">Staff Rights</MudText>
-            <MudButton OnClick="PromoteToStaff" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Promote</MudButton>
-            <MudButton OnClick="DemoteToUser" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Demote</MudButton>
-            <MudDivider Class="mt-2 mb-2"/>
-            <AuthorizeView Roles="Admin">
-                <MudText Typo="Typo.h5">Admin Rights</MudText>
-                <MudButton OnClick="PromoteToAdmin" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Promote</MudButton>
-                <MudButton OnClick="DemoteAdmin" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Demote</MudButton>
-            </AuthorizeView>
-        </MudPaper>
+        <ToggleUserRightsForm
+            Title="User Management"
+            Identifier="User id"
+            OnPromote="PromoteToStaff"
+            OnDemote="DemoteToUser"
+            OnAdminPromote="PromoteToAdmin"
+            OnAdminDemote="DemoteAdmin"
+        />
     </MudItem>
     <MudItem xs="5" Class="mt-4">
-        <MudText Typo="Typo.h3">Get User</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Username" HelperText="Please enter a valid username"
-                              @bind-Value="SearchUser" />
-            </MudCardContent>
-            <MudButton OnClick="GetUser">Search</MudButton>
-        </MudCard>
-        <MudPaper Class="pa-2 mt-4 mb-4">
-            @if (!string.IsNullOrEmpty(SearchResult.Id))
-            {
-                <MudText Typo="Typo.h5">User details</MudText>
-                <MudText Typo="Typo.body2">
-                    <p>User id: @SearchResult.Id</p>
-                    <p>Username: @SearchResult.Username</p>
-                    <p>User email: @SearchResult.Email</p>
-                </MudText>
-            }
-        </MudPaper>
+        <UserForm Title="Get User" OnButtonClick="GetUser" ButtonText="Search" SearchParameter="Username"/>
+        <ShowUserContainer User="SearchResult" />
     </MudItem>
     <MudItem xs="6">
-        <DeleteUserForm Title="Delete User" OnRemoveUser="RemoveUser"/>
+        <UserForm Title="Delete User" OnButtonClick="RemoveUser" ButtonText="Delete" SearchParameter="User Id"/>
     </MudItem>
 </MudGrid>
 
 @code {
-    UserRoleDTO User = new UserRoleDTO();
     UserRoleDTO SearchResult = new UserRoleDTO();
-    string SearchUser { get; set; } = string.Empty;
 
     private async Task RemoveUser(string DeleteUserId)
     {
@@ -76,14 +47,13 @@
         {
             CreateMessage("Please enter a valid string", true);
         }
-
     }
 
-    private async Task GetUser()
+    private async Task GetUser(string username)
     {
-        if (!string.IsNullOrEmpty(SearchUser))
+        if (!string.IsNullOrEmpty(username))
         {
-            var apiCall = await UserRoleService.SearchUser(SearchUser);
+            var apiCall = await UserRoleService.SearchUser(username);
             if (apiCall.Success)
             {
                 SearchResult = apiCall.Data;
@@ -95,7 +65,7 @@
         }
     }
 
-    private async Task PromoteToAdmin()
+    private async Task PromoteToAdmin(UserRoleDTO User)
     {
         if (!string.IsNullOrEmpty(User.Id))
         {
@@ -115,7 +85,7 @@
         }
     }
 
-    private async Task DemoteAdmin()
+    private async Task DemoteAdmin(UserRoleDTO User)
     {
         if (!string.IsNullOrEmpty(User.Id))
         {
@@ -135,7 +105,7 @@
         }
     }
 
-    private async Task PromoteToStaff()
+    private async Task PromoteToStaff(UserRoleDTO User)
     {
         if (!string.IsNullOrEmpty(User.Id))
         {
@@ -155,7 +125,7 @@
         }
     }
 
-    private async Task DemoteToUser()
+    private async Task DemoteToUser(UserRoleDTO User)
     {
         if (!string.IsNullOrEmpty(User.Id))
         {
@@ -196,5 +166,4 @@
         var result = await dialog.Result;
         return !result.Cancelled;
     }
-
 }
