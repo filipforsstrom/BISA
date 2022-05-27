@@ -49,16 +49,7 @@
         </MudPaper>
     </MudItem>
     <MudItem xs="6">
-        <MudText Typo="Typo.h3">Delete User</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="User Id" HelperText="Please enter a valid user id"
-                              @bind-Value="DeleteUserId" />
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton OnClick="RemoveUser" Color="Color.Error">Delete</MudButton>
-            </MudCardActions>
-        </MudCard>
+        <DeleteUserForm Title="Delete User" OnRemoveUser="RemoveUser"/>
     </MudItem>
 </MudGrid>
 
@@ -66,9 +57,8 @@
     UserRoleDTO User = new UserRoleDTO();
     UserRoleDTO SearchResult = new UserRoleDTO();
     string SearchUser { get; set; } = string.Empty;
-    string DeleteUserId { get; set; } = string.Empty;
 
-    private async Task RemoveUser()
+    private async Task RemoveUser(string DeleteUserId)
     {
         if (!string.IsNullOrEmpty(DeleteUserId))
         {            
