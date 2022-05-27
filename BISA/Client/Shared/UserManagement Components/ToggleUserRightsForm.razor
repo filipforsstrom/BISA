@@ -1,0 +1,61 @@
+﻿
+<MudText Typo="Typo.h3">@Title</MudText>
+<MudCard>
+    <MudCardContent>
+        <MudTextField Label="@(Identifier)" HelperText="@($"Please enter a valid {Identifier}")"
+                      @bind-Value="User.Id" />
+    </MudCardContent>
+</MudCard>
+<MudPaper Class="pa-2 mt-4 mb-4">
+    <MudText Typo="Typo.h5">Staff Rights</MudText>
+    <MudButton OnClick="PromoteToStaff" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Promote</MudButton>
+    <MudButton OnClick="DemoteToUser" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Demote</MudButton>
+    <MudDivider Class="mt-2 mb-2" />
+    <AuthorizeView Roles="Admin">
+        <MudText Typo="Typo.h5">Admin Rights</MudText>
+        <MudButton OnClick="PromoteToAdmin" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Promote</MudButton>
+        <MudButton OnClick="DemoteAdmin" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Demote</MudButton>
+    </AuthorizeView>
+</MudPaper>
+
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public string? Identifier { get; set; }
+
+    [Parameter]
+    public EventCallback<UserRoleDTO> OnPromote { get; set; }
+
+    [Parameter]
+    public EventCallback<UserRoleDTO> OnDemote { get; set; }
+
+    [Parameter]
+    public EventCallback<UserRoleDTO> OnAdminPromote { get; set; }
+
+    [Parameter]
+    public EventCallback<UserRoleDTO> OnAdminDemote { get; set; }
+
+    UserRoleDTO User { get; set; } = new();
+
+    private async Task PromoteToStaff()
+    {
+        await OnPromote.InvokeAsync(User);
+    }
+
+    private async Task DemoteToUser()
+    {
+        await OnDemote.InvokeAsync(User);
+    }
+
+    private async Task PromoteToAdmin()
+    {
+        await OnAdminPromote.InvokeAsync(User);
+    }
+
+    private async Task DemoteAdmin()
+    {
+        await OnAdminDemote.InvokeAsync(User);
+    }
+}

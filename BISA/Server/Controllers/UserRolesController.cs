@@ -47,10 +47,10 @@ namespace BISA.Server.Controllers
 
         }
 
-        [HttpDelete("[action]")]
-        public async Task<IActionResult> DeleteAdmin(UserRoleDTO userToDemote)
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteAdmin(string id)
         {
-            var eventResponse = await _userRolesService.DemoteAdmin(userToDemote);
+            var eventResponse = await _userRolesService.DemoteAdmin(id);
 
             if (eventResponse.Success)
             {
@@ -62,10 +62,10 @@ namespace BISA.Server.Controllers
             }
 
         }
-        [HttpDelete("[action]")]
-        public async Task<IActionResult> DeleteStaff(UserRoleDTO userToDemote)
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteStaff(string id)
         {
-            var eventResponse = await _userRolesService.DemoteStaff(userToDemote);
+            var eventResponse = await _userRolesService.DemoteStaff(id);
 
             if (eventResponse.Success)
             {

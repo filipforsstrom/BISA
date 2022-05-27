@@ -4,8 +4,7 @@
     {
         Task<ServiceResponseDTO<string>> PromoteToStaff(UserRoleDTO user);
         Task<ServiceResponseDTO<string>> PromoteToAdmin(UserRoleDTO user);
-        Task<ServiceResponseDTO<string>> DemoteStaff(UserRoleDTO user);
-        Task<ServiceResponseDTO<string>> DemoteAdmin(UserRoleDTO user);
-
+        Task<ServiceResponseDTO<string>> DemoteStaff(string id);
+        Task<ServiceResponseDTO<string>> DemoteAdmin(string id);
     }
 }
