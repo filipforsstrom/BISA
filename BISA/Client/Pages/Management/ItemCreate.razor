@@ -4,6 +4,7 @@
 @inject IMovieService MovieService
 @inject IBookService BookService
 @inject IEbookService EbookService
+@inject ISnackbar Snackbar
 
 <MudText Typo="Typo.h6">@(IsNew ? "Create" : "Update") item</MudText>
 
@@ -67,11 +68,6 @@
 }
 else { <p>Loading form....</p>}
 
-@if (!String.IsNullOrEmpty(MessageToUser))
-{
-    <MudText Typo="Typo.h5">@MessageToUser</MudText>
-}
-
 
 @code {
     [Parameter]
@@ -87,9 +83,8 @@ else { <p>Loading form....</p>}
     private BookViewModel book  = new();
     private List<TagViewModel> tags = new();
     private IEnumerable<TagViewModel> tagsForItem { get; set; } = new HashSet<TagViewModel>();
-    private bool createMovie { get; set; } = false;
-    private bool createBook { get; set; } = true;
-    private bool createEbook { get; set; } = false;
+    private ServiceResponseViewModel<string> serviceResponse = new();
+    private ServiceResponseViewModel<MovieViewModel> movieResponse = new();
     private EditContext EditContext;
 
     protected override async Task OnInitializedAsync()
@@ -153,13 +148,15 @@ else { <p>Loading form....</p>}
 
     private async Task HandleSubmit()
     {
+        //If creation of new item
         if (IsNew)
         {
             if(mediaType.Equals("Movie"))
             {
                 movie.Tags = tagsForItem.ToList();
                 movie.ItemInventory = itemInventory;
-                MessageToUser = await MovieService.CreateMovie(movie);
+                serviceResponse = await MovieService.CreateMovie(movie);
+                SnackbarHandling();
             }
             if (mediaType.Equals("Book"))
             {
@@ -175,12 +172,14 @@ else { <p>Loading form....</p>}
             }
         }
 
+        //if updating a pre-existing item
         if (!IsNew)
         {
             if(mediaType.Equals("Movie"))
             {
                 movie.Tags = tagsForItem.ToList();
-                MessageToUser = await MovieService.UpdateMovie(movie);
+                serviceResponse = await MovieService.UpdateMovie(movie);
+                SnackbarHandling();
             }
             if (mediaType.Equals("Book"))
             {
@@ -192,6 +191,18 @@ else { <p>Loading form....</p>}
                 ebook.Tags = tagsForItem.ToList();
                 MessageToUser = await EbookService.UpdateEbook(ebook);
             }
+        }
+    }
+
+    private void SnackbarHandling()
+    {
+        if (serviceResponse.Success)
+        {
+            Snackbar.Add(serviceResponse.Message, Severity.Success);
+        }
+        else if (!serviceResponse.Success)
+        {
+            Snackbar.Add(serviceResponse.Message, Severity.Error);
         }
 
     }

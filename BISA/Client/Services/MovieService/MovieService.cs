@@ -19,18 +19,43 @@ namespace BISA.Client.Services.MovieService
                 return await response.Content.ReadFromJsonAsync<MovieViewModel>();
             }
             else return null;
+            
         }
-        public async Task<string> CreateMovie(MovieViewModel movieToCreate)
+        public async Task<ServiceResponseViewModel<string>> CreateMovie(MovieViewModel movieToCreate)
         {
+            ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.PostAsJsonAsync("api/movies", movieToCreate);
+            if(response.IsSuccessStatusCode)
+            {
+                serviceResponse.Success = true;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
 
-                return await response.Content.ReadAsStringAsync();
+            return serviceResponse;
         }
 
-        public async Task<string> UpdateMovie(MovieViewModel movieToUpdate)
+        public async Task<ServiceResponseViewModel<string>> UpdateMovie(MovieViewModel movieToUpdate)
         {
+            ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.PutAsJsonAsync($"api/movies/{movieToUpdate.Id}", movieToUpdate);
-            return await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                serviceResponse.Success = true;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+
+            return serviceResponse;
         }
     }
 }

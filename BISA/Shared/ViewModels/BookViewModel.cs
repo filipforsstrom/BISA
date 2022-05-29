@@ -15,6 +15,7 @@ namespace BISA.Shared.ViewModels
         public List<TagViewModel>? Tags { get; set; }
         public int ItemInventory { get; set; }
         public List<ItemInventoryViewModel> Inventory { get; set; }
+        [Required(ErrorMessage = "ISBN is required")]
         public string? ISBN { get; set; }
     }
 }

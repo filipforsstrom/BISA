@@ -1,5 +1,5 @@
 ﻿                <MudTextField Label="Title" 
-                              @bind-Value="book.Title" For="@(() => book.Title)"/>
+                              @bind-Value="book.Title" For="@(() => book.Title)" Required=true/>
                 <MudTextField Label="Language" Class="mt-3"
                               @bind-Value="book.Language" For="@(() => book.Language)"/>
                 <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"
@@ -9,7 +9,7 @@
                               <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
                               @bind-Value="book.Creator" For="@(() => book.Creator)" InputType="InputType.Text"/>
                               <MudTextField Label="ISBN" HelperText="ISBN" Class="mt-3"
-                              @bind-Value="book.ISBN" For="@(() => book.ISBN)" InputType="InputType.Number"/>
+                              @bind-Value="book.ISBN" For="@(() => book.ISBN)" Required=true InputType="InputType.Number"/>
 
 @code {
     [Parameter]

@@ -30,9 +30,7 @@ namespace BISA.Server.Services.MovieService
             {
                 responseDTO.Message = "Movie already exists";
                 responseDTO.Success = false;
-
                 return responseDTO;
-
             }
 
             List<TagEntity> tagsForMovie = new List<TagEntity>();
