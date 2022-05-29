@@ -57,12 +57,6 @@ else
 
 <MudButton OnClick="(() => CreateItem())">Create new item</MudButton>
 
-@*Klicka på antingen edit eller delete item i tabellen (dialog-ruta för bekräftelse)*@
-@*Klicka på edit -> skicka till item-create/update-page och den hittar datan och fyller i formuläret med vilken typ itemet är.*@
-@*Knapp för att skapa ett item här under tabellen också.*@
-@*Formuläret ska ha en select list för vilken type man vill skapa. Formuläret uppdateras utifrån vad man väljer*@
-@**@
-
 
 @code {
     public ItemViewModel Item { get; set; }
