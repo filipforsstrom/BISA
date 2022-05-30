@@ -5,6 +5,7 @@
 @inject IBookService BookService
 @inject IEbookService EbookService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavManager
 
 <MudText Typo="Typo.h6">@(IsNew ? "Create" : "Update") item</MudText>
 
@@ -51,7 +52,7 @@
 
             @if (IsNew)
              {
-                <MudNumericField Label="Add Copies" @bind-Value=itemInventory></MudNumericField>
+                <MudNumericField Min=0 Max=200 Label="Add Copies" @bind-Value=itemInventory></MudNumericField>
              }
 
             </MudCardContent>
@@ -63,7 +64,6 @@
             </MudItem>
         </MudGrid>
 
-        <ValidationSummary />
     </EditForm>
 }
 else { <p>Loading form....</p>}
@@ -84,7 +84,6 @@ else { <p>Loading form....</p>}
     private List<TagViewModel> tags = new();
     private IEnumerable<TagViewModel> tagsForItem { get; set; } = new HashSet<TagViewModel>();
     private ServiceResponseViewModel<string> serviceResponse = new();
-    private ServiceResponseViewModel<MovieViewModel> movieResponse = new();
     private EditContext EditContext;
 
     protected override async Task OnInitializedAsync()
@@ -93,7 +92,7 @@ else { <p>Loading form....</p>}
         EditContext = new EditContext(book);
 
         //Check if form is used for updating current item, or to create a new one.
-        IsNew = itemToUpdate == 0 ? true : false;
+        await CheckIfUpdateOrNew();
 
         //Check what type of item is going to be updated so the form has correct validation parameters.
         await InitializeEditContext();
@@ -113,10 +112,13 @@ else { <p>Loading form....</p>}
 
         if(mediaType == "Book")
         {
+
             if (!IsNew)
             {
-                book = await BookService.GetBook(itemToUpdate);
+                var bookResponse = await BookService.GetBook(itemToUpdate);
+                book = bookResponse.Data;
             }
+
             EditContext = new EditContext(book);
         }
 
@@ -124,8 +126,10 @@ else { <p>Loading form....</p>}
         {
             if (!IsNew)
             {
-                ebook = await EbookService.GetEbook(itemToUpdate);
+                var ebookResponse = await EbookService.GetEbook(itemToUpdate);
+                ebook = ebookResponse.Data;
             }
+
             EditContext = new EditContext(ebook);
         }
 
@@ -133,9 +137,28 @@ else { <p>Loading form....</p>}
         {
             if (!IsNew)
             {
-                movie = await MovieService.GetMovie(itemToUpdate);
+                var movieResponse = await MovieService.GetMovie(itemToUpdate);
+                movie = movieResponse.Data;
             }
+
             EditContext = new EditContext(movie);
+        }
+
+    }
+
+    private async Task CheckIfUpdateOrNew()
+    {
+        IsNew = itemToUpdate == 0 ? true : false;
+
+        if (!IsNew)
+        {
+            var item = await ItemService.GetItem(itemToUpdate);
+
+            if(item == null)
+            {
+                Snackbar.Add("Item not found", Severity.Error);
+                NavManager.NavigateTo("/itemsmanagement");
+            }
         }
 
     }
@@ -143,7 +166,12 @@ else { <p>Loading form....</p>}
     private async Task<string> GetItemType(int id)
     {
         var item = await ItemService.GetItem(id);
-        return item.Type;
+        if (item != null)
+        {
+            return item.Type;
+        }
+        else return string.Empty;
+
     }
 
     private async Task HandleSubmit()
@@ -162,13 +190,15 @@ else { <p>Loading form....</p>}
             {
                 book.Tags = tagsForItem.ToList();
                 book.ItemInventory = itemInventory;
-                MessageToUser = await BookService.CreateBook(book);
+                serviceResponse = await BookService.CreateBook(book);
+                SnackbarHandling();
             }
             if (mediaType.Equals("Ebook"))
             {
                 ebook.Tags = tagsForItem.ToList();
                 ebook.ItemInventory = itemInventory;
-                MessageToUser = await EbookService.CreateEbook(ebook);
+                serviceResponse = await EbookService.CreateEbook(ebook);
+                SnackbarHandling();
             }
         }
 
@@ -184,12 +214,14 @@ else { <p>Loading form....</p>}
             if (mediaType.Equals("Book"))
             {
                 book.Tags = tagsForItem.ToList();
-                MessageToUser = await BookService.UpdateBook(book);
+                serviceResponse = await BookService.UpdateBook(book);
+                SnackbarHandling();
             }
             if (mediaType.Equals("Ebook"))
             {
                 ebook.Tags = tagsForItem.ToList();
-                MessageToUser = await EbookService.UpdateEbook(ebook);
+                serviceResponse = await EbookService.UpdateEbook(ebook);
+                SnackbarHandling();
             }
         }
     }
@@ -204,7 +236,6 @@ else { <p>Loading form....</p>}
         {
             Snackbar.Add(serviceResponse.Message, Severity.Error);
         }
-
     }
 
 }

@@ -21,12 +21,12 @@ namespace BISA.Server.Services.BookService
             var allBooks = await _context.Books.ToListAsync();
 
             var foundDuplicate = allBooks
-                .Any(b => b.Title.ToLower() == bookToCreate.Title.ToLower() &&
-                b.Creator.ToLower() == bookToCreate.Creator.ToLower() &&
-                b.Date.Equals(bookToCreate.Date) &&
-                b.Language.ToLower() == bookToCreate.Language.ToLower() &&
-                b.ISBN.ToLower() == bookToCreate.ISBN.ToLower() &&
-                b.Publisher.ToLower() == bookToCreate.Publisher.ToLower());
+                .Any(b => b.Title?.ToLower() == bookToCreate.Title?.ToLower() &&
+                b.Creator?.ToLower() == bookToCreate.Creator?.ToLower() &&
+                b.Date == bookToCreate.Date &&
+                b.Language?.ToLower() == bookToCreate.Language?.ToLower() &&
+                b.ISBN?.ToLower() == bookToCreate.ISBN?.ToLower() &&
+                b.Publisher?.ToLower() == bookToCreate.Publisher?.ToLower());
 
             if (foundDuplicate)
             {

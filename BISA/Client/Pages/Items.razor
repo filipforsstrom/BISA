@@ -85,15 +85,18 @@
             }
             if (Item.Type == "Book")
             {
-                Book = await BookService.GetBook(Item.Id);
+                var bookResponse = await BookService.GetBook(Item.Id);
+                Book = bookResponse.Data;
             }
             else if (Item.Type == "Ebook")
             {
-                Ebook = await EbookService.GetEbook(Item.Id);
+                var ebookResponse = await EbookService.GetEbook(Item.Id);
+                Ebook = ebookResponse.Data;
             }
             else if (Item.Type == "Movie")
             {
-                Movie = await MovieService.GetMovie(Item.Id);
+                var movieResponse = await MovieService.GetMovie(Item.Id);
+                Movie = movieResponse.Data;
             }
         }
     }

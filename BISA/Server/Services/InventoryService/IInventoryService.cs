@@ -3,7 +3,8 @@
     public interface IInventoryService
     {
         Task<ServiceResponseDTO<ItemInventoryChangeDTO>> AddItemInventory(ItemInventoryChangeDTO itemInventoryAdd);
-        Task<ServiceResponseDTO<ItemInventoryChangeDTO>> DeleteItemInventory(ItemInventoryChangeDTO itemInventoryDelete);
+        Task<ServiceResponseDTO<List<ItemInventoryDTO>>> GetItemsInventory(int itemId);
+        Task<ServiceResponseDTO<ItemInventoryChangeDTO>> DeleteItemInventory(int id);
 
     }
 }

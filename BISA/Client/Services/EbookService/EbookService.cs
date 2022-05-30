@@ -9,26 +9,58 @@
             _http = http;
         }
 
-        public async Task<string> CreateEbook(EbookViewModel ebookToCreate)
+        public async Task<ServiceResponseViewModel<string>> CreateEbook(EbookViewModel ebookToCreate)
         {
+            ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.PostAsJsonAsync("api/ebooks", ebookToCreate);
-            return await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                serviceResponse.Success = true;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+
+            return serviceResponse;
         }
 
-        public async Task<EbookViewModel> GetEbook(int itemId)
+        public async Task<ServiceResponseViewModel<EbookViewModel>> GetEbook(int itemId)
         {
+            ServiceResponseViewModel<EbookViewModel> serviceResponse = new();
             var response = await _http.GetAsync($"api/ebooks/{itemId}");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<EbookViewModel>();
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<EbookViewModel>();
+                serviceResponse.Success = true;
             }
-            else return null;
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+
+            return serviceResponse;
         }
 
-        public async Task<string> UpdateEbook(EbookViewModel ebookToUpdate)
+        public async Task<ServiceResponseViewModel<string>> UpdateEbook(EbookViewModel ebookToUpdate)
         {
+            ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.PutAsJsonAsync($"api/ebooks/{ebookToUpdate.Id}", ebookToUpdate);
-            return await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                serviceResponse.Success = true;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+
+            return serviceResponse;
         }
     }
 }

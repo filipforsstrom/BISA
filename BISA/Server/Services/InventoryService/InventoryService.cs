@@ -39,11 +39,11 @@ namespace BISA.Server.Services.InventoryService
             return responseDTO;
         }
 
-        public async Task<ServiceResponseDTO<ItemInventoryChangeDTO>> DeleteItemInventory(ItemInventoryChangeDTO itemInventoryDelete)
+        public async Task<ServiceResponseDTO<ItemInventoryChangeDTO>> DeleteItemInventory(int id)
         {
             ServiceResponseDTO<ItemInventoryChangeDTO> responseDTO = new();
 
-            var inventoryItem = await _context.ItemInventory.Where(i => i.Id == itemInventoryDelete.InventoryId).FirstOrDefaultAsync();
+            var inventoryItem = await _context.ItemInventory.Where(i => i.Id == id).FirstOrDefaultAsync();
 
             if (inventoryItem == null)
             {
@@ -66,5 +66,28 @@ namespace BISA.Server.Services.InventoryService
             return responseDTO;
         }
 
+        public async Task<ServiceResponseDTO<List<ItemInventoryDTO>>> GetItemsInventory(int itemId)
+        {
+            ServiceResponseDTO<List<ItemInventoryDTO>> responseDTO = new();
+            List<ItemInventoryDTO> itemInventoryDTOs = new List<ItemInventoryDTO>();
+
+            var inventory = await _context.ItemInventory.Where(i => i.ItemId == itemId).ToListAsync();
+
+            if (!inventory.Any())
+            {
+                responseDTO.Message = "No inventory found for item.";
+                responseDTO.Success = false;
+                return responseDTO;
+            }
+
+            foreach(var inventoryItem in inventory)
+            {
+                itemInventoryDTOs.Add(new ItemInventoryDTO { Id = inventoryItem.Id, ItemId = inventoryItem.ItemId, Available = inventoryItem.Available }); 
+            }
+
+            responseDTO.Success = true;
+            responseDTO.Data = itemInventoryDTOs;
+            return responseDTO;
+        }
     }
 }

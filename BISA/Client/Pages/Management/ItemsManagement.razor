@@ -4,6 +4,7 @@
 @inject IEbookService EbookService
 @inject IMovieService MovieService
 @inject NavigationManager NavManager
+@inject ISnackbar Snackbar
 
 @if (allItems != null)
 {
@@ -19,7 +20,8 @@
             <MudTh>Title</MudTh>
             <MudTh>Creator</MudTh>
             <MudTh>Type</MudTh>
-            <MudTh>Edit</MudTh>
+            <MudTh>Edit Item</MudTh>
+            <MudTh>Edit Inventory</MudTh>
             <MudTh>Delete</MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -27,9 +29,15 @@
             <MudTd DataLabel="Title">@context.Title</MudTd>
             <MudTd DataLabel="Creator">@context.Creator</MudTd>
             <MudTd DataLabel="Type">@context.Type</MudTd>
-            <MudTd DataLabel="Edit">
+            <MudTd DataLabel="Edit Item">
                 <MudIconButton @onclick="(() => EditItem(context.Id))"
                            Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+            <MudTd DataLabel="Edit Inventory">
+                <MudIconButton @onclick="(() => EditInventory(context.Id))"
+                           Icon="@Icons.Material.Filled.EditAttributes"
                            Color="Color.Primary"
                            Variant="Variant.Filled"></MudIconButton>
             </MudTd>
@@ -50,10 +58,10 @@ else
     <p>Loading.....</p>
 }
 
-@if (!String.IsNullOrEmpty(MessageToUser))
+@*@if (!String.IsNullOrEmpty(MessageToUser))
 {
     <MudText Typo="Typo.h5">@MessageToUser</MudText>
-}
+}*@
 
 <MudButton OnClick="(() => CreateItem())">Create new item</MudButton>
 
@@ -72,7 +80,7 @@ else
     private bool FilterSearch(ItemViewModel item)
     {
         bool isNumber = int.TryParse(searchString, out int result);
-        if(item.Title.ToLower().Contains(searchString.ToLower()))
+        if(item.Title.ToLower().Contains(searchString.ToLower()) || item.Id.Equals(result))
         {
             return true;
         }
@@ -91,9 +99,15 @@ else
         NavManager.NavigateTo($"/itemcreateupdate/{id}");
     }
 
+    private void EditInventory(int id)
+    {
+        NavManager.NavigateTo($"/iteminventorymanagement/{id}");
+    }
+
     private async Task DeleteItem(int id)
     {
         MessageToUser = await ItemService.DeleteItem(id);
+        Snackbar.Add(MessageToUser, Severity.Info);
         await GetItems();
     }
 

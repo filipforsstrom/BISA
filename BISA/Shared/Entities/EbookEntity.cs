@@ -8,6 +8,6 @@ namespace BISA.Shared.Entities
 {
     public class EbookEntity : ItemEntity
     {
-        public string Url { get; set; }
+        public string? Url { get; set; }
     }
 }

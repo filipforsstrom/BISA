@@ -9,7 +9,7 @@
                               <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
                               @bind-Value="book.Creator" For="@(() => book.Creator)" InputType="InputType.Text"/>
                               <MudTextField Label="ISBN" HelperText="ISBN" Class="mt-3"
-                              @bind-Value="book.ISBN" For="@(() => book.ISBN)" Required=true InputType="InputType.Number"/>
+                              @bind-Value="book.ISBN" For="@(() => book.ISBN)" Required=true InputType=InputType.Number/>
 
 @code {
     [Parameter]

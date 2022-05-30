@@ -11,14 +11,22 @@ namespace BISA.Client.Services.MovieService
             _http = http;
         }
 
-        public async Task<MovieViewModel> GetMovie(int itemId)
+        public async Task<ServiceResponseViewModel<MovieViewModel>> GetMovie(int itemId)
         {
+            ServiceResponseViewModel<MovieViewModel> serviceResponse = new();
             var response = await _http.GetAsync($"api/movies/{itemId}");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<MovieViewModel>();
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<MovieViewModel>();
+                serviceResponse.Success = true;
             }
-            else return null;
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+
+            return serviceResponse;
             
         }
         public async Task<ServiceResponseViewModel<string>> CreateMovie(MovieViewModel movieToCreate)

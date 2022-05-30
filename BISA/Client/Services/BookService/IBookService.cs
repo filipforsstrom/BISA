@@ -4,8 +4,8 @@ namespace BISA.Client.Services.BookService
 {
     public interface IBookService
     {
-        Task<BookViewModel> GetBook(int id);
-        Task<string> UpdateBook(BookViewModel bookToUpdate);
-        Task<string> CreateBook(BookViewModel bookToCreate);
+        Task<ServiceResponseViewModel<BookViewModel>> GetBook(int id);
+        Task<ServiceResponseViewModel<string>> UpdateBook(BookViewModel bookToUpdate);
+        Task<ServiceResponseViewModel<string>> CreateBook(BookViewModel bookToCreate);
     }
 }
