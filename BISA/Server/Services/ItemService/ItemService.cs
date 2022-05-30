@@ -20,6 +20,7 @@ namespace BISA.Server.Services.ItemService
             var itemFromDb = await _context.Items
                 .Where(i => i.Id == itemId)
                 .Include(i => i.ItemInventory)
+                .Include(t => t.Tags)
                 .FirstOrDefaultAsync();
 
             if (itemFromDb == null)
@@ -35,12 +36,19 @@ namespace BISA.Server.Services.ItemService
                 inventory.Add(new ItemInventoryDTO { Id = itemInventory.Id, ItemId = itemInventory.ItemId, Available = itemInventory.Available });
             }
 
+            List<TagDTO> tags = new List<TagDTO>();
+            foreach (var tag in itemFromDb.Tags)
+            {
+                tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
+            }
+
             var item = new ItemDTO
             {
                 Id = itemFromDb.Id,
                 Title = itemFromDb.Title,
                 Type = itemFromDb.Type,
-                Inventory = inventory
+                Inventory = inventory,
+                Tags = tags
             };
 
             responseDTO.Success = true;

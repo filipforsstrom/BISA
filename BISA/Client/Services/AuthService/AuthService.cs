@@ -17,9 +17,9 @@ namespace BISA.Client.Services.AuthService
             _authStateProvider = authStateProvider;
         }
 
-        public async Task<string> Login(UserLoginViewModel user)
+        public async Task<ServiceResponseViewModel<string>> Login(UserLoginViewModel user)
         {
-            string messageToUi;
+            ServiceResponseViewModel<string> responseViewModel = new();
             var httpResponse = await _httpClient.PostAsJsonAsync("api/auth/login", user);
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -27,34 +27,39 @@ namespace BISA.Client.Services.AuthService
                 await _localStorage.SetItemAsync("token", token);
                 var authState = await _authStateProvider.GetAuthenticationStateAsync();
 
-                messageToUi = "success";
-                return messageToUi;
+                responseViewModel.Success = true;
+                return responseViewModel;
             }
 
-            messageToUi = await httpResponse.Content.ReadAsStringAsync();
-            return messageToUi;
+            responseViewModel.Message = await httpResponse.Content.ReadAsStringAsync();
+            return responseViewModel;
         }
 
         
 
-        public async Task<string> Register(UserRegisterViewModel userRegister)
-        {   string messageToUi;
+        public async Task<ServiceResponseViewModel<string>> Register(UserRegisterViewModel userRegister)
+        {
+            ServiceResponseViewModel<string> responseViewModel = new();
+
             var httpResponse = await _httpClient.PostAsJsonAsync("api/auth/register", userRegister);
             if (httpResponse.IsSuccessStatusCode)
             {
                var response = await httpResponse.Content.ReadAsStringAsync();
 
-                messageToUi="success";
-                return response;
+                responseViewModel.Success = true;
+                responseViewModel.Message = response;
+                return responseViewModel;
             }
 
-            return await httpResponse.Content.ReadAsStringAsync();
+            responseViewModel.Message = await httpResponse.Content.ReadAsStringAsync();
+            return responseViewModel;
 
         }
 
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync("token");
+            await _localStorage.RemoveItemAsync("checkout");
             await _authStateProvider.GetAuthenticationStateAsync();
         }
     }

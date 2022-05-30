@@ -13,13 +13,13 @@ namespace BISA.Server.Services.UserRolesService
             _userManager = userManager;
         }
 
-        public async Task<ServiceResponseDTO<string>> DemoteAdmin(UserRoleDTO user)
+        public async Task<ServiceResponseDTO<string>> DemoteAdmin(string id)
         {
             ServiceResponseDTO<string> responseDTO = new();
             var roleToRemove = "Admin";
 
             //Find user to demote
-            var userToDemote = await _context.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync();
+            var userToDemote = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
 
             //Check that user exists
             if (userToDemote == null)
@@ -29,7 +29,7 @@ namespace BISA.Server.Services.UserRolesService
                 return responseDTO;
             }
 
-            var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == user.Id).ToListAsync();
+            var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == id).ToListAsync();
 
             if (!userCurrentRoles.Any(u => u.RoleId == "AdminId"))
             {
@@ -45,13 +45,13 @@ namespace BISA.Server.Services.UserRolesService
 
         }
 
-        public async Task<ServiceResponseDTO<string>> DemoteStaff(UserRoleDTO user)
+        public async Task<ServiceResponseDTO<string>> DemoteStaff(string id)
         {
             ServiceResponseDTO<string> responseDTO = new();
             var roleToRemove = "Staff";
 
             //Find user to demote
-            var userToDemote = await _context.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync();
+            var userToDemote = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
 
             //Check that user exists
             if (userToDemote == null)
@@ -61,7 +61,7 @@ namespace BISA.Server.Services.UserRolesService
                 return responseDTO;
             }
 
-            var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == user.Id).ToListAsync();
+            var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == id).ToListAsync();
 
             if (!userCurrentRoles.Any(u => u.RoleId == "StaffId"))
             {

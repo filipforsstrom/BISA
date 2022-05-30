@@ -1,0 +1,22 @@
+﻿
+
+
+@if (!string.IsNullOrEmpty(User.Id))
+{
+    <MudPaper Class="pa-2 mt-4 mb-4">
+        <MudText Typo="Typo.h5">User details</MudText>
+        <MudText Typo="Typo.body2">
+            <p>User id: @User.Id</p>
+            <p>Username: @User.Username</p>
+            <p>User email: @User.Email</p>
+        </MudText>
+    </MudPaper>
+}
+
+
+
+@code {
+    [Parameter]
+    public UserRoleDTO? User { get; set; }
+
+}

@@ -3,6 +3,7 @@
 
 
 <MudText Align="Align.Center" Typo="Typo.h5">Your Reserved Items</MudText>
+<MudText Align="Align.Center" Typo="Typo.subtitle2" Color="Color.Error">@messageToUser</MudText>
 @if(userReservations.Any())
 {
     @foreach (var reservation in userReservations)
@@ -16,11 +17,11 @@
                 <MudCardActions>
                     <MudButton Disabled="@hideButton" @onclick="(() => RemoveReservation(reservation.Id))" Variant="Variant.Filled" Color="Color.Error" Class="ml-auto">Remove reservation</MudButton>
                 </MudCardActions>
-                <MudText Typo="Typo.subtitle2" Color="Color.Error">@messageToUser</MudText>
             </MudCardContent>
         </MudCard>
         
     }
+    
 }
 else if(!userReservations.Any())
 {
@@ -28,12 +29,9 @@ else if(!userReservations.Any())
 }
 
     
-
-              
-        
 @code {
     private List<LoanReservationViewModel> userReservations { get; set; } = new();
-    private string messageToUser;
+    private string? messageToUser;
     private bool hideButton = false;
 
 
@@ -58,9 +56,25 @@ else if(!userReservations.Any())
 
         if(removeReservationResult == "Reservation was canceled")
         {
-            hideButton = true;
+            var getMyReservationResult = await ReservationsService.GetMyReservations();
+            if (getMyReservationResult.Success)
+            {
+                userReservations = getMyReservationResult.Data;
+            }
+            else
+            {
+                messageToUser = getMyReservationResult.Message;
+            }
+            messageToUser = removeReservationResult;
         }
-        messageToUser = removeReservationResult;
+
+        if (!userReservations.Any())
+        {
+            messageToUser = "";
+        }
+        
+
+        
 
     }
     

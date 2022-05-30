@@ -9,7 +9,10 @@
         public string? Date { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
-        public List<ItemInventoryViewModel> Inventory { get; set; }
-        public List<TagViewModel> Tags { get; set; }
+        public List<ItemInventoryViewModel>? Inventory { get; set; }
+        public List<TagViewModel>? Tags { get; set; }
+
+
+
     }
 }

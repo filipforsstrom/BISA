@@ -59,6 +59,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 
         {
             var deleteResponse = await _itemService.DeleteItem(id);
