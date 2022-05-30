@@ -15,7 +15,6 @@ namespace BISA.Server.Controllers
             _searchService = searchService;
         }
 
-        // GET: api/<SearchController>
         [HttpGet("title")]
         public async Task<IActionResult> GetByTitle([FromQuery] string title) // searchdto
         {

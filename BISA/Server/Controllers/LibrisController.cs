@@ -7,6 +7,7 @@ namespace BISA.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin, Staff")]
     public class LibrisController : ControllerBase
     {
         private readonly ILibrisService _librisService;
@@ -16,7 +17,6 @@ namespace BISA.Server.Controllers
             _librisService = librisService ?? throw new ArgumentNullException(nameof(librisService));
         }
         [HttpGet]
-        [Authorize]
         public async Task<List<LibrisItemDTO>> GetItems()
         {
             var result = await _librisService.GetItems();

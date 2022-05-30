@@ -119,7 +119,7 @@
         {
             if (loans.Any(l => l.ItemId == item.Id))
             {
-                Snackbar.Add($"{item.Title} is allready added to checkout", Severity.Error, config => { config.ShowCloseIcon = false; });
+                Snackbar.Add($"{item.Title} is already added to checkout", Severity.Error, config => { config.ShowCloseIcon = false; });
             }
             else
             {
