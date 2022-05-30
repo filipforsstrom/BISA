@@ -110,8 +110,6 @@ namespace BISA.Server.Services.StatisticsService
             mostPopularItemDTO.Tags = ConvertTagToDTO(itemEntity.Tags);
             mostPopularItemDTO.Type = itemEntity.Type.ToLower();
 
-            //mostPopularItemDTO.ItemInventory = itemEntity.ItemInventory.Count();
-
             return mostPopularItemDTO;
         }
 

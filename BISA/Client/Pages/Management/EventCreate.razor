@@ -1,5 +1,5 @@
 ﻿@page "/eventcreate"
-@using System.Security
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IEventService EventService
 @inject NavigationManager NavigationManager
 

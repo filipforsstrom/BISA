@@ -14,8 +14,8 @@ namespace BISA.Server.Controllers
             _inventoryService = inventoryService;
         }
 
-
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] ItemInventoryChangeDTO itemInventoryAdd)
         {
             var inventoryResponse = await _inventoryService.AddItemInventory(itemInventoryAdd);
@@ -32,6 +32,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(int id, ItemInventoryChangeDTO itemInventoryDelete)
         {
             itemInventoryDelete.InventoryId = id;

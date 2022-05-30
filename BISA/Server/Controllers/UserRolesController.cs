@@ -5,6 +5,7 @@ namespace BISA.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin, Staff")]
     public class UserRolesController : ControllerBase
     {
         private readonly IUserRolesService _userRolesService;
@@ -28,7 +29,6 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(eventResponse.Message);
             }
-
         }
 
         [HttpPost("[action]")]
@@ -44,7 +44,6 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(eventResponse.Message);
             }
-
         }
 
         [HttpDelete("[action]/{id}")]
@@ -60,8 +59,8 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(eventResponse.Message);
             }
-
         }
+
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteStaff(string id)
         {
@@ -75,7 +74,6 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(eventResponse.Message);
             }
-
         }
     }
 }

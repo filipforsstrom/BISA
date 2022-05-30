@@ -60,6 +60,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] EventCreateDTO eventToCreate)
         {
             //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00" och inte på millisekunden
@@ -78,6 +79,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToUpdate)
         {
             var eventResponse = await _eventService.UpdateEvent(id, eventToUpdate);
@@ -93,6 +95,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(int id)
         {
             var eventResponse = await _eventService.DeleteEvent(id);

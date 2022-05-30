@@ -5,6 +5,7 @@ namespace BISA.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin, Staff")]
     public class StatisticsController : ControllerBase
     {
         private readonly IStatisticsService _statisticsService;
@@ -30,8 +31,8 @@ namespace BISA.Server.Controllers
         [HttpGet("users")]
         public async Task<IActionResult> GetMostActiveUser()
         {
-            
-            var statResponse = await _statisticsService.GetMostActiveUser(); 
+
+            var statResponse = await _statisticsService.GetMostActiveUser();
 
             if (statResponse.Success)
             {
