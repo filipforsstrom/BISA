@@ -1,4 +1,5 @@
 ﻿@page "/statistics"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @using Append.Blazor.Printing
 @inject IPrintingService PrintingService
 @inject IStatisticsService StatisticsService

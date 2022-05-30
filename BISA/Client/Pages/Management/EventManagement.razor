@@ -1,4 +1,5 @@
 ﻿@page "/eventmanagement/{id}"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IEventService EventService
 @inject NavigationManager NavigationManager
 
