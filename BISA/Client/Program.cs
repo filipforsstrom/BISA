@@ -9,20 +9,21 @@ global using BISA.Shared.ViewModels;
 global using Blazored.LocalStorage;
 global using Microsoft.AspNetCore.Components.Authorization;
 global using System.Net.Http.Json;
+using Append.Blazor.Printing;
 using BISA.Client;
 using BISA.Client.Services.AuthService;
 using BISA.Client.Services.EventService;
 using BISA.Client.Services.ReservationsService;
+using BISA.Client.Services.ReservationsService;
 using BISA.Client.Services.SearchService;
+using BISA.Client.Services.StatisticsService;
+using BISA.Client.Services.UserRoleService;
+using BISA.Client.Services.UserService;
 using BISA.Client.Services.UserService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using BISA.Client.Services.UserService;
-using BISA.Client.Services.ReservationsService;
-using BISA.Client.Services.UserRoleService;
-using BISA.Client.Services.StatisticsService;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -41,6 +42,7 @@ builder.Services.AddScoped<IReservationsService, ReservationsService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddScoped<IPrintingService, PrintingService>();
 
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
