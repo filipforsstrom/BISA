@@ -7,6 +7,6 @@ namespace BISA.Client.Services.LoanService
         Task<List<LoanViewModel>> GetAllLoans();
         Task<ServiceResponseViewModel<List<LoanViewModel>>> GetMyLoans();
         Task<ServiceResponseViewModel<List<LoanDTO>>> AddLoan(List<CheckoutDTO> items);
-        Task<string> ReturnLoan(int id);
+        Task<ServiceResponseViewModel<string>> ReturnLoan(int id);
     }
 }

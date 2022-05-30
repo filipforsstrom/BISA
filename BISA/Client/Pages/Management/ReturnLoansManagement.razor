@@ -1,7 +1,46 @@
-﻿@page "/returnloansmanagement"
+﻿@page "/loansmanagement"
+@inject ILoanService LoanService
+@inject ISnackbar Snackbar
+@attribute [Authorize(Roles = "Staff")]
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h3">Return item</MudText>
+    </MudItem>
+    <MudItem>
+        <EditForm Model="ItemId" OnSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <MudNumericField @bind-Value="ItemId" Label="Scan an item" Variant="Variant.Text" Min="1"/>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Return</MudButton>
+            <ValidationSummary />
+        </EditForm>
+    </MudItem>
+</MudGrid>
 
-<h3>ReturnLoansManagement</h3>
 
 @code {
+    int ItemId { get; set; }
 
+    private async Task OnSubmit()
+    {
+        var serviceResponse = await LoanService.ReturnLoan(ItemId);
+        if (serviceResponse.Success)
+        {
+            CreateMessage(serviceResponse.Message); 
+            StateHasChanged();
+        }
+        else
+        {
+           CreateMessage(serviceResponse.Message, true); 
+        }
+    }
+
+    private void CreateMessage(string msg, bool error = false)
+    {
+        var severity = error switch
+        {
+            true => Severity.Error,
+            _ => Severity.Normal
+        };
+        Snackbar.Add(msg, severity, config => { config.ShowCloseIcon = false; });
+    }
 }
