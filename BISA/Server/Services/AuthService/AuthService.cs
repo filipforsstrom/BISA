@@ -28,7 +28,7 @@ namespace BISA.Server.Services.AuthService
                 var jwt = await CreateToken(currentUser);
                 serviceResponse.Data = jwt;
                 serviceResponse.Success = true;
-                serviceResponse.Message = signInResult.Succeeded.ToString();
+     
                 return serviceResponse;
             }
             serviceResponse.Data = null;
@@ -64,9 +64,8 @@ namespace BISA.Server.Services.AuthService
                     return serviceResponse;
                 }
             }
-            serviceResponse.Data = result.ToString();
-            serviceResponse.Success = false;
             serviceResponse.Message = result.ToString();
+            serviceResponse.Success = false;
             return serviceResponse;
         }
 
