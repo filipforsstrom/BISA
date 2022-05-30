@@ -24,19 +24,19 @@
 
 @code {
     private UserLoginViewModel User { get; set; } = new();
-    string messageToUser;
+    string? messageToUser;
 
     private async void logInUser()
     {
         var response = await AuthService.Login(User);
 
-        if (response == "success")
+        if (response.Success)
         {
             NavigationManager.NavigateTo("/");
         }
         else
         {
-            messageToUser = response;
+            messageToUser = response.Message;
             StateHasChanged();
         }
 
