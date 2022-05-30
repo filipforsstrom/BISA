@@ -16,12 +16,11 @@ namespace BISA.Server.Controllers
             _loanService = loanService;
         }
 
-        // GET: api/<LoanController>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var loanResponse = await _loanService.GetAllLoans();
-                        
+
             if (loanResponse.Success)
             {
                 return Ok(loanResponse.Data);
@@ -29,12 +28,11 @@ namespace BISA.Server.Controllers
             return BadRequest(loanResponse.Message);
         }
 
-        // GET api/<LoanController>/5
         [HttpGet("user")]
         public async Task<IActionResult> GetUserLoans()
         {
             var loanResponse = await _loanService.GetMyLoans();
-            
+
             if (loanResponse.Success)
             {
                 return Ok(loanResponse.Data);
@@ -42,7 +40,6 @@ namespace BISA.Server.Controllers
             return BadRequest(loanResponse.Message);
         }
 
-        // POST api/<LoanController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<CheckoutDTO> loanItems)
         {
@@ -50,21 +47,17 @@ namespace BISA.Server.Controllers
 
             if (loanResponse.Success)
             {
-                return Created("/loans", loanResponse.Data); 
+                return Created("/loans", loanResponse.Data);
             }
             return BadRequest(loanResponse.Message);
         }
 
-       
-
-        // DELETE api/<LoanController>/5
-        // Bok återlämnad
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             // Ta bort lån, flytta till lånehistorik, flytta reservationer
             var loanResponse = await _loanService.ReturnLoan(id);
-            
+
             if (loanResponse.Success)
             {
                 return NoContent();

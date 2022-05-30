@@ -1,8 +1,6 @@
 ﻿using BISA.Server.Services.EbookService;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BISA.Server.Controllers
 {
     [Route("api/[controller]")]
@@ -16,12 +14,10 @@ namespace BISA.Server.Controllers
             _ebookService = ebookService;
         }
 
-
-        // GET api/<EbooksController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-           
+
             var ebookResponse = await _ebookService.GetEbook(id);
 
             if (ebookResponse.Success)
@@ -34,8 +30,8 @@ namespace BISA.Server.Controllers
             }
         }
 
-        // POST api/<EbooksController>
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] EbookCreateDTO ebookToAdd)
         {
 
@@ -51,8 +47,8 @@ namespace BISA.Server.Controllers
             }
         }
 
-        // PUT api/<EbooksController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Put(int id, [FromBody] EbookUpdateDTO ebookToUpdate)
         {
             ebookToUpdate.Id = id;
