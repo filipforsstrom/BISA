@@ -13,16 +13,18 @@ namespace BISA.Server.Controllers
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id) // string email or user id?
+        [Authorize(Roles = "Admin, Staff")]
+        [HttpGet("{username}")]
+        public async Task<IActionResult> Get(string username)
         {
-            var userResponse = new ServiceResponseDTO<string>(); // UserViewModel?
+            var userResponse = await _userService.GetUser(username);
             if (userResponse.Success)
             {
                 return Ok(userResponse.Data);
             }
-            return BadRequest();
+            return BadRequest(userResponse.Message);
         }
+
         [Authorize]
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePassword)
@@ -38,6 +40,18 @@ namespace BISA.Server.Controllers
                 return BadRequest(changePasswordResponse.Message);
             }
 
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var userResponse = await _userService.DeleteUser(id);
+            if (userResponse.Success)
+            {
+                return NoContent();
+            }
+            return BadRequest(userResponse.Message);
         }
     }
 }
