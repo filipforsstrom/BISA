@@ -1,4 +1,6 @@
-﻿namespace BISA.Client.Services.InventoryService
+﻿using BISA.Shared.DTO;
+
+namespace BISA.Client.Services.InventoryService
 {
     public class InventoryService : IInventoryService
     {
@@ -8,6 +10,33 @@
         {
             _http = http;
         }
+
+        public async Task<ServiceResponseViewModel<string>> AddItemInventory(int amount, int itemId)
+        {
+            ServiceResponseViewModel<string> serviceResponse = new();
+
+            ItemInventoryChangeDTO changedItem = new ItemInventoryChangeDTO
+            {
+                AmountToAdd = amount,
+                ItemId = itemId
+            };
+
+            var response = await _http.PostAsJsonAsync("api/inventory", changedItem);
+
+            if(response.IsSuccessStatusCode)
+            {
+                serviceResponse.Success = true;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+            else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponseViewModel<string>> DeleteItemInventory(int id)
         {
             ServiceResponseViewModel<string> serviceResponse = new();

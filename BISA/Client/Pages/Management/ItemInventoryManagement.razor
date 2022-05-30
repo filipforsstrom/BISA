@@ -16,6 +16,7 @@
             <MudTh>Delete</MudTh>
         </HeaderContent>
         <RowTemplate>
+
             <MudTd DataLabel="Id">@context.Id</MudTd>
             <MudTd DataLabel="Available">@context.Available</MudTd>
             <MudTd DataLabel="Delete">
@@ -35,9 +36,19 @@ else
     <p>No inventory found.</p>
 }
 
+<MudGrid>
+    <MudItem xs="12">
+        <MudNumericField @bind-Value=InventoryToAdd Min=0 Max=50></MudNumericField>
+    </MudItem>
+    <MudItem xs="6">
+        <MudButton Size=Size.Large OnClick="(() => AddInventoryToItem())">ADD INVENTORY</MudButton>
+    </MudItem>
+    </MudGrid>
+
 @code {
     [Parameter]
     public int ItemId { get; set; }
+    private int InventoryToAdd { get; set; }
     private List<ItemInventoryViewModel> ItemInventory { get; set; }
     private ServiceResponseViewModel<string> ServiceResponse = new();
 
@@ -54,7 +65,7 @@ else
         ServiceResponse = await InventoryService.DeleteItemInventory(inventoryId);
         if (ServiceResponse.Success)
         {
-           await GetAllInventoryItems(ItemId);
+            await GetAllInventoryItems(ItemId);
         }
         SnackbarHandling();
     }
@@ -72,7 +83,20 @@ else
             ServiceResponse.Message = serviceResponse.Message;
             SnackbarHandling();
         }
+    }
 
+    private async Task AddInventoryToItem()
+    {
+        var serviceResponse = await InventoryService.AddItemInventory(InventoryToAdd, ItemId);
+
+        ServiceResponse.Success = serviceResponse.Success;
+        ServiceResponse.Message = serviceResponse.Message;
+        SnackbarHandling();
+
+        if(serviceResponse.Success)
+        {
+            await GetAllInventoryItems(ItemId);
+        }
     }
 
     private void SnackbarHandling()

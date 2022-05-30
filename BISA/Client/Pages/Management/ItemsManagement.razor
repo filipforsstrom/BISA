@@ -58,12 +58,8 @@ else
     <p>Loading.....</p>
 }
 
-@*@if (!String.IsNullOrEmpty(MessageToUser))
-{
-    <MudText Typo="Typo.h5">@MessageToUser</MudText>
-}*@
 
-<MudButton OnClick="(() => CreateItem())">Create new item</MudButton>
+<MudButton Size=Size.Large OnClick="(() => CreateItem())">Create new item</MudButton>
 
 
 @code {
@@ -106,6 +102,7 @@ else
 
     private async Task DeleteItem(int id)
     {
+        //Dialogruta för att bekräfta
         MessageToUser = await ItemService.DeleteItem(id);
         Snackbar.Add(MessageToUser, Severity.Info);
         await GetItems();
