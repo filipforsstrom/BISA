@@ -55,7 +55,6 @@ namespace BISA.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            // Ta bort lån, flytta till lånehistorik, flytta reservationer
             var loanResponse = await _loanService.ReturnLoan(id);
 
             if (loanResponse.Success)

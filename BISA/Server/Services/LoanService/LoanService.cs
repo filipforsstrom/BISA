@@ -139,9 +139,17 @@ namespace BISA.Server.Services.LoanService
         {
             var response = new ServiceResponseDTO<string>();
 
+            var invItemReturned = await _context.ItemInventory.FirstOrDefaultAsync(i => i.Id == id);
+            if (invItemReturned == null)
+            {
+                response.Success = false;
+                response.Message = "No matching item found";
+                return response;
+            }
+
             var loanToRemove = await _context.LoansActive
                 .Include(loan => loan.ItemInventory)
-                .FirstOrDefaultAsync(l => l.Id == id);
+                .FirstOrDefaultAsync(l => l.ItemInventoryId == invItemReturned.Id);
 
             if (loanToRemove != null)
             {
@@ -152,7 +160,7 @@ namespace BISA.Server.Services.LoanService
                 // Check if item has pending reservations
                 var checkReservations = await GetFirstItemReservation(loanToRemove.ItemInventory.ItemId);
 
-                if (GetFirstItemReservation != null)
+                if (checkReservations != null)
                 {
                     await RemoveReservation(checkReservations.Id);
                     // Move reservation to active loan

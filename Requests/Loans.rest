@@ -45,7 +45,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 # @name loans/id
-DELETE {{baseUri}}/loans/5
+DELETE {{baseUri}}/loans/1
 Authorization: Bearer {{authToken}}
 
 
