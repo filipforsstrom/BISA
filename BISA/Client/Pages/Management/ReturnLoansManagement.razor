@@ -10,7 +10,7 @@
         <EditForm Model="ItemId" OnSubmit="OnSubmit">
             <DataAnnotationsValidator />
             <MudNumericField @bind-Value="ItemId" Label="Scan an item" Variant="Variant.Text" Min="1"/>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Return</MudButton>
+            <MudButton Class="mt-2" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Return</MudButton>
             <ValidationSummary />
         </EditForm>
     </MudItem>
