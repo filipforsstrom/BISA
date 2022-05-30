@@ -1,21 +1,23 @@
 ﻿@page "/search"
 @page "/search/{atpageloadsearch}"
-@inject ISearchService searchService
-@inject NavigationManager navManager
+@using Append.Blazor.Printing
+@inject IPrintingService PrintingService
+@inject ISearchService SearchService
+@inject NavigationManager NavigationManager
 
 <EditForm Model="@SearchMessage" OnSubmit="SearchBy">
-                    <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" Required="true" RequiredError="Search is required!"/>
-                    
-                    <div class="d-flex">
-                        <MudRadioGroup T="string" Required="true" @bind-SelectedOption="SearchByProperty">
-                            <MudRadio Option="@("title")">Search by title</MudRadio>
-                            <MudRadio Option="@("tags")">Search by tags</MudRadio>
-                            <MudRadio  Option="@("all")">All</MudRadio>
-                        </MudRadioGroup>
-                    </div>
-                    <div class="d-flex align-center justify-space-between mt-6">
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
-                    </div>
+    <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" Required="true" RequiredError="Search is required!" />
+
+    <div class="d-flex">
+        <MudRadioGroup T="string" Required="true" @bind-SelectedOption="SearchByProperty">
+            <MudRadio Option="@("title")">Search by title</MudRadio>
+            <MudRadio Option="@("tags")">Search by tags</MudRadio>
+            <MudRadio Option="@("all")">All</MudRadio>
+        </MudRadioGroup>
+    </div>
+    <div class="d-flex align-center justify-space-between mt-6">
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
+    </div>
 </EditForm>
 
 
@@ -43,15 +45,15 @@
     {
         if (SearchByProperty.Equals("title"))
         {
-            ItemsSearchedFor = await searchService.GetByTitle(SearchMessage);
+            ItemsSearchedFor = await SearchService.GetByTitle(SearchMessage);
         }
-        else if(SearchByProperty.Equals("tags"))
+        else if (SearchByProperty.Equals("tags"))
         {
-            ItemsSearchedFor = await searchService.GetByTags(SearchMessage);
+            ItemsSearchedFor = await SearchService.GetByTags(SearchMessage);
         }
-        else if(SearchByProperty.Equals("all"))
+        else if (SearchByProperty.Equals("all"))
         {
-            ItemsSearchedFor = await searchService.GetByAll(SearchMessage);
+            ItemsSearchedFor = await SearchService.GetByAll(SearchMessage);
         }
     }
 
