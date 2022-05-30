@@ -37,7 +37,7 @@ namespace BISA.Server.Controllers
             if (registerResponse.Success)
             {
                 HttpContext.Response.Headers.Add("X-AuthToken", registerResponse.Data); // for RestClient in vscode
-                return Ok(registerResponse.Data);
+                return Ok(registerResponse);
             }
             else
             {

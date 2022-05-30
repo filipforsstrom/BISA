@@ -5,8 +5,8 @@ namespace BISA.Client.Services.AuthService
 {
     public interface IAuthService
     {
-        Task<string> Login(UserLoginViewModel user);
-        Task<string> Register(UserRegisterViewModel userRegister);
+        Task<ServiceResponseViewModel<string>> Login(UserLoginViewModel user);
+        Task<ServiceResponseViewModel<string>> Register(UserRegisterViewModel userRegister);
 
         Task Logout();
     }

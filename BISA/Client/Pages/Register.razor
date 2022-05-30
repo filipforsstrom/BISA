@@ -30,7 +30,7 @@
     </MudCard>
     
 </EditForm>
-<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@messageToUser</MudText>
+<MudText Align="Align.Center" Color="Color.Error" Typo="Typo.h6">@messageToUser</MudText>
 
 
 
@@ -39,7 +39,7 @@
 
 @code {
     private UserRegisterViewModel RegistratedUser { get; set; } = new();
-    string messageToUser;
+    string? messageToUser;
 
 
 
@@ -47,13 +47,13 @@
     {
         var response = await AuthService.Register(RegistratedUser);
 
-        if(response == "success")
+        if(response.Success)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/login");
         }
         else
         {
-            messageToUser = response;
+            messageToUser = response.Message;
             StateHasChanged();
         }
     }
