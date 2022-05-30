@@ -39,7 +39,7 @@
         var severity = error switch
         {
             true => Severity.Error,
-            _ => Severity.Normal
+            _ => Severity.Success
         };
         Snackbar.Add(msg, severity, config => { config.ShowCloseIcon = false; });
     }
