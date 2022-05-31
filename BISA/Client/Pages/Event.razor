@@ -18,10 +18,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var singleEvent = await EventService.GetEvent(Int32.Parse(Id));
-        if (singleEvent != null)
-        {
-            SingleEvent = singleEvent;
-        }
+        var serviceResponse = await EventService.GetEvent(Int32.Parse(Id));
+        if (serviceResponse.Success) SingleEvent = serviceResponse.Data;
     }
 }
