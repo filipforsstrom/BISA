@@ -7,12 +7,14 @@
     <MudCard>
         <MudCardContent>
             <MudText>@e.Subject</MudText>
-            <MudText Typo="Typo.body2">@e.Organizer</MudText>
+            <MudText Typo="Typo.body2">@e.Type.Type</MudText>
+            <MudText Typo="Typo.body2">Organized by: @e.Organizer</MudText>
         </MudCardContent>
         <MudCardActions>
-            <MudLink Href="@($"events/{e.Id}")">Select</MudLink>
+            <MudLink Href="@($"events/{e.Id}")">Read more</MudLink>
         </MudCardActions>
     </MudCard>
+    <br />
 }
 
 
