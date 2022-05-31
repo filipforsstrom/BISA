@@ -8,6 +8,7 @@
         public string? Date { get; set; }
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
+        public string? Description { get; set; }
         public List<TagDTO>? Tags { get; set; }
         public int ItemInventory { get; set; }
         public List<ItemInventoryDTO> Inventory { get; set; }

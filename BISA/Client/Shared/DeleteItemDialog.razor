@@ -1,0 +1,32 @@
+﻿@inject ISnackbar Snackbar
+@inject IItemService ItemService
+
+<MudDialog>
+    <DialogContent>
+        <MudText>Are you sure you want to delete item with ID @ItemId?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(() => DeleteItem())">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int ItemId { get; set; }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private async Task DeleteItem()
+    {
+        var message = await ItemService.DeleteItem(ItemId);
+        Snackbar.Add(message, Severity.Info);
+        MudDialog.Close(DialogResult.Ok(ItemId));
+    }
+}

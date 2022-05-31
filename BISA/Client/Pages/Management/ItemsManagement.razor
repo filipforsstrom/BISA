@@ -5,6 +5,7 @@
 @inject IMovieService MovieService
 @inject NavigationManager NavManager
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 @if (allItems != null)
 {
@@ -102,10 +103,16 @@ else
 
     private async Task DeleteItem(int id)
     {
-        //Dialogruta för att bekräfta
-        MessageToUser = await ItemService.DeleteItem(id);
-        Snackbar.Add(MessageToUser, Severity.Info);
-        await GetItems();
+        var parameters = new DialogParameters();
+        parameters.Add("ItemId", id);
+
+        var dialog = DialogService.Show<DeleteItemDialog>("Delete item?", parameters);
+        var result = await dialog.Result;
+
+        if(!result.Cancelled)
+        {
+            await GetItems();
+        }
     }
 
     private async Task GetItems()
