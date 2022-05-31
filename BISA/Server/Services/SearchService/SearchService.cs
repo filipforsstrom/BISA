@@ -62,10 +62,12 @@ namespace BISA.Server.Services.SearchService
             var items = await _context.Items
                 .Include(i => i.ItemInventory)
                 .Include(i => i.Tags)
-                .Where(i => i.Title.ToLower().Contains(search.ToLower()) ||
-                i.Creator.ToLower().Contains(search.ToLower()) ||
-                i.Publisher.ToLower().Contains(search.ToLower()) ||
-                i.Date.ToLower().Contains(search.ToLower()) || i.Tags.Any(t => t.Tag.ToLower().Contains(search.ToLower())))
+                .Where(i => i.Title.ToLower().Contains(search.ToLower()) 
+                || i.Creator.ToLower().Contains(search.ToLower()) 
+                || i.Publisher.ToLower().Contains(search.ToLower()) 
+                || i.Date.ToLower().Contains(search.ToLower()) 
+                || i.Description.ToLower().Contains(search) 
+                || i.Tags.Any(t => t.Tag.ToLower().Contains(search.ToLower())))
                 .ToListAsync();
 
             if (items != null)
@@ -96,7 +98,9 @@ namespace BISA.Server.Services.SearchService
                     Creator = item.Creator,
                     Type = item.Type,
                     Tags = ConvertTagsToTagDTOs(item.Tags),
-                    ItemInventory = item.ItemInventory.Count
+                    ItemInventory = item.ItemInventory.Count,
+                    Description = item.Description,
+                    Image = item.Image,
                 });
             }
 

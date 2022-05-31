@@ -15,6 +15,8 @@ namespace BISA.Shared.DTO
         public string? Publisher { get; set; }
         public string? Creator { get; set; }
         public string? Type { get; set; }
+        public string? Description { get; set; }
+        public string? Image { get; set; }
         public List<TagDTO>? Tags { get; set; } // i ItemService omvandlar vi List<TagEntity> till en string array?? diskussion
         public int ItemInventory { get; set; } // i ItemService omvandlar vi  List<ItemInventoryEntity> till int
         public List<ItemInventoryDTO>? Inventory { get; set; }

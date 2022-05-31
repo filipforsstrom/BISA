@@ -15,7 +15,6 @@ namespace BISA.Server.Services.EbookService
         {
             ServiceResponseDTO<EbookCreateDTO> responseDTO = new();
 
-
             var allEbooks = await _context.Ebooks.ToListAsync();
 
             var foundDuplicate = allEbooks
@@ -60,9 +59,10 @@ namespace BISA.Server.Services.EbookService
                 Url = ebookToCreate.Url,
                 Publisher = ebookToCreate.Publisher,
                 Tags = tagsForEbook,
+                Description = ebookToCreate.Description,
+                Image = ebookToCreate.Image,
             };
 
-            //adding nr of copies of ebook to inventory
             for (int i = 0; i < ebookToCreate.ItemInventory; i++)
             {
                 _context.ItemInventory.Add(new ItemInventoryEntity { Item = ebookEntity, Available = true });
@@ -122,7 +122,9 @@ namespace BISA.Server.Services.EbookService
                 Publisher = ebook.Publisher,
                 Tags = tags,
                 ItemInventory = ebook.ItemInventory.Count(),
-                Inventory = ItemInventory
+                Inventory = ItemInventory,
+                Description = ebook.Description,
+                Image = ebook.Image,
             };
 
             responseDTO.Success = true;
@@ -166,7 +168,6 @@ namespace BISA.Server.Services.EbookService
                 }
             }
 
-            //ebookToUpdate.Id = updatedEbook.Id;
             ebookToUpdate.Title = updatedEbook.Title;
             ebookToUpdate.Creator = updatedEbook.Creator;
             ebookToUpdate.Date = updatedEbook.Date;
@@ -174,6 +175,8 @@ namespace BISA.Server.Services.EbookService
             ebookToUpdate.Url = updatedEbook.Url;
             ebookToUpdate.Publisher = updatedEbook.Publisher;
             ebookToUpdate.Tags = tagsForEbook;
+            ebookToUpdate.Description = updatedEbook.Description;
+            ebookToUpdate.Image = updatedEbook.Image;
 
 
             _context.Entry(ebookToUpdate).State = EntityState.Modified;
