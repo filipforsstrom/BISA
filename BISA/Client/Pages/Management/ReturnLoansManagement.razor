@@ -1,7 +1,8 @@
 ﻿@page "/loansmanagement"
 @inject ILoanService LoanService
 @inject ISnackbar Snackbar
-@attribute [Authorize(Roles = "Staff")]
+@attribute [Authorize(Roles = "Admin, Staff")]
+
 <MudGrid>
     <MudItem xs="12">
         <MudText Typo="Typo.h3">Return item</MudText>
