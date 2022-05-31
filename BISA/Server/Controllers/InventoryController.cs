@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BISA.Server.Controllers
 {
-    [Route("api/Inventory")]
+    [Route("api/[controller]")]
     [ApiController]
     public class InventoryController : ControllerBase
     {
@@ -14,8 +14,23 @@ namespace BISA.Server.Controllers
             _inventoryService = inventoryService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetItemInventory(int id)
+        {
+            var inventoryResponse = await _inventoryService.GetItemsInventory(id);
+
+            if (inventoryResponse.Success)
+            {
+                return Ok(inventoryResponse.Data);
+            }
+            else
+            {
+                return BadRequest(inventoryResponse.Message);
+            }
+        }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] ItemInventoryChangeDTO itemInventoryAdd)
         {
             var inventoryResponse = await _inventoryService.AddItemInventory(itemInventoryAdd);
@@ -32,14 +47,14 @@ namespace BISA.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id, ItemInventoryChangeDTO itemInventoryDelete)
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> Delete(int id)
         {
-            itemInventoryDelete.InventoryId = id;
-            var inventoryResponse = await _inventoryService.DeleteItemInventory(itemInventoryDelete);
+            var inventoryResponse = await _inventoryService.DeleteItemInventory(id);
 
             if (inventoryResponse.Success)
             {
-                return NoContent();
+                return NotFound(inventoryResponse.Message);
             }
             else
             {

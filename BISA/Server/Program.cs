@@ -141,7 +141,7 @@ using (var serviceScope = app.Services.CreateScope())
     var services = serviceScope.ServiceProvider;
 
     var librisService = services.GetRequiredService<ILibrisService>();
-    await librisService.SeedDatabase();
+    //await librisService.SeedDatabase();
 }
 
 // Configure the HTTP request pipeline.

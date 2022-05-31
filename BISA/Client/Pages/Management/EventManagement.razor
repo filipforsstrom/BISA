@@ -1,6 +1,8 @@
 ﻿@page "/eventmanagement/{id}"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IEventService EventService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
 <EditForm Model="SingleEvent" OnValidSubmit="UpdateEvent">
     <MudCard>
@@ -29,7 +31,6 @@
     </MudCard>
 </EditForm>
 <MudIconButton OnClick="DeleteEvent" Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
-<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@MessageToUser</MudText>
 
 @code {
     [Parameter]
@@ -39,12 +40,13 @@
     private List<EventTypeViewModel> EventTypes { get; set; } = new();
     private EventViewModel SingleEvent { get; set; } = new();
     private int EventTypeId { get; set; }
-    private string MessageToUser { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        EventTypes = await EventService.GetEventTypes();
-        SingleEvent = await EventService.GetEvent(Int32.Parse(Id));
+        var eventTypesResponse = await EventService.GetEventTypes();
+        if (eventTypesResponse.Success) EventTypes = eventTypesResponse.Data;
+        var singleEventResponse = await EventService.GetEvent(Int32.Parse(Id));
+        if (singleEventResponse.Success) SingleEvent = singleEventResponse.Data;
         EventTypeId = SingleEvent.Type.Id;
         EventDate = SingleEvent.Date;
         EventTime = SingleEvent.Date.TimeOfDay;
@@ -54,14 +56,19 @@
     {
         SingleEvent.Type.Id = EventTypeId;
         SingleEvent.Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault());
-        SingleEvent = await EventService.UpdateEvent(SingleEvent);
+        var updateEvent = await EventService.UpdateEvent(SingleEvent);
+        if (updateEvent.Success)
+        {
+            SingleEvent = updateEvent.Data;
+            Snackbar.Add($"Event updated", Severity.Success);
+        }
         StateHasChanged();
     }
 
     private async Task DeleteEvent()
     {
         var deleteResult = await EventService.DeleteEvent(Int32.Parse(Id));
-        if (deleteResult == $"Event {Id} successfully deleted") NavigationManager.NavigateTo("/eventsmanagement");
-        else MessageToUser = deleteResult;
+        if (deleteResult.Success) NavigationManager.NavigateTo("/eventsmanagement");
+        else Snackbar.Add($"{deleteResult.Message}", Severity.Error);
     }
 }

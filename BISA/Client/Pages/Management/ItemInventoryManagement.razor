@@ -1,0 +1,116 @@
+﻿@page "/iteminventorymanagement/{itemid:int}"
+@attribute [Authorize(Roles = "Admin, Staff")]
+@inject IInventoryService InventoryService
+@inject ISnackbar Snackbar
+
+
+@if (ItemInventory != null)
+{
+
+    <MudTable Items=ItemInventory Dense="true" Class="mb-2">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Inventory for item Id: @ItemId</MudText>
+            <MudSpacer></MudSpacer>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Available</MudTh>
+            <MudTh>Delete</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Available">@context.Available</MudTd>
+            <MudTd DataLabel="Delete">
+                <MudIconButton @onclick="(() => DeleteInventoryItem(context.Id))"
+                           Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[] { 5, 10 }" />
+        </PagerContent>
+    </MudTable>
+}
+else
+{
+    <p>No inventory found.</p>
+}
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudNumericField @bind-Value=InventoryToAdd Min=0 Max=50></MudNumericField>
+    </MudItem>
+    <MudItem xs="6">
+        <MudButton Size=Size.Large OnClick="(() => AddInventoryToItem())">ADD INVENTORY</MudButton>
+    </MudItem>
+    </MudGrid>
+
+@code {
+    [Parameter]
+    public int ItemId { get; set; }
+    private int InventoryToAdd { get; set; }
+    private List<ItemInventoryViewModel> ItemInventory { get; set; }
+    private ServiceResponseViewModel<string> ServiceResponse = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(ItemId != 0)
+        {
+            await GetAllInventoryItems(ItemId);
+        };
+    }
+
+    private async Task DeleteInventoryItem(int inventoryId)
+    {
+        ServiceResponse = await InventoryService.DeleteItemInventory(inventoryId);
+        if (ServiceResponse.Success)
+        {
+            await GetAllInventoryItems(ItemId);
+        }
+        SnackbarHandling();
+    }
+
+    private async Task GetAllInventoryItems(int itemId)
+    {
+        var serviceResponse = await InventoryService.GetItemInventory(itemId);
+        if (serviceResponse.Success)
+        {
+            ItemInventory = serviceResponse.Data;
+        }
+        else if (!serviceResponse.Success)
+        {
+            ServiceResponse.Success = serviceResponse.Success;
+            ServiceResponse.Message = serviceResponse.Message;
+            ItemInventory.Clear();
+            SnackbarHandling();
+        }
+    }
+
+    private async Task AddInventoryToItem()
+    {
+        var serviceResponse = await InventoryService.AddItemInventory(InventoryToAdd, ItemId);
+
+        ServiceResponse.Success = serviceResponse.Success;
+        ServiceResponse.Message = serviceResponse.Message;
+        SnackbarHandling();
+
+        if(serviceResponse.Success)
+        {
+            await GetAllInventoryItems(ItemId);
+        }
+    }
+
+    private void SnackbarHandling()
+    {
+        if (ServiceResponse.Success)
+        {
+            Snackbar.Add(ServiceResponse.Message, Severity.Success);
+        }
+        else if(!ServiceResponse.Success)
+        {
+            Snackbar.Add(ServiceResponse.Message, Severity.Error);
+        }
+    }
+}

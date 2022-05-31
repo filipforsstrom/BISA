@@ -33,6 +33,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] BookCreateDTO bookToCreate)
         {
 
@@ -40,7 +41,7 @@ namespace BISA.Server.Controllers
 
             if (bookResponse.Success)
             {
-                return Ok(bookResponse.Data);
+                return Ok(bookResponse.Message);
             }
             else
             {
@@ -49,6 +50,7 @@ namespace BISA.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Put(int id, [FromBody] BookUpdateDTO bookToUpdate)
         {
             bookToUpdate.Id = id;
@@ -64,6 +66,6 @@ namespace BISA.Server.Controllers
             }
         }
 
-       
+
     }
 }

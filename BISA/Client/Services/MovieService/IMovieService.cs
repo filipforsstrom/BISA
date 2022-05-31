@@ -2,8 +2,8 @@
 {
     public interface IMovieService
     {
-        Task<MovieViewModel> GetMovie(int itemId);
-        //Task<MovieViewModel> UpdateMovie(MovieUpdateDTO movieToUpdate);
-        //Task<MovieViewModel> CreateMovie(MovieCreateDTO movieToAdd);
+        Task<ServiceResponseViewModel<MovieViewModel>> GetMovie(int itemId);
+        Task<ServiceResponseViewModel<string>> UpdateMovie(MovieViewModel movieToUpdate);
+        Task<ServiceResponseViewModel<string>> CreateMovie(MovieViewModel movieToAdd);
     }
 }

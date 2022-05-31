@@ -1,7 +1,125 @@
 ﻿@page "/itemsmanagement"
+@attribute [Authorize(Roles = "Admin, Staff")]
+@inject IItemService ItemService
+@inject IBookService BookService
+@inject IEbookService EbookService
+@inject IMovieService MovieService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
-<h3>ItemsManagement</h3>
+@if (allItems != null)
+{
+
+    <MudTable Items=allItems Dense="true" Filter="new Func<ItemViewModel,bool>(FilterSearch)" Class="mb-2">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Items</MudText>
+            <MudSpacer></MudSpacer>
+            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Title</MudTh>
+            <MudTh>Creator</MudTh>
+            <MudTh>Type</MudTh>
+            <MudTh>Edit Item</MudTh>
+            <MudTh>Edit Inventory</MudTh>
+            <MudTh>Delete</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Title">@context.Title</MudTd>
+            <MudTd DataLabel="Creator">@context.Creator</MudTd>
+            <MudTd DataLabel="Type">@context.Type</MudTd>
+            <MudTd DataLabel="Edit Item">
+                <MudIconButton @onclick="(() => EditItem(context.Id))"
+                           Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+            <MudTd DataLabel="Edit Inventory">
+                <MudIconButton @onclick="(() => EditInventory(context.Id))"
+                           Icon="@Icons.Material.Filled.EditAttributes"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+            <MudTd DataLabel="Delete">
+                <MudIconButton @onclick="(() => DeleteItem(context.Id))"
+                           Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Variant="Variant.Filled"></MudIconButton>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[] { 5, 10 }" />
+        </PagerContent>
+    </MudTable>
+}
+else
+{
+    <p>Loading.....</p>
+}
+
+
+<MudButton Size=Size.Large OnClick="(() => CreateItem())">Create new item</MudButton>
+
 
 @code {
+    public ItemViewModel Item { get; set; }
+    public List<ItemViewModel> allItems { get; set; }
+    private string MessageToUser { get; set; }
+    private string searchString { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    private bool FilterSearch(ItemViewModel item)
+    {
+        bool isNumber = int.TryParse(searchString, out int result);
+        if(item.Title.ToLower().Contains(searchString.ToLower()) || item.Id.Equals(result))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void CreateItem()
+    {
+        NavigationManager.NavigateTo("/itemcreateupdate");
+    }
+
+
+    private void EditItem(int id)
+    {
+        NavigationManager.NavigateTo($"/itemcreateupdate/{id}");
+    }
+
+    private void EditInventory(int id)
+    {
+        NavigationManager.NavigateTo($"/iteminventorymanagement/{id}");
+    }
+
+    private async Task DeleteItem(int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ItemId", id);
+
+        var dialog = DialogService.Show<DeleteItemDialog>("Delete item?", parameters);
+        var result = await dialog.Result;
+
+        if(!result.Cancelled)
+        {
+            await GetItems();
+        }
+    }
+
+    private async Task GetItems()
+    {
+        allItems = await ItemService.GetItems();
+    }
+
 
 }

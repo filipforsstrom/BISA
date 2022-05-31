@@ -59,6 +59,7 @@ namespace BISA.Client.Services.AuthService
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync("token");
+            await _localStorage.RemoveItemAsync("checkout");
             await _authStateProvider.GetAuthenticationStateAsync();
         }
     }

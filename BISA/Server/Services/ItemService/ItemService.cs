@@ -72,13 +72,30 @@ namespace BISA.Server.Services.ItemService
                 return responseDTO;
             }
 
+           if(itemToDelete.ItemInventory.Any(i => i.Available == false))
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "Item requested for deletion doesn't have all copies in stock.";
+                return responseDTO;
+            }
+
             itemToDelete.ItemInventory.Clear();
             itemToDelete.Tags.Clear();
             _context.Items.Remove(itemToDelete);
 
-            await _context.SaveChangesAsync();
-            responseDTO.Success = true;
+            var createdResult = await _context.SaveChangesAsync();
+
+            if(createdResult > 0)
+            {
+                responseDTO.Success = true;
+                responseDTO.Message = "Item deleted";
+                return responseDTO;
+            }
+            
+            responseDTO.Success = false;
+            responseDTO.Message = "Something went wrong with requested item for deletion";
             return responseDTO;
+            
         }
 
 
@@ -112,6 +129,7 @@ namespace BISA.Server.Services.ItemService
                         ItemInventory = item.ItemInventory.Count(),
                         Language = item.Language,
                         Publisher = item.Publisher,
+                        Type = item.Type,
                         Tags = ConvertTagToTagDTO(item.Tags)
                     });
             }
@@ -133,5 +151,23 @@ namespace BISA.Server.Services.ItemService
             return tagsAsDTOs;
         }
 
+        public async Task<ServiceResponseDTO<List<TagDTO>>> GetTags()
+        {
+            ServiceResponseDTO<List<TagDTO>> responseDTO = new();
+            var tags = await _context.Tags.ToListAsync();
+
+            if(tags == null)
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "No tags were found";
+                return responseDTO;
+            }
+
+            var tagDtos = ConvertTagToTagDTO(tags);
+            responseDTO.Success = true;
+            responseDTO.Data = tagDtos;
+            return responseDTO;
+
+        }
     }
 }

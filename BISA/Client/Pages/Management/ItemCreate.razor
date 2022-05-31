@@ -1,0 +1,241 @@
+﻿@page "/itemcreateupdate"
+@page "/itemcreateupdate/{itemToUpdate:int}"
+@inject IItemService ItemService
+@inject IMovieService MovieService
+@inject IBookService BookService
+@inject IEbookService EbookService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavManager
+
+<MudText Typo="Typo.h6">@(IsNew ? "Create" : "Update") item</MudText>
+
+@if(IsNew)
+{
+        <MudSelect T="string" SelectedValuesChanged="(() => InitializeEditContext())" @bind-Value="@mediaType" Label="Media Type" AnchorOrigin="Origin.BottomCenter">
+        <MudSelectItem Value="@("Book")" />
+        <MudSelectItem Value="@("Ebook")" />
+        <MudSelectItem Value="@("Movie")"/>
+        </MudSelect>
+}
+
+@if (dataIsLoaded)
+{
+    <EditForm OnValidSubmit="@HandleSubmit" EditContext=@EditContext>
+        <DataAnnotationsValidator/>
+
+        <MudGrid>
+            <MudItem xs=12 Class="mt-3">
+                <MudCard>
+                    <MudCardContent>
+
+            @if (mediaType.Equals("Movie"))
+            {
+                <CreateMovieForm movie=movie></CreateMovieForm>
+            }
+
+            @if (mediaType.Equals("Book"))
+            {
+                <CreateBookForm book=book></CreateBookForm>
+            }
+
+            @if (mediaType.Equals("Ebook"))
+            {
+                <CreateEbookForm ebook=ebook></CreateEbookForm>
+            }
+
+        <MudSelect T="TagViewModel" ToStringFunc="@(t=> t == null ? null : $"{t.Tag}")" Label="Tags" Required="true" MultiSelection="true" @bind-SelectedValues="@tagsForItem">
+            @foreach (var tag in tags)
+            {
+                <MudSelectItem T="TagViewModel" Value="@tag">@tag.Tag</MudSelectItem>
+            }
+        </MudSelect>
+
+            @if (IsNew)
+             {
+                <MudNumericField Min=0 Max=200 Label="Add Copies" @bind-Value=itemInventory></MudNumericField>
+             }
+
+            </MudCardContent>
+            
+         <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@(IsNew ? "Create" : "Update")</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+    </EditForm>
+}
+else { <p>Loading form....</p>}
+
+
+@code {
+    [Parameter]
+    public int itemToUpdate { get; set; }
+    private bool dataIsLoaded { get; set; }
+    private bool success { get; set; } = false;
+    private bool IsNew { get; set; }
+    private string? mediaType { get; set; } = "Book";
+    private int itemInventory { get; set; }
+    private string? MessageToUser { get; set; }
+    private MovieViewModel movie = new();
+    private EbookViewModel ebook = new();
+    private BookViewModel book  = new();
+    private List<TagViewModel> tags = new();
+    private IEnumerable<TagViewModel> tagsForItem { get; set; } = new HashSet<TagViewModel>();
+    private ServiceResponseViewModel<string> serviceResponse = new();
+    private EditContext EditContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //EditForm needs initialized model straight away. Template form model will be book.
+        EditContext = new EditContext(book);
+
+        //Check if form is used for updating current item, or to create a new one.
+        await CheckIfUpdateOrNew();
+
+        //Check what type of item is going to be updated so the form has correct validation parameters.
+        await InitializeEditContext();
+
+        tags = await ItemService.GetTags();
+
+        //When initial data has been processed, show form.
+        dataIsLoaded = true;
+    }
+
+    private async Task InitializeEditContext()
+    {
+        if(!IsNew)
+        {
+            mediaType = await GetItemType(itemToUpdate);
+        }
+
+        if(mediaType == "Book")
+        {
+
+            if (!IsNew)
+            {
+                var bookResponse = await BookService.GetBook(itemToUpdate);
+                book = bookResponse.Data;
+            }
+
+            EditContext = new EditContext(book);
+        }
+
+        if(mediaType == "Ebook")
+        {
+            if (!IsNew)
+            {
+                var ebookResponse = await EbookService.GetEbook(itemToUpdate);
+                ebook = ebookResponse.Data;
+            }
+
+            EditContext = new EditContext(ebook);
+        }
+
+        if(mediaType == "Movie")
+        {
+            if (!IsNew)
+            {
+                var movieResponse = await MovieService.GetMovie(itemToUpdate);
+                movie = movieResponse.Data;
+            }
+
+            EditContext = new EditContext(movie);
+        }
+
+    }
+
+    private async Task CheckIfUpdateOrNew()
+    {
+        IsNew = itemToUpdate == 0 ? true : false;
+
+        if (!IsNew)
+        {
+            var item = await ItemService.GetItem(itemToUpdate);
+
+            if(item == null)
+            {
+                Snackbar.Add("Item not found", Severity.Error);
+                NavManager.NavigateTo("/itemsmanagement");
+            }
+        }
+
+    }
+
+    private async Task<string> GetItemType(int id)
+    {
+        var item = await ItemService.GetItem(id);
+        if (item != null)
+        {
+            return item.Type;
+        }
+        else return string.Empty;
+
+    }
+
+    private async Task HandleSubmit()
+    {
+        //If creation of new item
+        if (IsNew)
+        {
+            if(mediaType.Equals("Movie"))
+            {
+                movie.Tags = tagsForItem.ToList();
+                movie.ItemInventory = itemInventory;
+                serviceResponse = await MovieService.CreateMovie(movie);
+                SnackbarHandling();
+            }
+            if (mediaType.Equals("Book"))
+            {
+                book.Tags = tagsForItem.ToList();
+                book.ItemInventory = itemInventory;
+                serviceResponse = await BookService.CreateBook(book);
+                SnackbarHandling();
+            }
+            if (mediaType.Equals("Ebook"))
+            {
+                ebook.Tags = tagsForItem.ToList();
+                ebook.ItemInventory = itemInventory;
+                serviceResponse = await EbookService.CreateEbook(ebook);
+                SnackbarHandling();
+            }
+        }
+
+        //if updating a pre-existing item
+        if (!IsNew)
+        {
+            if(mediaType.Equals("Movie"))
+            {
+                movie.Tags = tagsForItem.ToList();
+                serviceResponse = await MovieService.UpdateMovie(movie);
+                SnackbarHandling();
+            }
+            if (mediaType.Equals("Book"))
+            {
+                book.Tags = tagsForItem.ToList();
+                serviceResponse = await BookService.UpdateBook(book);
+                SnackbarHandling();
+            }
+            if (mediaType.Equals("Ebook"))
+            {
+                ebook.Tags = tagsForItem.ToList();
+                serviceResponse = await EbookService.UpdateEbook(ebook);
+                SnackbarHandling();
+            }
+        }
+    }
+
+    private void SnackbarHandling()
+    {
+        if (serviceResponse.Success)
+        {
+            Snackbar.Add(serviceResponse.Message, Severity.Success);
+        }
+        else if (!serviceResponse.Success)
+        {
+            Snackbar.Add(serviceResponse.Message, Severity.Error);
+        }
+    }
+
+}

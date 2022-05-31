@@ -30,54 +30,88 @@ namespace BISA.Client.Services.EventService
             return serviceResponse;
         }
 
-        public async Task<string> DeleteEvent(int eventId)
+        public async Task<ServiceResponseViewModel<string>> DeleteEvent(int eventId)
         {
+            ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.DeleteAsync($"api/events/{eventId}");
             if (response.IsSuccessStatusCode)
             {
-                return $"Event {eventId} successfully deleted";
+                serviceResponse.Success = true;
+                serviceResponse.Message = $"Event {eventId} successfully deleted";
+                return serviceResponse;
             }
-            else return await response.Content.ReadAsStringAsync();
+
+            serviceResponse.Success = false;
+            serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            return serviceResponse;
         }
 
-        public async Task<EventViewModel> GetEvent(int eventId)
+        public async Task<ServiceResponseViewModel<EventViewModel>> GetEvent(int eventId)
         {
+            ServiceResponseViewModel<EventViewModel> serviceResponse = new();
             var response = await _http.GetAsync($"api/events/{eventId}");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<EventViewModel>();
+                serviceResponse.Success = true;
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<EventViewModel>();
+                return serviceResponse;
             }
-            else return null;
+
+            serviceResponse.Success = false;
+            serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            return serviceResponse;
         }
 
-        public async Task<List<EventViewModel>> GetEvents()
+        public async Task<ServiceResponseViewModel<List<EventViewModel>>> GetEvents()
         {
+            ServiceResponseViewModel<List<EventViewModel>> serviceResponse = new();
             var response = await _http.GetAsync("api/events");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<List<EventViewModel>>();
+                serviceResponse.Success = true;
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<List<EventViewModel>>();
+                return serviceResponse;
             }
-            return null;
+
+            serviceResponse.Success = false;
+            serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            return serviceResponse;
         }
 
-        public async Task<List<EventTypeViewModel>> GetEventTypes()
+        public async Task<ServiceResponseViewModel<List<EventTypeViewModel>>> GetEventTypes()
         {
+            ServiceResponseViewModel<List<EventTypeViewModel>> serviceResponse = new();
             var response = await _http.GetAsync("api/events/types");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<List<EventTypeViewModel>>();
+                serviceResponse.Success = true;
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<List<EventTypeViewModel>>();
+                return serviceResponse;
             }
-            return null;
+
+            serviceResponse.Success = false;
+            serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            return serviceResponse;
         }
 
-        public async Task<EventViewModel> UpdateEvent(EventViewModel eventToUpdate)
+        public async Task<ServiceResponseViewModel<EventViewModel>> UpdateEvent(EventViewModel eventToUpdate)
         {
+            ServiceResponseViewModel<EventViewModel> serviceResponse = new();
+
             var response = await _http.PutAsJsonAsync($"api/events/{eventToUpdate.Id}", eventToUpdate);
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                return await response.Content.ReadFromJsonAsync<EventViewModel>();
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
             }
-            return null;
+            else if (response.IsSuccessStatusCode)
+            {
+                serviceResponse.Data = await response.Content.ReadFromJsonAsync<EventViewModel>();
+                serviceResponse.Success = true;
+                serviceResponse.Message = response.ReasonPhrase;
+            }
+            return serviceResponse;
         }
     }
 }

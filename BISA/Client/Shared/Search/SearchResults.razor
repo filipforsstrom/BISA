@@ -1,6 +1,6 @@
 ﻿@inject NavigationManager navManager
 
-@if(Items.Any())
+@if(Items != null)
 {
     <MudTable T="ItemViewModel" OnRowClick="@RowClicked" Items="@Items">
 

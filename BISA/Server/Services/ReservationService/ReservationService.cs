@@ -95,7 +95,7 @@ namespace BISA.Server.Services.ReservationService
             if (userInDb == null)
             {
                 response.Success = false;
-                response.Message = "User not in database";
+                response.Message = "User not found";
                 return response;
             }
 

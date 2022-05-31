@@ -51,9 +51,23 @@ namespace BISA.Client.Services.LoanService
             return responseViewModel;
         }
 
-        public async Task<string> ReturnLoan(int id)
+        public async Task<ServiceResponseViewModel<string>> ReturnLoan(int id)
         {
-            throw new NotImplementedException();
+            var response = new ServiceResponseViewModel<string>();
+
+            var httpResponse = await _httpClient.DeleteAsync($"api/loans/{id}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                response.Message = "Item returned";
+                response.Success = true;
+            }
+            else
+            {
+                var apiMessage = await httpResponse.Content.ReadAsStringAsync();
+                response.Message = apiMessage;
+                response.Success = false;
+            }
+            return response;
         }
     }
 }

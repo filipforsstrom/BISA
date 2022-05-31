@@ -1,23 +1,24 @@
 ﻿@page "/eventcreate"
-@using System.Security
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IEventService EventService
-@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
-<EditForm Model="SingleEvent" OnValidSubmit="CreateEvent">
+<EditForm Model="EventToValidate" OnValidSubmit="CreateEvent">
+    <DataAnnotationsValidator />
     <MudCard>
         <MudText Align="Align.Center" Typo="Typo.h3">Create event</MudText>
         <MudCardContent>
-            <MudDatePicker Label="Date" @bind-Date="EventDate" />
-            <MudTimePicker Label="Time" @bind-Time="EventTime" />
-            <MudTextField Label="Organizer" @bind-Value="SingleEvent.Organizer"
-                          For="(() => SingleEvent.Organizer)"></MudTextField>
-            <MudTextField Label="Subject" @bind-Value="SingleEvent.Subject"
-                          For="(() => SingleEvent.Subject)"></MudTextField>
-            <MudTextField Label="Location" @bind-Value="SingleEvent.Location"
-                          For="(() => SingleEvent.Location)"></MudTextField>
-            <MudTextField Label="Description" @bind-Value="SingleEvent.Description"
-                          For="(() => SingleEvent.Description)"></MudTextField>
-            <MudSelect Label="Type" @bind-Value="EventTypeId">
+            <MudDatePicker Label="Date" @bind-Date="EventDate" Required="true"/>
+            <MudTimePicker Label="Time" @bind-Time="EventTime" Required="true"/>
+            <MudTextField Label="Organizer" @bind-Value="EventToValidate.Organizer"
+                          For="(() => EventToValidate.Organizer)"></MudTextField>
+            <MudTextField Label="Subject" @bind-Value="EventToValidate.Subject"
+                          For="(() => EventToValidate.Subject)"></MudTextField>
+            <MudTextField Label="Location" @bind-Value="EventToValidate.Location"
+                          For="(() => EventToValidate.Location)"></MudTextField>
+            <MudTextField Label="Description" @bind-Value="EventToValidate.Description"
+                          For="(() => EventToValidate.Description)"></MudTextField>
+            <MudSelect Label="Type" @bind-Value="EventToValidate.EventTypeId">
                 @foreach (var type in EventTypes)
                 {
                     <MudSelectItem T="int" Value="type.Id">@type.Type</MudSelectItem>
@@ -29,36 +30,43 @@
         </MudCardActions>
     </MudCard>
 </EditForm>
-<MudText Align="Align.Center" Color="Color.Warning" Typo="Typo.h4">@MessageToUser</MudText>
 
 @code {
     private DateTime? EventDate { get; set; }
     private TimeSpan? EventTime { get; set; }
     private List<EventTypeViewModel> EventTypes { get; set; } = new();
+    private EventCreateViewModel EventToValidate { get; set; } = new();
     private EventViewModel SingleEvent { get; set; } = new();
-    private int EventTypeId { get; set; }
-    private string MessageToUser { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        EventTypes = await EventService.GetEventTypes();
-        EventTypeId = 1; // default eventtype
+        var serviceResponse = await EventService.GetEventTypes();
+        if (serviceResponse.Success) EventTypes = serviceResponse.Data;
+        EventToValidate.EventTypeId = 1; // default eventtype
         StateHasChanged();
     }
 
     private async Task CreateEvent()
     {
-        SingleEvent.Type.Id = EventTypeId;
-        SingleEvent.Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault());
-        var createEventResult = await EventService.CreateEvent(SingleEvent);
+        EventViewModel eventToCreate = new EventViewModel
+        {
+            Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault()),
+            Description = EventToValidate.Description,
+            Location = EventToValidate.Location,
+            Organizer = EventToValidate.Organizer,
+            Subject = EventToValidate.Subject,
+            Type = new EventTypeViewModel { Id = EventToValidate.EventTypeId }
+        };
+
+        var createEventResult = await EventService.CreateEvent(eventToCreate);
         if (createEventResult.Success == false)
         {
-            MessageToUser = createEventResult.Message;
+            Snackbar.Add($"{@createEventResult.Message}", Severity.Error);
         }
         else if (createEventResult.Success)
         {
             SingleEvent = createEventResult.Data;
-            MessageToUser = createEventResult.Message;
+            Snackbar.Add("Event created", Severity.Success);
         }
         StateHasChanged();
     }

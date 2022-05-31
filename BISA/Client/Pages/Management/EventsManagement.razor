@@ -1,4 +1,5 @@
 ﻿@page "/eventsmanagement"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IEventService EventService
 @inject NavigationManager NavigationManager
 
@@ -22,7 +23,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        AllEvents = await EventService.GetEvents();
+        var serviceResponse = await EventService.GetEvents();
+        if (serviceResponse.Success) AllEvents = serviceResponse.Data;
     }
     private void RowClicked(TableRowClickEventArgs<EventViewModel> e)
     {

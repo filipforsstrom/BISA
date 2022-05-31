@@ -19,30 +19,30 @@ namespace BISA.Server.Services.EbookService
             var allEbooks = await _context.Ebooks.ToListAsync();
 
             var foundDuplicate = allEbooks
-              .Any(b => b.Title.ToLower() == ebookToCreate.Title.ToLower() &&
-              b.Creator.ToLower() == ebookToCreate.Creator.ToLower() &&
-              b.Date.Equals(ebookToCreate.Date) &&
-              b.Language.ToLower() == ebookToCreate.Language.ToLower() &&
-              b.Url.ToLower() == ebookToCreate.Url.ToLower() &&
-              b.Publisher.ToLower() == ebookToCreate.Publisher.ToLower());
+              .Any(b => b.Title?.ToLower() == ebookToCreate.Title?.ToLower() &&
+              b.Creator?.ToLower() == ebookToCreate.Creator?.ToLower() &&
+              b.Date == ebookToCreate.Date &&
+              b.Language?.ToLower() == ebookToCreate.Language?.ToLower() &&
+              b.Url?.ToLower() == ebookToCreate.Url?.ToLower() &&
+              b.Publisher?.ToLower() == ebookToCreate.Publisher?.ToLower());
 
             if (foundDuplicate)
             {
                 responseDTO.Success = false;
-                responseDTO.Message = "Book already exists.";
+                responseDTO.Message = "Ebook already exists.";
                 return responseDTO;
             }
 
 
             List<TagEntity> tagsForEbook = new List<TagEntity>();
 
-            if (ebookToCreate.Tags != null)
+            if (ebookToCreate.Tags.Any())
             {
-                foreach (var tagId in ebookToCreate.Tags)
+                foreach (var tag in ebookToCreate.Tags)
                 {
                     try
                     {
-                        tagsForEbook.Add(_context.Tags.Single(t => t.Id == tagId));
+                        tagsForEbook.Add(_context.Tags.Single(t => t.Id == tag.Id));
                     }
                     catch (Exception)
                     {
@@ -150,13 +150,13 @@ namespace BISA.Server.Services.EbookService
 
             List<TagEntity> tagsForEbook = new List<TagEntity>();
 
-            if (updatedEbook.Tags != null)
+            if (updatedEbook.Tags.Any())
             {
-                foreach (var tagId in updatedEbook.Tags)
+                foreach (var tag in updatedEbook.Tags)
                 {
                     try
                     {
-                        tagsForEbook.Add(_context.Tags.Single(m => m.Id == tagId));
+                        tagsForEbook.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {

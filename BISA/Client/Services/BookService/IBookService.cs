@@ -1,9 +1,11 @@
-﻿namespace BISA.Client.Services.BookService
+﻿using BISA.Shared.DTO;
+
+namespace BISA.Client.Services.BookService
 {
     public interface IBookService
     {
-        Task<BookViewModel> GetBook(int id);
-        //Task<BookViewModel> UpdateBook(BookUpdateDTO bookToUpdate);
-        //Task<BookViewModel> CreateBook(BookCreateDTO bookToCreate);
+        Task<ServiceResponseViewModel<BookViewModel>> GetBook(int id);
+        Task<ServiceResponseViewModel<string>> UpdateBook(BookViewModel bookToUpdate);
+        Task<ServiceResponseViewModel<string>> CreateBook(BookViewModel bookToCreate);
     }
 }

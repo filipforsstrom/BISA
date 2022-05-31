@@ -1,4 +1,5 @@
 ﻿@page "/usersmanagement"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @using BISA.Client.Shared.UserManagement_Components
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService

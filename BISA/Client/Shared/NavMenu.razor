@@ -1,17 +1,23 @@
 ﻿<MudNavMenu>
-    <MudNavLink Href="/checkout" Match="NavLinkMatch.Prefix">Checkout</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="/checkout" Match="NavLinkMatch.Prefix">Checkout</MudNavLink>
+            <MudNavGroup Title="Managment" Expanded="true">
+                <MudNavLink Href="/eventsmanagement" Match="NavLinkMatch.Prefix">Events - Calender</MudNavLink>
+                <MudNavLink Href="/eventcreate" Match="NavLinkMatch.Prefix">Events - Create</MudNavLink>
+                <MudNavLink Href="/itemsmanagement" Match="NavLinkMatch.Prefix">Items</MudNavLink>
+                <MudNavLink Href="/loansmanagement" Match="NavLinkMatch.Prefix">Return loans</MudNavLink>
+                <MudNavLink Href="/usersmanagement" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
+            <MudNavLink Href="/statistics" Match="NavLinkMatch.Prefix">Statistics</MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
+            <MudNavLink Href="/register" Match="NavLinkMatch.Prefix">Register</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
     <MudNavLink Href="/events" Match="NavLinkMatch.Prefix">Events</MudNavLink>
-    <MudNavLink Href="/items" Match="NavLinkMatch.Prefix">Items</MudNavLink>
-    <MudNavLink Href="/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
-    <MudNavGroup Title="Managment" Expanded="true">
-        <MudNavLink Href="/eventsmanagement" Match="NavLinkMatch.Prefix">Events</MudNavLink>
-        <MudNavLink Href="/itemsmanagement" Match="NavLinkMatch.Prefix">Items</MudNavLink>
-        <MudNavLink Href="/returnloansmanagement" Match="NavLinkMatch.Prefix">Return loans</MudNavLink>
-        <MudNavLink Href="/usersmanagement" Match="NavLinkMatch.Prefix">Users</MudNavLink>
-    </MudNavGroup>
-    <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
-    <MudNavLink Href="/register" Match="NavLinkMatch.Prefix">Register</MudNavLink>
-    <MudNavLink Href="/reservations" Match="NavLinkMatch.Prefix">Reservations</MudNavLink>
     <MudNavLink Href="/search" Match="NavLinkMatch.Prefix">Search</MudNavLink>
-    <MudNavLink Href="/statistics" Match="NavLinkMatch.Prefix">Statistics</MudNavLink>
+    <MudNavLink Href="/reservations" Match="NavLinkMatch.Prefix">Reservations</MudNavLink>
 </MudNavMenu>
