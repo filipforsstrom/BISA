@@ -95,7 +95,7 @@ namespace BISA.Server.Services.ReservationService
             if (userInDb == null)
             {
                 response.Success = false;
-                response.Message = "You do not have any loans";
+                response.Message = "User not in database";
                 return response;
             }
 
@@ -104,7 +104,7 @@ namespace BISA.Server.Services.ReservationService
                 .Where(lr => lr.UserId == userInDb.Id)
                 .ToListAsync();
 
-            if (reservations != null)
+            if (reservations.Any())
             {
                 response.Data = reservations;
                 response.Success = true;
@@ -112,7 +112,7 @@ namespace BISA.Server.Services.ReservationService
             }
 
             response.Success = false;
-            response.Message = "Request failed";
+            response.Message = "You do not have any items reserved";
             return response;
         }
 

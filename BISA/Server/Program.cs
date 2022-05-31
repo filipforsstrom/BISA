@@ -119,24 +119,23 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-//// Deletes, creates and updates database anew with the seeded data
+////// Deletes, creates and updates database anew with the seeded data
 using (var scope = app.Services.CreateScope())
 {
     using (var context = scope.ServiceProvider.GetService<BisaDbContext>())
     {
         context.Database.EnsureDeleted();
-        //context.Database.Migrate();
-        context.Database.EnsureCreated();
+        context.Database.Migrate();
+        
     }
     using (var context = scope.ServiceProvider.GetService<UserDbContext>())
     {
         context.Database.EnsureDeleted();
-        //context.Database.Migrate();
-        context.Database.EnsureCreated();
+        context.Database.Migrate();
     }
 }
 
-// Seed database with LIBRIS
+////Seed database with LIBRIS
 using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;

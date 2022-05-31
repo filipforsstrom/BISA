@@ -23,6 +23,14 @@ namespace BISA.Server.Data.DbContexts
                         Description = "Musikevenemang",
                         Image = "musik.img",
                         Type = "Konsert"
+                    },
+                    new EventTypeEntity
+                    {
+                        Id = 3,
+                        Capacity = 500,
+                        Description = "Insamlimg",
+                        Image = "insamling.img",
+                        Type = "Välgörenhet"
                     }
                 );
 
@@ -32,22 +40,32 @@ namespace BISA.Server.Data.DbContexts
                     new EventEntity
                     {
                         Id = 1,
-                        Date = DateTime.Now,
+                        Date = new DateTime(2022, 08, 10),
                         Location = "Malmö",
-                        Organizer = "Kalle-Staffan",
-                        Subject = "Djur",
+                        Organizer = "Läsklubben",
+                        Subject = "Exotiska djur och växter",
                         EventTypeId = 1,
-                        Description = "Kalle-Staffan läser från sin bok 'Dom vilda djuren'."
+                        Description = "Staffan läser från sin bok 'Den vilda naturen'."
                     },
                     new EventEntity
                     {
                         Id = 2,
-                        Date = DateTime.Now,
+                        Date = new DateTime(2022, 07, 14),
                         Location = "Tranås",
                         Organizer = "Fora",
-                        Subject = "Yttrandefrihet",
+                        Subject = "Klassisk musik",
                         EventTypeId = 2,
-                        Description = "Fora besöker vårt bibliotek för att diskutera yttrandefrihet."
+                        Description = "Fora besöker vårt bibliotek för en Österrikisk musikresa bakåt i tiden"
+                    },
+                    new EventEntity
+                    {
+                        Id = 3,
+                        Date = new DateTime(2022, 10, 22),
+                        Location = "Folkets Park Malmö",
+                        Organizer = "Röda Korset",
+                        Subject = "Kriget i Yemen",
+                        EventTypeId = 3,
+                        Description = "Malmös musik community samlar in pengar till förmån för utsatta människor i Yemen"
                     }
                 );
         }
