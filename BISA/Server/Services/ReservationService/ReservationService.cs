@@ -44,7 +44,7 @@ namespace BISA.Server.Services.ReservationService
                     {
                         UserId = userInDb.Id,
                         Date_From = time,
-                        Date_To = time.AddDays(20),
+                        Date_To = time.AddDays(GetItemLoanTime(item.Type)),
                         ItemId = item.Id
                     };
 
@@ -74,7 +74,7 @@ namespace BISA.Server.Services.ReservationService
                 .Where(lr => lr.ItemId == itemId)
                 .ToListAsync();
 
-            if (reservations != null)
+            if (reservations.Any())
             {
                 response.Data = reservations;
                 response.Success = true;
@@ -99,14 +99,13 @@ namespace BISA.Server.Services.ReservationService
                 return response;
             }
 
-            var reservations = await _context.LoansReservation
+            var reservations = _context.LoansReservation
                 .Include(lrItem => lrItem.Item)
-                .Where(lr => lr.UserId == userInDb.Id)
-                .ToListAsync();
+                .Where(lr => lr.UserId == userInDb.Id);
 
             if (reservations.Any())
             {
-                response.Data = reservations;
+                response.Data = await reservations.ToListAsync();
                 response.Success = true;
                 return response;
             }
@@ -156,9 +155,8 @@ namespace BISA.Server.Services.ReservationService
             return response;
         }
 
-        private DateTime CheckTimeAvailable(int id)
+        public DateTime CheckTimeAvailable(int id)
         {
-            // Check earlier reservations
             var loans = _context.LoansActive
                 .Where(l => l.ItemInventory.ItemId == id)
                 .OrderBy(l => l.Date_To)
@@ -181,15 +179,19 @@ namespace BISA.Server.Services.ReservationService
 
                 var earliestReservationItem = reservations[newReservationIndex - numberOfInventory];
                 return earliestReservationItem.Date_To.AddDays(1);
-                // Calculate estimated time of earliest available invItem
-                // return time
-                //return DateTime.Now;
             }
             else
             {
                 return loans[0].Date_To.AddDays(1);
             }
         }
+
+        public double GetItemLoanTime(string itemType) => itemType switch
+        {
+            "Ebook" => BusinessRulesDTO.EbookLoanTime,
+            "Movie" => BusinessRulesDTO.MovieLoanTime,
+            _ => BusinessRulesDTO.BookLoanTime
+        };
 
     }
 }
