@@ -10,7 +10,7 @@ namespace BISA.Shared.Entities
     [Table("LoanHistory")]
     public class LoanHistoryEntity : LoanSuperEntity
     {
-        public DateTime Date_Returned { get; set; }
+        //public DateTime Date_Returned { get; set; } TA BORT?
         [ForeignKey(nameof(ItemInventory))]
         public int ItemInventoryId { get; set; }
         public ItemInventoryEntity? ItemInventory { get; set; }

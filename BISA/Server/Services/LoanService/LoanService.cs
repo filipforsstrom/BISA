@@ -124,14 +124,20 @@ namespace BISA.Server.Services.LoanService
                     .Where(l => l.UserId == userInDb.Id)
                     .ToListAsync();
 
-                
+                if (userLoans.Any())
+                {
+                    response.Data = ConvertToDTO(userLoans);
+                    response.Success = true;
+                    return response;
+                }
 
-                response.Data = ConvertToDTO(userLoans);
-                response.Success = true;
+                response.Success= false;
+                response.Message = "You do not have any loans";
                 return response;
+                
             }
             response.Success = false;
-            response.Message = "You do not have any loans";
+            response.Message = "Error calling the database";
             return response;
         }
 

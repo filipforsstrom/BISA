@@ -20,7 +20,7 @@
 }
 else if(!userLoans.Any())
 {
-    <MudText Align="Align.Center" Typo="Typo.body1">@messageToUser</MudText>
+    <MudText Align="Align.Center" Typo="Typo.body1" Color="Color.Error">@messageToUser</MudText>
 }
 
     
@@ -37,6 +37,7 @@ else if(!userLoans.Any())
         if (getUserLoanResult.Success)
         {
             userLoans = getUserLoanResult.Data;
+            messageToUser = getUserLoanResult.Message;
         }
         else
         {
