@@ -412,56 +412,56 @@ namespace BISA.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2710),
-                            Date_To = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2750),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(229),
+                            Date_To = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(264),
                             ItemInventoryId = 1,
                             UserId = 2
                         },
                         new
                         {
                             Id = 2,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2755),
-                            Date_To = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2757),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(267),
+                            Date_To = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(268),
                             ItemInventoryId = 2,
                             UserId = 5
                         },
                         new
                         {
                             Id = 3,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2760),
-                            Date_To = new DateTime(2022, 6, 7, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2762),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(270),
+                            Date_To = new DateTime(2022, 6, 7, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(271),
                             ItemInventoryId = 4,
                             UserId = 3
                         },
                         new
                         {
                             Id = 4,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2765),
-                            Date_To = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2767),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(273),
+                            Date_To = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(274),
                             ItemInventoryId = 6,
                             UserId = 5
                         },
                         new
                         {
                             Id = 5,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2770),
-                            Date_To = new DateTime(2022, 6, 7, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2772),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(276),
+                            Date_To = new DateTime(2022, 6, 7, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(277),
                             ItemInventoryId = 18,
                             UserId = 5
                         },
                         new
                         {
                             Id = 6,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2775),
-                            Date_To = new DateTime(2022, 6, 7, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2777),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(279),
+                            Date_To = new DateTime(2022, 6, 7, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(280),
                             ItemInventoryId = 15,
                             UserId = 5
                         },
                         new
                         {
                             Id = 7,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2780),
-                            Date_To = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2782),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(283),
+                            Date_To = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(284),
                             ItemInventoryId = 14,
                             UserId = 5
                         });
@@ -594,32 +594,32 @@ namespace BISA.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2870),
-                            Date_To = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2873),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(318),
+                            Date_To = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(320),
                             ItemId = 1,
                             UserId = 3
                         },
                         new
                         {
                             Id = 2,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2877),
-                            Date_To = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2879),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(323),
+                            Date_To = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(324),
                             ItemId = 1,
                             UserId = 4
                         },
                         new
                         {
                             Id = 4,
-                            Date_From = new DateTime(2022, 5, 31, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2882),
-                            Date_To = new DateTime(2022, 6, 7, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2884),
+                            Date_From = new DateTime(2022, 5, 31, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(326),
+                            Date_To = new DateTime(2022, 6, 7, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(327),
                             ItemId = 9,
                             UserId = 1
                         },
                         new
                         {
                             Id = 5,
-                            Date_From = new DateTime(2022, 6, 20, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2887),
-                            Date_To = new DateTime(2022, 6, 27, 10, 41, 4, 379, DateTimeKind.Local).AddTicks(2889),
+                            Date_From = new DateTime(2022, 6, 20, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(328),
+                            Date_To = new DateTime(2022, 6, 27, 14, 8, 17, 611, DateTimeKind.Local).AddTicks(330),
                             ItemId = 9,
                             UserId = 3
                         });
@@ -825,7 +825,6 @@ namespace BISA.Server.Migrations
                     b.HasBaseType("BISA.Shared.Entities.ItemEntity");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Ebook");
