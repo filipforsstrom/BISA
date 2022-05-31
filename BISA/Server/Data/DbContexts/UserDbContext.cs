@@ -26,7 +26,7 @@ namespace BISA.Server.Data.DbContexts
             ApplicationUser admin = new()
             {
                 Id = "b74ddd14-6340-4840-95c2-db12554843e5",
-                UserName = "Admin",
+                UserName = "admin",
                 NormalizedUserName = "ADMIN",
                 Email = "admin@gmail.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
@@ -37,7 +37,7 @@ namespace BISA.Server.Data.DbContexts
             ApplicationUser jaff = new()
             {
                 Id = "b74ddd14-6340-4840-95c2-db12554843e6",
-                UserName = "Jaff",
+                UserName = "jaff",
                 NormalizedUserName = "JAFF",
                 Email = "jaff@gmail.com",
                 NormalizedEmail = "JAFF@GMAIL.COM",
@@ -48,7 +48,7 @@ namespace BISA.Server.Data.DbContexts
             ApplicationUser micke = new()
             {
                 Id = "b74ddd14-6340-4840-95c2-db12554843e7",
-                UserName = "Micke",
+                UserName = "micke",
                 NormalizedUserName = "MICKE",
                 Email = "micke@gmail.com",
                 NormalizedEmail = "MICKE@GMAIL.COM",
@@ -67,8 +67,29 @@ namespace BISA.Server.Data.DbContexts
             };
             junne.PasswordHash = passwordHasher.HashPassword(junne, "junne");
 
+            ApplicationUser alexurtti = new()
+            {
+                Id = "5a389f27-9fc1-4505-b779-ccb3020af009",
+                UserName = "alexurtti",
+                NormalizedUserName = "ALEXURTTI",
+                Email = "alex@hotmail.com",
+                NormalizedEmail = "ALEX@HOTMAIL.COM",
+                LockoutEnabled = false,
+            };
+            alexurtti.PasswordHash = passwordHasher.HashPassword(alexurtti, "alexurtti");
 
-            builder.Entity<ApplicationUser>().HasData(admin, jaff, micke, junne);
+            ApplicationUser bosse = new()
+            {
+                Id = "c11686e5-daaa-4d0d-91de-cdcd6c618bbc",
+                UserName = "bosse",
+                NormalizedUserName = "BOSSE",
+                Email = "bosse@hotmail.com",
+                NormalizedEmail = "BOSSE@HOTMAIL.COM",
+                LockoutEnabled = false,
+            };
+            bosse.PasswordHash = passwordHasher.HashPassword(bosse, "bosse");
+
+            builder.Entity<ApplicationUser>().HasData(admin, jaff, micke, junne, alexurtti, bosse);
         }
 
         private void SeedRoles(ModelBuilder builder)
@@ -83,8 +104,7 @@ namespace BISA.Server.Data.DbContexts
         {
             builder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>() { RoleId = "AdminId", UserId = "b74ddd14-6340-4840-95c2-db12554843e5" },
-                new IdentityUserRole<string>() { RoleId = "StaffId", UserId = "b74ddd14-6340-4840-95c2-db12554843e6" },
-                new IdentityUserRole<string>() { RoleId = "AdminId", UserId = "b74ddd14-6340-4840-95c2-db12554843e8" }
+                new IdentityUserRole<string>() { RoleId = "StaffId", UserId = "b74ddd14-6340-4840-95c2-db12554843e6" }
                 );
         }
     }
