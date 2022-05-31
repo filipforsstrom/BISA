@@ -1,6 +1,8 @@
 ﻿@page "/iteminventorymanagement/{itemid:int}"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IInventoryService InventoryService
 @inject ISnackbar Snackbar
+
 
 @if (ItemInventory != null)
 {

@@ -1,9 +1,10 @@
 ﻿@page "/itemsmanagement"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IItemService ItemService
 @inject IBookService BookService
 @inject IEbookService EbookService
 @inject IMovieService MovieService
-@inject NavigationManager NavManager
+@inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
 @if (allItems != null)
@@ -86,18 +87,18 @@ else
 
     private void CreateItem()
     {
-        NavManager.NavigateTo("/itemcreateupdate");
+        NavigationManager.NavigateTo("/itemcreateupdate");
     }
 
 
     private void EditItem(int id)
     {
-        NavManager.NavigateTo($"/itemcreateupdate/{id}");
+        NavigationManager.NavigateTo($"/itemcreateupdate/{id}");
     }
 
     private void EditInventory(int id)
     {
-        NavManager.NavigateTo($"/iteminventorymanagement/{id}");
+        NavigationManager.NavigateTo($"/iteminventorymanagement/{id}");
     }
 
     private async Task DeleteItem(int id)
