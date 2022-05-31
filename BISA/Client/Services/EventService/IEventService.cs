@@ -3,11 +3,11 @@ namespace BISA.Client.Services.EventService
 {
     public interface IEventService
     {
-        Task<List<EventViewModel>> GetEvents();
-        Task<List<EventTypeViewModel>> GetEventTypes();
-        Task<EventViewModel> GetEvent(int eventId);
+        Task<ServiceResponseViewModel<List<EventViewModel>>> GetEvents();
+        Task<ServiceResponseViewModel<List<EventTypeViewModel>>> GetEventTypes();
+        Task<ServiceResponseViewModel<EventViewModel>> GetEvent(int eventId);
         Task<ServiceResponseViewModel<EventViewModel>> CreateEvent(EventViewModel eventToCreate);
-        Task<EventViewModel> UpdateEvent(EventViewModel eventToUpdate);
-        Task<string> DeleteEvent(int eventId);
+        Task<ServiceResponseViewModel<EventViewModel>> UpdateEvent(EventViewModel eventToUpdate);
+        Task<ServiceResponseViewModel<string>> DeleteEvent(int eventId);
     }
 }
