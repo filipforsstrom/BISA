@@ -6,8 +6,17 @@
 
 <MudCard>
     <MudCardContent>
-        <MudText>@SingleEvent.Subject</MudText>
-        <MudText Typo="Typo.body2">@SingleEvent.Organizer</MudText>
+        
+        <MudText Typo="Typo.h6">@SingleEvent.Subject</MudText>
+        <MudText>@SingleEvent.Type.Type</MudText>
+        <MudText Typo="Typo.body2">Organized by: @SingleEvent.Organizer</MudText>
+        <br />
+        <MudText>Description: </MudText>
+        <MudText>@SingleEvent.Description</MudText>
+        <br />
+        <MudText>Where: @SingleEvent.Location</MudText>
+        <MudText>When: @SingleEvent.Date</MudText>
+        
     </MudCardContent>
 </MudCard>
 
