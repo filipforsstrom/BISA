@@ -48,22 +48,27 @@ namespace BISA.Client.Services.ReservationsService
                 return serviceResponse;
             }
             serviceResponse.Success = false;
+            serviceResponse.Data = new List<LoanReservationViewModel>();
             serviceResponse.Message = await httpResponse.Content.ReadAsStringAsync();
 
             return serviceResponse;
         }
 
-        public async Task<string> RemoveReservation(int reservationId)
+        public async Task<ServiceResponseViewModel<string>> RemoveReservation(int reservationId)
         {
-
+            ServiceResponseViewModel<string> serviceResponse = new();
             var httpResponse = await _httpClient.DeleteAsync($"api/reservations/{reservationId}");
 
             if (httpResponse.IsSuccessStatusCode)
             {
-                return await httpResponse.Content.ReadAsStringAsync();
+                serviceResponse.Data = await httpResponse.Content.ReadAsStringAsync();
+                serviceResponse.Success = true;
+                return serviceResponse;
             }
 
-            return await httpResponse.Content.ReadAsStringAsync();
+            serviceResponse.Data = await httpResponse.Content.ReadAsStringAsync();
+            serviceResponse.Success = false;
+            return serviceResponse;
         }
     }
 }
