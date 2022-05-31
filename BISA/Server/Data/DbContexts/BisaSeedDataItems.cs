@@ -122,7 +122,9 @@ namespace BISA.Server.Data.DbContexts
                     new ItemInventoryEntity { Id = 15, ItemId = 7, Available = false },
                     new ItemInventoryEntity { Id = 16, ItemId = 8, Available = true },
                     new ItemInventoryEntity { Id = 17, ItemId = 8, Available = true },
-                    new ItemInventoryEntity { Id = 18, ItemId = 9, Available = false }
+                    new ItemInventoryEntity { Id = 18, ItemId = 9, Available = false },
+                    new ItemInventoryEntity { Id = 19, ItemId = 10, Available = true },
+                    new ItemInventoryEntity { Id = 20, ItemId = 10, Available = true }
                 );
         }
         public static void SeedLoans(this ModelBuilder modelBuilder)

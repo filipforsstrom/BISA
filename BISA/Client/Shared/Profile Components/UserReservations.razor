@@ -51,28 +51,27 @@
     {
         var removeReservationResult = await ReservationsService.RemoveReservation(reservationId);
 
-        if(removeReservationResult == "Reservation was canceled")
+        if(removeReservationResult.Success)
         {
-            var getMyReservationResult = await ReservationsService.GetMyReservations();
+            userReservations.RemoveAll(r => r.Id == reservationId);
 
-            if (getMyReservationResult.Success)
+            if (userReservations.Any())
             {
-                userReservations = getMyReservationResult.Data;
+                messageToUser = removeReservationResult.Data;
             }
             else
             {
-                messageToUser = getMyReservationResult.Message;
+                messageToUser = "You do not have any items reserved";
             }
-            messageToUser = removeReservationResult;
-        }
 
-        if (!userReservations.Any())
+            StateHasChanged();
+
+        }
+        else
         {
-            messageToUser = "";
+            messageToUser = removeReservationResult.Data;
         }
-        
 
-        
 
     }
     
