@@ -25,12 +25,13 @@
     {
         if (Id != null)
         {
-            var singleEvent = await EventService.GetEvent(Int32.Parse(Id));
-            if (singleEvent != null ) EventsList.Add(singleEvent);
+            var serviceResponse = await EventService.GetEvent(Int32.Parse(Id));
+            if (serviceResponse.Success) EventsList.Add(serviceResponse.Data);
         }
         else
         {
-            EventsList = await EventService.GetEvents();
+            var serviceResponse = await EventService.GetEvents();
+            if (serviceResponse.Success) EventsList = serviceResponse.Data;
         }
     }
 }
