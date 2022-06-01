@@ -44,10 +44,12 @@ namespace BISA.Client.Services.AuthService
             var httpResponse = await _httpClient.PostAsJsonAsync("api/auth/register", userRegister);
             if (httpResponse.IsSuccessStatusCode)
             {
-               var response = await httpResponse.Content.ReadAsStringAsync();
+                var token = await httpResponse.Content.ReadAsStringAsync();
+                await _localStorage.SetItemAsync("token", token);
+                var authState = await _authStateProvider.GetAuthenticationStateAsync();
+
 
                 responseViewModel.Success = true;
-                responseViewModel.Message = response;
                 return responseViewModel;
             }
 
