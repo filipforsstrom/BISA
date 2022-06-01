@@ -59,7 +59,9 @@ namespace BISA.Server.Services.MovieService
                 Publisher = movieToCreate.Publisher,
                 Creator = movieToCreate.Creator,
                 Tags = tagsForMovie,
-                RuntimeInMinutes = movieToCreate.RuntimeInMinutes
+                RuntimeInMinutes = movieToCreate.RuntimeInMinutes,
+                Description = movieToCreate.Description,
+                Image = movieToCreate.Image,
 
             };
 
@@ -121,7 +123,9 @@ namespace BISA.Server.Services.MovieService
                 Tags = tags,
                 ItemInventory = response.ItemInventory.Count(),
                 Inventory = ItemInventory,
-                RuntimeInMinutes = response.RuntimeInMinutes
+                RuntimeInMinutes = response.RuntimeInMinutes,
+                Description = response.Description,
+                Image = response.Image,
             };
             return responseDTO;
 
@@ -175,6 +179,8 @@ namespace BISA.Server.Services.MovieService
             movieToUpdate.Creator = updatedMovie.Creator;
             movieToUpdate.Date = updatedMovie.Date;
             movieToUpdate.Publisher = updatedMovie.Publisher;
+            movieToUpdate.Description = updatedMovie.Description;
+            movieToUpdate.Image = updatedMovie.Image;
 
             _context.Entry(movieToUpdate).State = EntityState.Modified;
             await _context.SaveChangesAsync();

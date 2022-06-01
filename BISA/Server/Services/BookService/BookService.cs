@@ -64,6 +64,8 @@ namespace BISA.Server.Services.BookService
                 ISBN = bookToCreate.ISBN,
                 Publisher = bookToCreate.Publisher,
                 Tags = tagsForBookToBeCreated,
+                Description = bookToCreate.Description,
+                Image = bookToCreate.Image,
             };
 
             //----------------ITEM TO INVENTORY-TABLE LOGIC------------------------//
@@ -129,7 +131,9 @@ namespace BISA.Server.Services.BookService
                 Publisher = book.Publisher,
                 Tags = Tags,
                 ItemInventory = book.ItemInventory.Count(),
-                Inventory = ItemInventory
+                Inventory = ItemInventory,
+                Description = book.Description,
+                Image = book.Image,
             };
 
             responseDTO.Success = true;
@@ -180,6 +184,8 @@ namespace BISA.Server.Services.BookService
             bookEntity.ISBN = bookToUpdate.ISBN;
             bookEntity.Publisher = bookToUpdate.Publisher;
             bookEntity.Tags = tagsForBookToBeUpdated;
+            bookEntity.Image = bookToUpdate.Image;
+            bookEntity.Description = bookToUpdate.Description;
 
 
             //Let ef know that the entity we found's state has been modified and then save changes.
@@ -192,25 +198,5 @@ namespace BISA.Server.Services.BookService
             return responseDTO;
         }
 
-        //public async Task<List<TagEntity>> GetTags(List<TagDTO> tagsDtos)
-        //{
-        //    List<TagEntity> tagsToBook = new List<TagEntity>();
-
-        //    var Tags = await _context.Tags.ToListAsync();
-
-        //    foreach (var tagId in tagsDtos)
-        //    {
-        //        foreach (var tag in Tags)
-        //        {
-        //            if (tag.Id == tagId.Id)
-        //            {
-        //                tagsToBook.Add(tag);
-        //            }
-        //        }
-        //    }
-
-
-        //    return tagsToBook;
-        //}
     }
 }

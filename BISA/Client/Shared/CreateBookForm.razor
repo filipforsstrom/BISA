@@ -1,14 +1,20 @@
 ﻿                <MudTextField Label="Title" 
-                              @bind-Value="book.Title" For="@(() => book.Title)" Required=true/>
+                              @bind-Value="book.Title" HelperText="Enter title" For="@(() => book.Title)" Required=true/>
+
                 <MudTextField Label="Language" Class="mt-3"
-                              @bind-Value="book.Language" For="@(() => book.Language)"/>
+                              @bind-Value="book.Language" HelperText="Enter language" For="@(() => book.Language)"/>
+
                 <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"
                               @bind-Value="book.Date" For="@(() => book.Date)" InputType="InputType.Date"/>
-                <MudTextField Label="Publisher" HelperText="Publisher" Class="mt-3"
+
+                <MudTextField Label="Publisher" HelperText="Enter publisher" Class="mt-3"
                               @bind-Value="book.Publisher" For="@(() => book.Publisher)" InputType="InputType.Text"/>
-                              <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
+
+                              <MudTextField Label="Creator" HelperText="Enter creator" Class="mt-3"
                               @bind-Value="book.Creator" For="@(() => book.Creator)" InputType="InputType.Text"/>
-                              <MudTextField Label="ISBN" HelperText="ISBN" Class="mt-3"
+
+                <MudTextField @bind-Value="book.Description" HelperText="Enter description" Label="Description" InputType="InputType.Text" Class="mt-5" />
+                              <MudTextField Label="ISBN" HelperText="Enter ISBN" Class="mt-3"
                               @bind-Value="book.ISBN" For="@(() => book.ISBN)" Required=true InputType=InputType.Number/>
 
 @code {

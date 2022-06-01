@@ -1,14 +1,21 @@
 ﻿            <MudTextField Label="Title" 
-                              @bind-Value="movie.Title" For="@(() => movie.Title)" Required=true />
+                              @bind-Value="movie.Title" HelperText="Enter title" For="@(() => movie.Title)" Required=true />
+
                 <MudTextField Label="Language" Class="mt-3"
-                              @bind-Value="movie.Language" For="@(() => movie.Language)"/>
+                              @bind-Value="movie.Language" HelperText="Enter language" For="@(() => movie.Language)"/>
+
                 <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"
                               @bind-Value="movie.Date" For="@(() => movie.Date)" InputType="InputType.Date"/>
-                <MudTextField Label="Publisher" HelperText="Publisher" Class="mt-3"
+
+                <MudTextField Label="Publisher" HelperText="Enter publisher" Class="mt-3"
                               @bind-Value="movie.Publisher" For="@(() => movie.Publisher)" InputType="InputType.Text"/>
-                              <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
+
+                <MudTextField Label="Creator" HelperText="Enter creator" Class="mt-3"
                               @bind-Value="movie.Creator" For="@(() => movie.Creator)" InputType="InputType.Text"/>
-                              <MudTextField Label="RunTime" HelperText="RunTime" Class="mt-3"
+
+                <MudTextField @bind-Value="movie.Description" HelperText="Enter description" Label="Description" InputType="InputType.Text" Class="mt-5" />
+
+                <MudTextField Label="RunTime" HelperText="Enter run time" Class="mt-3"
                               @bind-Value="movie.RuntimeInMinutes" For="@(() => movie.RuntimeInMinutes)" InputType="InputType.Number"/>
 @code {
     [Parameter]

@@ -1,14 +1,21 @@
 ﻿                <MudTextField Label="Title" 
-                              @bind-Value="ebook.Title" For="@(() => ebook.Title)" Required=true/>
+                              @bind-Value="ebook.Title" HelperText="Enter title" For="@(() => ebook.Title)" Required=true/>
+
                 <MudTextField Label="Language" Class="mt-3"
-                              @bind-Value="ebook.Language" For="@(() => ebook.Language)"/>
+                              @bind-Value="ebook.Language" HelperText="Enter language" For="@(() => ebook.Language)"/>
+
                 <MudTextField Label="Date" HelperText="Choose a date" Class="mt-3"
                               @bind-Value="ebook.Date" For="@(() => ebook.Date)" InputType="InputType.Date"/>
-                <MudTextField Label="Publisher" HelperText="Publisher" Class="mt-3"
+
+                <MudTextField Label="Publisher" HelperText="Enter publisher" Class="mt-3"
                               @bind-Value="ebook.Publisher" For="@(() => ebook.Publisher)" InputType="InputType.Text"/>
-                              <MudTextField Label="Creator" HelperText="Creator" Class="mt-3"
+
+                              <MudTextField Label="Creator" HelperText="Enter creator" Class="mt-3"
                               @bind-Value="ebook.Creator" For="@(() => ebook.Creator)" InputType="InputType.Text"/>
-                              <MudTextField Label="Url" HelperText="Url" Class="mt-3"
+
+                 <MudTextField @bind-Value="ebook.Description" HelperText="Enter description" Label="Description" InputType="InputType.Text" Class="mt-5" />
+
+                              <MudTextField Label="Url" HelperText="Enter url" Class="mt-3"
                               @bind-Value="ebook.Url" For="@(() => ebook.Url)" InputType="InputType.Url"/>
 
 @code {

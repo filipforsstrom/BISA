@@ -43,7 +43,7 @@
                 <CreateEbookForm ebook=ebook></CreateEbookForm>
             }
 
-        <MudSelect T="TagViewModel" ToStringFunc="@(t=> t == null ? null : $"{t.Tag}")" Label="Tags" Required="true" MultiSelection="true" @bind-SelectedValues="@tagsForItem">
+        <MudSelect T="TagViewModel" ToStringFunc="@(t=> t == null ? null : $"{t.Tag}")" HelperText="Choose tags" Label="Tags" Required="true" MultiSelection="true" @bind-SelectedValues="@tagsForItem">
             @foreach (var tag in tags)
             {
                 <MudSelectItem T="TagViewModel" Value="@tag">@tag.Tag</MudSelectItem>

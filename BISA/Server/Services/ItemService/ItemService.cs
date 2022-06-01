@@ -130,6 +130,8 @@ namespace BISA.Server.Services.ItemService
                         Language = item.Language,
                         Publisher = item.Publisher,
                         Type = item.Type,
+                        Description = item.Description,
+                        Image = item.Image,
                         Tags = ConvertTagToTagDTO(item.Tags)
                     });
             }

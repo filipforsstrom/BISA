@@ -14,9 +14,10 @@ namespace BISA.Shared.DTO
         public string? Language { get; set; }
         public string? Date { get; set; }
         public string? Publisher { get; set; }
+        public string? Description { get; set; }
+        public string? Image { get; set; }
         public string? Creator { get; set; }
         public List<TagViewModel>? Tags { get; set; }
-        //public int ItemInventory { get; set; } behövs ej? om vi ändå inte ska uppdatera detta? samma i bookUpdateDTO isf
         public string? Url { get; set; }
     }
 }
