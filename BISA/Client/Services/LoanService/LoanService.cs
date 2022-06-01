@@ -22,8 +22,8 @@ namespace BISA.Client.Services.LoanService
             var httpResponse = await _httpClient.GetAsync("api/loans/user");
             if (httpResponse.IsSuccessStatusCode)
             {
-                responseViewModel.Data = await httpResponse.Content.ReadFromJsonAsync<List<LoanViewModel>>();
                 responseViewModel.Success = true;
+                responseViewModel.Data = await httpResponse.Content.ReadFromJsonAsync<List<LoanViewModel>>();
 
                 return responseViewModel;
             }

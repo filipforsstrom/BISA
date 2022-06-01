@@ -30,10 +30,6 @@ namespace BISA.Client.Services.ReservationsService
             return serviceResponse;
         }
 
-        public Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetItemReservations(int itemId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetMyReservations()
         {

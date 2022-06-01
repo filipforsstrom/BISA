@@ -7,7 +7,6 @@ namespace BISA.Client.Services.ReservationsService
     {
         Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetMyReservations();
         Task<ServiceResponseViewModel<string>> RemoveReservation(int reservationId);
-        Task<ServiceResponseViewModel<List<LoanReservationViewModel>>> GetItemReservations(int itemId);
         Task<ServiceResponseViewModel<LoanReservationViewModel>> AddReservation(int itemId);
     }
 }

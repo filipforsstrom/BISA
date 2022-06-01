@@ -58,18 +58,30 @@
             </MudCardContent>
         </MudCard>
     }
-    @if (Available)
-    {
-        <MudButton OnClick="() => AddToLoans(Item)" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
-    }
-    else
-    {
-        <MudButton OnClick="@((e) => Reserve(Item))" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
-    }
-    @if (NoStock)
-    {
-        <MudText>This @Item.Type isn't available</MudText>
-    }
+    <AuthorizeView>
+        <Authorized>
+            @if (Available)
+            {
+                <MudButton OnClick="() => AddToLoans(Item)" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
+            }
+            else
+            {
+                <MudButton OnClick="@((e) => Reserve(Item))" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
+            }
+            @if (NoStock)
+            {
+                <MudText>This @Item.Type isn't available</MudText>
+            }
+        </Authorized>
+
+        <NotAuthorized>
+            <MudText Typo="Typo.body2">
+                Please
+                <MudLink href="@("login")" Typo="Typo.body2">login</MudLink>
+                if you want to loan this @Item.Type
+            </MudText>
+        </NotAuthorized>
+    </AuthorizeView>
 }
 
 @code {
@@ -153,14 +165,14 @@
 
     private async Task Reserve(ItemViewModel item)
     {
-        var parameters = new DialogParameters { ["Item"]=item };
+        var parameters = new DialogParameters { ["Item"] = item };
 
         var dialog = DialogService.Show<ReserveDialog>("Reserve", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)
         {
-            
+
         }
     }
 
