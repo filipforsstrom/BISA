@@ -157,8 +157,13 @@ namespace BISA.Server.Services.UserRolesService
 
             //Check if user already has role
             var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == user.Id).ToListAsync();
-            
 
+            if (userCurrentRoles.Any(u => u.RoleId == "AdminId"))
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "Protected user. Contact Administrator";
+                return responseDTO;
+            }
             if (userCurrentRoles.Any(u => u.RoleId == "StaffId"))
             {
                 responseDTO.Success = false;
