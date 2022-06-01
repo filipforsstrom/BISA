@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISnackbar Snackbar
 
 <EditForm Model="User" OnValidSubmit="logInUser">
@@ -23,6 +24,17 @@
 
 @code {
     private UserLoginViewModel User { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
 
     private async void logInUser()
     {
