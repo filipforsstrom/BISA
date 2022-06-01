@@ -14,6 +14,7 @@ namespace BISA.Shared.ViewModels
         [Required]
         public string NewPassword { get; set; }
         [Required]
+        [Compare(nameof(NewPassword), ErrorMessage = "New password doesn't match")]
         public string ValidatedPassword { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace BISA.Shared.ViewModels
         [Required(ErrorMessage = "Please select a password ")]
         public string? Password { get; set; }
         [Required(ErrorMessage = "You need to confirm your password")]
-        [Compare(nameof(Password),ErrorMessage ="Passwords dont match")]
+        [Compare(nameof(Password), ErrorMessage = "Passwords doesn't match")]
         public string? ValidatePassword { get; set; }
 
 
