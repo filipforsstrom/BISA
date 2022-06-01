@@ -1,9 +1,14 @@
 ﻿@page "/register"
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
 
+<AuthorizeView>
+    <Authorized>
 
-
+    </Authorized>
+</AuthorizeView>
 <EditForm Model="RegistratedUser" OnValidSubmit="RegisterUser">
     <DataAnnotationsValidator />
     
@@ -30,18 +35,20 @@
     </MudCard>
     
 </EditForm>
-<MudText Align="Align.Center" Color="Color.Error" Typo="Typo.h6">@messageToUser</MudText>
-
-
-
-
-
 
 @code {
     private UserRegisterViewModel RegistratedUser { get; set; } = new();
-    string? messageToUser;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        if (user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
 
     private async Task RegisterUser()
     {
@@ -53,10 +60,7 @@
         }
         else
         {
-            messageToUser = response.Message;
-            StateHasChanged();
+            Snackbar.Add($"Error: {response.Message}", Severity.Error, config => { config.ShowCloseIcon = false; });
         }
     }
-
-
 }
