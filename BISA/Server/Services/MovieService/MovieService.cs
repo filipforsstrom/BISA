@@ -50,6 +50,12 @@ namespace BISA.Server.Services.MovieService
 
                 }
             }
+
+            if (string.IsNullOrEmpty(movieToCreate.Image))
+            {
+                movieToCreate.Image = "/assets/movie.jpg";
+            }
+
             var movieEntity = new MovieEntity
             {
 
