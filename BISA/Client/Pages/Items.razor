@@ -15,60 +15,95 @@
 {
     @if (Item.Type == "Book")
     {
-        <MudCard>
-            <MudCardContent>
-                <MudText>@Book.Title</MudText>
-                <MudText Typo="Typo.body2">@Book.Creator</MudText>
-                <MudText Typo="Typo.body2">@Book.ISBN</MudText>
-                <MudText Typo="Typo.body2">@Item.Type</MudText>
-                @foreach (var tag in Book.Tags)
-                {
-                    <MudLink href="@($"search/{tag.Tag}")" Typo="Typo.body2">@tag.Tag</MudLink>
-                }
-            </MudCardContent>
-        </MudCard>
+
+        <MudImage Alt="" Width="300" Height="220" Src="assets/book.jpg"></MudImage>
+        <MudGrid>
+            <MudItem xs=12>
+                <MudCard >
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6"><u>Title</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.Title</MudText>
+                    <MudText Typo="Typo.h6"><u>Description</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.Description</MudText>
+                    <MudText Typo="Typo.h6"><u>Author</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.Creator</MudText>
+                    <MudText Typo="Typo.h6"><u>ISBN</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.ISBN</MudText>
+                    <MudText Typo="Typo.h6"><u>Media type</u></MudText>
+                    <MudText Typo="Typo.body2">@Item.Type</MudText>
+                    <MudText Typo="Typo.h6"><u>Tags</u></MudText>
+                        @foreach (var tag in Book.Tags)
+                        {
+                            <MudLink Class="ml-2" href="@($"search/{tag.Tag}")" Typo="Typo.caption">@tag.Tag</MudLink>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+
+            </MudGrid>
+            
+        
     }
     else if (Item.Type == "Ebook")
     {
+        <MudImage Alt="Ebook img" Width="332" Height="250" Src="assets/ebook.jpg"></MudImage>
+
         <MudCard>
             <MudCardContent>
-                <MudText>@Ebook.Title</MudText>
+                <MudText Typo="Typo.h6"><u>Title</u></MudText>
+                <MudText Typo="Typo.body2">@Ebook.Title</MudText>
+                <MudText Typo="Typo.h6"><u>Description</u></MudText>
+                <MudText Typo="Typo.body2">@Ebook.Description</MudText>
+                <MudText Typo="Typo.h6"><u>Author</u></MudText>
                 <MudText Typo="Typo.body2">@Ebook.Creator</MudText>
+                <MudText Typo="Typo.h6"><u>URL</u></MudText>
                 <MudText Typo="Typo.body2">@Ebook.Url</MudText>
+                <MudText Typo="Typo.h6"><u>Media type</u></MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+                <MudText Typo="Typo.h6"><u>Tags</u></MudText>
                 @foreach (var tag in Ebook.Tags)
                 {
-                    <MudLink href="@($"search/{tag.Tag}")" Typo="Typo.body2">@tag.Tag</MudLink>
+                    <MudLink Class="ml-2" href="@($"search/{tag.Tag}")" Typo="Typo.caption">@tag.Tag</MudLink>
                 }
             </MudCardContent>
         </MudCard>
     }
     else if (Item.Type == "Movie")
     {
+        <MudImage Alt="" Width="332" Height="250" Src="assets/movie.jpg"></MudImage>
+
         <MudCard>
             <MudCardContent>
-                <MudText>@Movie.Title</MudText>
+                <MudText Typo="Typo.h6"><u>Title</u></MudText>
+                <MudText Typo="Typo.body2">@Movie.Title</MudText>
+                <MudText Typo="Typo.h6"><u>Description</u></MudText>
+                <MudText Typo="Typo.body2">@Movie.Description</MudText>
+                <MudText Typo="Typo.h6"><u>Author</u></MudText>
                 <MudText Typo="Typo.body2">@Movie.Creator</MudText>
-                <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes</MudText>
+                <MudText Typo="Typo.h6"><u>Runtime</u></MudText>
+                <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes min</MudText>
+                <MudText Typo="Typo.h6"><u>Media type</u></MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+                <MudText Typo="Typo.h6"><u>Tags</u></MudText>
                 @foreach (var tag in Movie.Tags)
                 {
-                    <MudLink href="@($"search/{tag.Tag}")" Typo="Typo.body2">@tag.Tag</MudLink>
+                    <MudLink Class="ml-2" href="@($"search/{tag.Tag}")" Typo="Typo.caption">@tag.Tag</MudLink>
                 }
             </MudCardContent>
         </MudCard>
     }
     @if (Available)
     {
-        <MudButton OnClick="() => AddToLoans(Item)" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
+        <MudButton Class="mt-3" OnClick="() => AddToLoans(Item)" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Loan</MudButton>
     }
     else
     {
-        <MudButton OnClick="@((e) => Reserve(Item))" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
+        <MudButton Class="mt-3" OnClick="@((e) => Reserve(Item))" Disabled="@NoStock" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Reserve</MudButton>
     }
     @if (NoStock)
     {
-        <MudText>This @Item.Type isn't available</MudText>
+        <MudText Class="mt-3">This @Item.Type isn't available</MudText>
     }
 }
 
