@@ -18,7 +18,7 @@
         <MudCard>
             <MudCardContent>
                 <MudText>@Book.Title</MudText>
-                <MudText Typo="Typo.body2">@Book.Creator</MudText>
+                <MudLink href="@($"search/{Book.Creator}")" Typo="Typo.body2">@Book.Creator</MudLink>
                 <MudText Typo="Typo.body2">@Book.ISBN</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
                 @foreach (var tag in Book.Tags)
@@ -33,7 +33,7 @@
         <MudCard>
             <MudCardContent>
                 <MudText>@Ebook.Title</MudText>
-                <MudText Typo="Typo.body2">@Ebook.Creator</MudText>
+                <MudLink href="@($"search/{Ebook.Creator}")" Typo="Typo.body2">@Ebook.Creator</MudLink>
                 <MudText Typo="Typo.body2">@Ebook.Url</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
                 @foreach (var tag in Ebook.Tags)
@@ -48,7 +48,7 @@
         <MudCard>
             <MudCardContent>
                 <MudText>@Movie.Title</MudText>
-                <MudText Typo="Typo.body2">@Movie.Creator</MudText>
+                <MudLink href="@($"search/{Movie.Creator}")" Typo="Typo.body2">@Movie.Creator</MudLink>
                 <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes</MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
                 @foreach (var tag in Movie.Tags)
