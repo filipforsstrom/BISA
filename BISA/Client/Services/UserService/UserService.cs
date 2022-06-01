@@ -8,16 +8,20 @@
         {
             _httpClient = httpClient;
         }
-        public async Task<string> ChangePassword(UserChangePasswordViewModel userChangePassword)
+        public async Task<ServiceResponseViewModel<string>> ChangePassword(UserChangePasswordViewModel userChangePassword)
         {
+            ServiceResponseViewModel<string> serviceResponse = new();
             var httpResponse = await _httpClient.PostAsJsonAsync("api/user/changePassword", userChangePassword);
-            if(httpResponse != null)
+            if (httpResponse.IsSuccessStatusCode)
             {
-                var userMessage = await httpResponse.Content.ReadAsStringAsync();
-                return userMessage;
+                serviceResponse.Success = true;
+                serviceResponse.Message = await httpResponse.Content.ReadAsStringAsync();
+                return serviceResponse;
             }
 
-            return await httpResponse.Content.ReadAsStringAsync();
+            serviceResponse.Success = false;
+            serviceResponse.Message = await httpResponse.Content.ReadAsStringAsync();
+            return serviceResponse;
         }
 
         public async Task<ServiceResponseViewModel<string>> DeleteUser(string id)
@@ -28,7 +32,7 @@
             if (httpResponse.IsSuccessStatusCode)
             {
                 response.Success = true;
-                response.Message = "User deleted"; 
+                response.Message = "User deleted";
             }
             else
             {
