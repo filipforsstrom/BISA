@@ -5,7 +5,6 @@
 @inject IDialogService DialogService
 @inject IUserRoleService UserRoleService
 @inject IUserService UserService
-@attribute [Authorize(Roles = "Admin, Staff")]
 
 <MudGrid>
     <MudItem xs="6" Class="mt-4">
@@ -22,9 +21,11 @@
         <UserForm Title="Get User" OnButtonClick="GetUser" ButtonText="Search" SearchParameter="Username"/>
         <ShowUserContainer User="SearchResult" />
     </MudItem>
-    <MudItem xs="6">
-        <UserForm Title="Delete User" OnButtonClick="RemoveUser" ButtonText="Delete" SearchParameter="User Id"/>
-    </MudItem>
+    <AuthorizeView Roles="Admin">
+        <MudItem xs="6">
+            <UserForm Title="Delete User" OnButtonClick="RemoveUser" ButtonText="Delete" SearchParameter="User Id"/>
+        </MudItem>
+    </AuthorizeView>
 </MudGrid>
 
 @code {
@@ -40,6 +41,7 @@
                 if (apiCall.Success)
                 {
                     CreateMessage("User deleted.");
+                    StateHasChanged();
                 }
                 else
                 {

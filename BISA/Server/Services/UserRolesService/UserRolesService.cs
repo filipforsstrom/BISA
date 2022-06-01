@@ -6,16 +6,28 @@ namespace BISA.Server.Services.UserRolesService
     {
         private readonly UserDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserRolesService(UserDbContext context, UserManager<ApplicationUser> userManager)
+        public UserRolesService(UserDbContext context, UserManager<ApplicationUser> userManager, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public async Task<ServiceResponseDTO<string>> DemoteAdmin(string id)
         {
             ServiceResponseDTO<string> responseDTO = new();
+            var userFromContextId = _httpContextAccessor.HttpContext?
+                .User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.Equals(userFromContextId, id))
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "You can't demote yourself";
+                return responseDTO;
+            }
             var roleToRemove = "Admin";
 
             //Find user to demote
@@ -39,6 +51,7 @@ namespace BISA.Server.Services.UserRolesService
             }
 
             await RemoveRoles(userToDemote);
+            await PromoteToStaff(new UserRoleDTO { Id = id });
             responseDTO.Success = true;
             responseDTO.Message = $"{userToDemote.UserName} demoted from {roleToRemove}.";
             return responseDTO;
@@ -48,6 +61,16 @@ namespace BISA.Server.Services.UserRolesService
         public async Task<ServiceResponseDTO<string>> DemoteStaff(string id)
         {
             ServiceResponseDTO<string> responseDTO = new();
+
+            var userFromContextId = _httpContextAccessor.HttpContext?
+                .User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.Equals(userFromContextId, id))
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "You can't demote yourself";
+                return responseDTO;
+            }
             var roleToRemove = "Staff";
 
             //Find user to demote
