@@ -11,7 +11,7 @@ namespace BISA.Server.Services.ReservationService
         public ReservationService(BisaDbContext context, IHttpContextAccessor httpContext)
         {
             _context = context;
-            _httpContext = httpContext;
+            _httpContext = httpContext ?? throw new ArgumentNullException(nameof(httpContext));
         }
 
         public async Task<ServiceResponseDTO<LoanReservationEntity>> AddReservation(int itemId)
@@ -141,7 +141,7 @@ namespace BISA.Server.Services.ReservationService
                     await _context.SaveChangesAsync();
 
                     response.Success = true;
-                    response.Message = $"Reservation was canceled";
+                    response.Message = "Reservation was canceled";
                     return response;
                 }
 

@@ -41,8 +41,8 @@ namespace BISA.Server.Tests
 
         private void InitDb()
         {
-            var user = new UserEntity { Id = 1000, UserId = "b74ddd14-6340-4840-95c2-db12554843e6", Email = "michael@gmail.com" };
-            var user_two = new UserEntity { Id = 1001, UserId = "f156", Email = "michael@gmail.com" };
+            var user = new UserEntity { Id = 1000, UserId = "b74ddd14-6340-4840-95c2-db12554843e6", Firstname = "michael", Lastname = "kors", Username = "mkor" ,Email = "michael@gmail.com" };
+            var user_two = new UserEntity { Id = 1001, UserId = "f156", Firstname = "michael", Lastname = "kors", Username = "mkor", Email = "michael@gmail.com" };
 
             var item = new ItemEntity { Id = 1001, Title = "Ondskan", Date = "1980", Creator = "Jan Guillou" };
             var invItem = new ItemInventoryEntity { Id = 1001, ItemId = item.Id, Available = false };
@@ -233,7 +233,7 @@ namespace BISA.Server.Tests
                 Date_To = DateTime.Now.AddDays(40)
             });
             _context.SaveChanges();
-            var expectedMessage = $"Reservation was canceled";
+            var expectedMessage = "Reservation was canceled";
             var reservationsAtStart = _context.LoansReservation.ToList();
 
             // Act
@@ -245,6 +245,60 @@ namespace BISA.Server.Tests
             Assert.True(result.Success);            
             Assert.Equal(result.Message, expectedMessage);
             Assert.Equal(reservationsAtEnd.Count, reservationsAtStart.Count - 1);
+        }
+
+        [Fact]
+        public async void RemoveReservation_OnInvalidUser_ReturnsResponseFalseWithMessage()
+        {
+            // Arrange
+            _context.LoansReservation.Add(new LoanReservationEntity
+            {
+                Id = 1,
+                ItemId = 1,
+                UserId = 1001,
+                Date_From = DateTime.Now.AddDays(20),
+                Date_To = DateTime.Now.AddDays(40)
+            });
+            _context.SaveChanges();
+            var expectedMessage = "Invalid user";
+            var reservationsAtStart = _context.LoansReservation.ToList();
+            
+            // Act
+            var result = await _sut.RemoveReservation(1);
+
+            // Assert
+            var reservationsAtEnd = _context.LoansReservation.ToList();
+
+            Assert.False(result.Success);
+            Assert.Equal(expectedMessage, result.Message);
+            Assert.Equal(reservationsAtStart.Count, reservationsAtEnd.Count);
+        }
+
+        [Fact]
+        public async void RemoveReservation_WhenNoMatchingReservationIsFound_ReturnsResponseFalseWithMessage()
+        {
+            // Arrange
+            _context.LoansReservation.Add(new LoanReservationEntity
+            {
+                Id = 1,
+                ItemId = 1,
+                UserId = 1001,
+                Date_From = DateTime.Now.AddDays(20),
+                Date_To = DateTime.Now.AddDays(40)
+            });
+            _context.SaveChanges();
+            var expectedMessage = "No matching reservation found";
+            var reservationsAtStart = _context.LoansReservation.ToList();
+
+            // Act
+            var result = await _sut.RemoveReservation(2);
+
+            // Assert
+            var reservationsAtEnd = _context.LoansReservation.ToList();
+
+            Assert.False(result.Success);
+            Assert.Equal(expectedMessage, result.Message);
+            Assert.Equal(reservationsAtStart.Count, reservationsAtEnd.Count);
         }
 
         [Fact]
