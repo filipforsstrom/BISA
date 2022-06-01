@@ -1,7 +1,7 @@
 ﻿@page "/login"
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
-
+@inject ISnackbar Snackbar
 
 <EditForm Model="User" OnValidSubmit="logInUser">
     <DataAnnotationsValidator />
@@ -20,11 +20,9 @@
     </MudCard>
     
 </EditForm>
-<MudText Align="Align.Center" Color="Color.Error" Typo="Typo.h4">@messageToUser</MudText>
 
 @code {
     private UserLoginViewModel User { get; set; } = new();
-    string? messageToUser;
 
     private async void logInUser()
     {
@@ -36,11 +34,7 @@
         }
         else
         {
-            messageToUser = response.Message;
-            StateHasChanged();
+            Snackbar.Add($"{response.Message}", Severity.Error, config => { config.ShowCloseIcon = false; });
         }
-
     }
-
-
 }
