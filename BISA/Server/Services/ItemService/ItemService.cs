@@ -48,6 +48,8 @@ namespace BISA.Server.Services.ItemService
                 Title = itemFromDb.Title,
                 Type = itemFromDb.Type,
                 Inventory = inventory,
+                Description = itemFromDb.Description,
+                Creator = itemFromDb.Creator,
                 Tags = tags
             };
 

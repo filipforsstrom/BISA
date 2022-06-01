@@ -130,7 +130,8 @@
                 {
                     ItemId = item.Id,
                     Title = item.Title,
-                    Description = "Here's a description"
+                    Author = item.Creator,
+                    Description = item.Description
                 });
                 await LocalStorage.SetItemAsync("checkout", loans);
             }
@@ -141,8 +142,9 @@
             newCheckout.Add(new CheckoutDTO
                 {
                     ItemId = item.Id,
+                    Author = item.Creator,
                     Title = item.Title,
-                    Description = "Here's a description"
+                    Description = item.Description
                 });
             await LocalStorage.SetItemAsync("checkout", newCheckout);
         }

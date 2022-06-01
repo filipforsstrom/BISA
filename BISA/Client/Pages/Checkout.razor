@@ -12,14 +12,14 @@
 {
     <MudTable Items="@Items">
         <HeaderContent>
-            <MudTh>Id</MudTh>
             <MudTh>Title</MudTh>
+            <MudTh>Creator</MudTh>
             <MudTh>Description</MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Title">@context.ItemId</MudTd>
-            <MudTd DataLabel="Type">@context.Title</MudTd>
+            <MudTd DataLabel="Title">@context.Title</MudTd>
+            <MudTd DataLabel="Creator">@context.Author</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
             <MudTd>
                 <MudButton OnClick="() => OnRemoveClick(context.ItemId)" Variant="Variant.Filled" Color="Color.Secondary">Cancel</MudButton>
