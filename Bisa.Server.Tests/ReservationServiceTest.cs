@@ -41,8 +41,8 @@ namespace BISA.Server.Tests
 
         private void InitDb()
         {
-            var user = new UserEntity { Id = 1000, UserId = "b74ddd14-6340-4840-95c2-db12554843e6", Email = "michael@gmail.com", Warnings = 0 };
-            var user_two = new UserEntity { Id = 1001, UserId = "f156", Email = "michael@gmail.com", Warnings = 0 };
+            var user = new UserEntity { Id = 1000, UserId = "b74ddd14-6340-4840-95c2-db12554843e6", Email = "michael@gmail.com" };
+            var user_two = new UserEntity { Id = 1001, UserId = "f156", Email = "michael@gmail.com" };
 
             var item = new ItemEntity { Id = 1001, Title = "Ondskan", Date = "1980", Creator = "Jan Guillou" };
             var invItem = new ItemInventoryEntity { Id = 1001, ItemId = item.Id, Available = false };
