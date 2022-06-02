@@ -1,4 +1,6 @@
-﻿namespace BISA.Client.Services.EbookService
+﻿using static System.Net.HttpStatusCode;
+
+namespace BISA.Client.Services.EbookService
 {
     public class EbookService : IEbookService
     {
@@ -16,14 +18,18 @@
             if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Ebook successfully created";
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else if (response.StatusCode == BadRequest)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
             }
-
+            else if (response.StatusCode == InternalServerError)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
             return serviceResponse;
         }
 
@@ -36,12 +42,11 @@
                 serviceResponse.Data = await response.Content.ReadFromJsonAsync<EbookViewModel>();
                 serviceResponse.Success = true;
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else if (response.StatusCode == BadRequest)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
             }
-
             return serviceResponse;
         }
 
@@ -52,14 +57,18 @@
             if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Ebook successfully updated";
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else if (response.StatusCode == BadRequest)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
             }
-
+            else if (response.StatusCode == InternalServerError)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+            }
             return serviceResponse;
         }
     }

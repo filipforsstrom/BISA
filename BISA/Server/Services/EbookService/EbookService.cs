@@ -11,10 +11,8 @@ namespace BISA.Server.Services.EbookService
         {
             _context = context;
         }
-        public async Task<ServiceResponseDTO<EbookCreateDTO>> CreateEbook(EbookCreateDTO ebookToCreate)
+        public async Task<EbookCreateDTO> CreateEbook(EbookCreateDTO ebookToCreate)
         {
-            ServiceResponseDTO<EbookCreateDTO> responseDTO = new();
-
             var allEbooks = await _context.Ebooks.ToListAsync();
 
             var foundDuplicate = allEbooks
@@ -27,9 +25,7 @@ namespace BISA.Server.Services.EbookService
 
             if (foundDuplicate)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Ebook already exists.";
-                return responseDTO;
+                throw new ArgumentException("This ebook already exists");
             }
 
 
@@ -76,18 +72,11 @@ namespace BISA.Server.Services.EbookService
             _context.Ebooks.Add(ebookEntity);
             await _context.SaveChangesAsync();
 
-            responseDTO.Success = true;
-            responseDTO.Message = "Ebook successfully created";
-            responseDTO.Data = ebookToCreate;
-
-            return responseDTO;
-
+            return ebookToCreate;
         }
 
-        public async Task<ServiceResponseDTO<EbookDTO>> GetEbook(int itemId)
+        public async Task<EbookDTO> GetEbook(int itemId)
         {
-            ServiceResponseDTO<EbookDTO> responseDTO = new();
-
             var ebook = _context.Ebooks
                 .Where(e => e.Id == itemId)
                 .Include(e => e.Tags)
@@ -96,9 +85,7 @@ namespace BISA.Server.Services.EbookService
 
             if (ebook == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Ebook not found";
-                return responseDTO;
+                throw new NotFoundException("There is no ebook with that id");
             }
 
 
@@ -132,25 +119,18 @@ namespace BISA.Server.Services.EbookService
                 Image = ebook.Image,
             };
 
-            responseDTO.Success = true;
-            responseDTO.Data = ebookDTO;
-            return responseDTO;
-
+            return ebookDTO;
         }
 
-        public async Task<ServiceResponseDTO<EbookUpdateDTO>> UpdateEbook(EbookUpdateDTO updatedEbook)
+        public async Task<EbookUpdateDTO> UpdateEbook(EbookUpdateDTO updatedEbook)
         {
-            ServiceResponseDTO<EbookUpdateDTO> responseDTO = new();
-
             var ebookToUpdate = await _context.Ebooks.Where(e => e.Id == updatedEbook.Id)
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync();
 
             if (ebookToUpdate == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Book requested for update not found. ";
-                return responseDTO;
+                throw new ArgumentException("Book requested for update not found");
             }
 
             ebookToUpdate.Tags.Clear();
@@ -183,18 +163,10 @@ namespace BISA.Server.Services.EbookService
             ebookToUpdate.Description = updatedEbook.Description;
             ebookToUpdate.Image = updatedEbook.Image;
 
-
             _context.Entry(ebookToUpdate).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            responseDTO.Success = true;
-            responseDTO.Data = updatedEbook;
-            responseDTO.Message = "Ebook successfully updated";
-
-            return responseDTO;
-
+            return updatedEbook;
         }
-
-
     }
 }

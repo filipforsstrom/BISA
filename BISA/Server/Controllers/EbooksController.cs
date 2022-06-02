@@ -17,33 +17,37 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-
-            var ebookResponse = await _ebookService.GetEbook(id);
-
-            if (ebookResponse.Success)
+            try
             {
-                return Ok(ebookResponse.Data);
+                var ebook = await _ebookService.GetEbook(id);
+                return Ok(ebook);
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(ebookResponse.Message);
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Post([FromBody] EbookCreateDTO ebookToAdd)
+        public async Task<IActionResult> Post([FromBody] EbookCreateDTO ebookToCreate)
         {
-
-            var ebookResponse = await _ebookService.CreateEbook(ebookToAdd);
-
-            if (ebookResponse.Success)
+            try
             {
-                return Ok(ebookResponse.Message);
+                var ebookResponse = await _ebookService.CreateEbook(ebookToCreate);
+                return Ok(ebookResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(ebookResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
 
@@ -51,16 +55,19 @@ namespace BISA.Server.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Put(int id, [FromBody] EbookUpdateDTO ebookToUpdate)
         {
-            ebookToUpdate.Id = id;
-            var ebookResponse = await _ebookService.UpdateEbook(ebookToUpdate);
-
-            if (ebookResponse.Success)
+            try
             {
-                return Ok(ebookResponse.Message);
+                ebookToUpdate.Id = id;
+                var ebookResponse = await _ebookService.UpdateEbook(ebookToUpdate);
+                return Ok(ebookResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(ebookResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
     }
