@@ -18,7 +18,7 @@
                 serviceResponse.Success = true;
                 serviceResponse.Message = "Book created successfully";
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
@@ -36,7 +36,7 @@
                 serviceResponse.Data = await response.Content.ReadFromJsonAsync<BookViewModel>();
                 serviceResponse.Success = true;
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
@@ -55,7 +55,7 @@
                 serviceResponse.Success = true;
                 serviceResponse.Message = "Book successfully updated";
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();

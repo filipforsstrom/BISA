@@ -11,10 +11,8 @@ namespace BISA.Server.Services.MovieService
         {
             _context = context;
         }
-        public async Task<ServiceResponseDTO<MovieCreateDTO>> CreateMovie(MovieCreateDTO movieToCreate)
+        public async Task<MovieCreateDTO> CreateMovie(MovieCreateDTO movieToCreate)
         {
-            ServiceResponseDTO<MovieCreateDTO> responseDTO = new();
-
 
             var allMovies = await _context.Movies.ToListAsync();
 
@@ -28,9 +26,7 @@ namespace BISA.Server.Services.MovieService
 
             if (foundDuplicate)
             {
-                responseDTO.Message = "Movie already exists";
-                responseDTO.Success = false;
-                return responseDTO;
+                throw new ArgumentException(" This movie already exists");
             }
 
             List<TagEntity> tagsForMovie = new List<TagEntity>();
@@ -79,15 +75,13 @@ namespace BISA.Server.Services.MovieService
             _context.Movies.Add(movieEntity);
             await _context.SaveChangesAsync();
 
-            responseDTO.Message = "Movie successfully added";
-            responseDTO.Success = true;
-            responseDTO.Data = movieToCreate;
+            return movieToCreate;
 
-            return responseDTO;
+            
 
         }
 
-        public async Task<ServiceResponseDTO<MovieDTO>> GetMovie(int itemId)
+        public async Task<MovieDTO> GetMovie(int itemId)
         {
             var response = await _context.Movies.Where(m => m.Id == itemId)
                 .Include(m => m.Tags)
@@ -98,10 +92,7 @@ namespace BISA.Server.Services.MovieService
 
             if (response == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Movie not found";
-                responseDTO.Data = null;
-                return responseDTO;
+                throw new NotFoundException("Movie not found");
             }
 
             List<TagDTO> tags = new();
@@ -117,8 +108,8 @@ namespace BISA.Server.Services.MovieService
                 { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
             }
 
-            responseDTO.Success = true;
-            responseDTO.Data = new MovieDTO
+
+            var movieDto = new MovieDTO()
             {
                 Id = response.Id,
                 Title = response.Title,
@@ -133,12 +124,27 @@ namespace BISA.Server.Services.MovieService
                 Description = response.Description,
                 Image = response.Image,
             };
-            return responseDTO;
+            return movieDto;
 
         }
 
-        public async Task<ServiceResponseDTO<MovieUpdateDTO>> UpdateMovie(int id, MovieUpdateDTO updatedMovie)
+        public async Task<MovieUpdateDTO> UpdateMovie(int id, MovieUpdateDTO updatedMovie)
         {
+            var allmovies = await _context.Movies.ToListAsync();
+
+            var foundDuplicate = allmovies
+                .Any(b => b.Title?.ToLower() == updatedMovie.Title?.ToLower() &&
+                b.Creator?.ToLower() == updatedMovie.Creator?.ToLower() &&
+                b.Date == updatedMovie.Date &&
+                b.Language?.ToLower() == updatedMovie.Language?.ToLower() &&
+                b.RuntimeInMinutes == updatedMovie.RuntimeInMinutes &&
+                b.Publisher?.ToLower() == updatedMovie.Publisher?.ToLower());
+
+            if (foundDuplicate)
+            {
+                throw new ArgumentException("A movie with these exact properties already exists.");
+            }
+
 
             var movieToUpdate = await _context.Movies
                 .Where(m => m.Id == id)
@@ -149,9 +155,7 @@ namespace BISA.Server.Services.MovieService
 
             if (movieToUpdate == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Movie requested for update not found.";
-                return responseDTO;
+                throw new NotFoundException("Movie requested for update not found.");
             }
 
             if (movieToUpdate.Tags.Any())
@@ -173,7 +177,6 @@ namespace BISA.Server.Services.MovieService
                     {
 
                     }
-
                 }
             }
 
@@ -191,11 +194,7 @@ namespace BISA.Server.Services.MovieService
             _context.Entry(movieToUpdate).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            responseDTO.Success = true;
-            responseDTO.Data = updatedMovie;
-            responseDTO.Message = "Movie successfully updated";
-
-            return responseDTO;
+            return updatedMovie;
 
         }
     }

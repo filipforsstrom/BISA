@@ -14,18 +14,23 @@ namespace BISA.Server.Controllers
         {
             _movieService = movieService;
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var movieResponse = await _movieService.GetMovie(id);
-
-            if (movieResponse.Success)
+            try
             {
-                return Ok(movieResponse.Data);
+                var movieResponse = await _movieService.GetMovie(id);
+                return Ok(movieResponse);
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(movieResponse.Message);
+
+                return NotFound(exception.Message);
+            }
+            catch(Exception exeption)
+            {
+                return BadRequest(exeption.Message);
             }
         }
 
@@ -33,32 +38,47 @@ namespace BISA.Server.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] MovieCreateDTO movieToCreate)
         {
-            var movieResponse = await _movieService.CreateMovie(movieToCreate);
 
-            if (movieResponse.Success)
+            try
             {
-                return Ok(movieResponse.Message);
+                var movieResponse = await _movieService.CreateMovie(movieToCreate);
+                return Ok(movieResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(movieResponse.Message);
+                return BadRequest(exception.Message);
             }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
+
+
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Put(int id, [FromBody] MovieUpdateDTO movieToUpdate)
         {
-            var movieResponse = await _movieService.UpdateMovie(id, movieToUpdate);
 
-            if (movieResponse.Success)
+            try
             {
-                return Ok(movieResponse.Message);
+                var movieResponse = await _movieService.UpdateMovie(id, movieToUpdate);
+                return Ok(movieResponse);
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(movieResponse.Message);
+                return NotFound(exception.Message);
             }
+            catch(ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+
         }
 
     }
