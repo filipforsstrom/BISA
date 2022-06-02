@@ -20,7 +20,7 @@ namespace BISA.Client.Services.MovieService
                 serviceResponse.Data = await response.Content.ReadFromJsonAsync<MovieViewModel>();
                 serviceResponse.Success = true;
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
@@ -36,9 +36,9 @@ namespace BISA.Client.Services.MovieService
             if(response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Movie successfully created";
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else 
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
@@ -55,9 +55,9 @@ namespace BISA.Client.Services.MovieService
             if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Movie successfully updated";
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = await response.Content.ReadAsStringAsync();
