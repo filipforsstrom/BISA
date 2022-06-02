@@ -61,25 +61,41 @@ namespace BISA.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] List<CheckoutDTO> loanItems)
         {
-            var loanResponse = await _loanService.AddLoan(loanItems);
-
-            if (loanResponse.Success)
-            {
-                return Created("/loans", loanResponse.Data);
+            try 
+            { 
+                var loanResponse = await _loanService.AddLoan(loanItems);
+                return Created("/loans", loanResponse);
             }
-            return BadRequest(loanResponse.Message);
+            catch (UserNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (ArgumentOutOfRangeException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch(InvalidOperationException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var loanResponse = await _loanService.ReturnLoan(id);
-
-            if (loanResponse.Success)
+            try
             {
+                var loanResponse = await _loanService.ReturnLoan(id);
                 return NoContent();
             }
-            return BadRequest(loanResponse.Message);
+            catch (NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

@@ -16,7 +16,6 @@ namespace BISA.Server.Services.LoanService
 
         public async Task<List<LoanDTO>> AddLoan(List<CheckoutDTO> items)
         {
-            var response = new ServiceResponseDTO<List<LoanDTO>>();
 
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userInDb = await _context.Users
@@ -68,19 +67,14 @@ namespace BISA.Server.Services.LoanService
                     _context.LoansActive.AddRange(loansToAdd);
                     await _context.SaveChangesAsync();
 
-                    response.Data = ConvertToDTO(loansToAdd);
-                    response.Message = infoMessage;
-                    response.Success = true;
-                    return response;
+                    var addedLoans = ConvertToDTO(loansToAdd);
+                    return addedLoans;
                 }
 
-                response.Success = false;
-                response.Message = infoMessage;
-                return response;
+                throw new InvalidOperationException(infoMessage);
             }
-            response.Success = false;
-            response.Message = $"User only eligible for {BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count} more loans";
-            return response;
+
+            throw new ArgumentOutOfRangeException($"User only eligible for {BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count} more loans");
         }
 
         public async Task<List<LoanDTO>> GetAllLoans()
@@ -132,14 +126,12 @@ namespace BISA.Server.Services.LoanService
 
         public async Task<string> ReturnLoan(int id)
         {
-            var response = new ServiceResponseDTO<string>();
 
             var invItemReturned = await _context.ItemInventory.FirstOrDefaultAsync(i => i.Id == id);
+
             if (invItemReturned == null)
             {
-                response.Success = false;
-                response.Message = "No matching item found";
-                return response;
+                throw new NotFoundException("No matching item found.");
             }
 
             var loanToRemove = await _context.LoansActive
@@ -172,12 +164,10 @@ namespace BISA.Server.Services.LoanService
                     await _context.SaveChangesAsync();
                 }
                 
-                response.Success = true;
-                return response;
+                return "Loan returned";
             }
-            response.Success = false;
-            response.Message = "No matching loan found";
-            return response;
+
+            throw new NotFoundException("No matching loan found");
         }
 
         private double GetItemLoanTime(string itemType) => itemType switch
