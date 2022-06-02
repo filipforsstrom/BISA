@@ -54,6 +54,11 @@ namespace BISA.Server.Services.BookService
                 }
             }
 
+            if(string.IsNullOrEmpty(bookToCreate.Image))
+            {
+                bookToCreate.Image = "/assets/book.jpg";
+            }
+
             //Create book entity for the db.
             var bookEntity = new BookEntity()
             {

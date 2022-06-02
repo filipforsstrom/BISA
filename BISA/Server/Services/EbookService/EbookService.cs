@@ -50,6 +50,11 @@ namespace BISA.Server.Services.EbookService
                 }
             }
 
+            if (string.IsNullOrEmpty(ebookToCreate.Image))
+            {
+                ebookToCreate.Image = "/assets/ebook.jpg";
+            }
+
             var ebookEntity = new EbookEntity
             {
                 Title = ebookToCreate.Title,

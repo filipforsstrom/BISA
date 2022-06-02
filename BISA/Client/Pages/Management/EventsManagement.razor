@@ -3,9 +3,12 @@
 @inject IEventService EventService
 @inject NavigationManager NavigationManager
 
-<h3>EventsManagement</h3>
-
-<MudTable T="EventViewModel" OnRowClick="@RowClicked" Items="@AllEvents.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+<MudTable T="EventViewModel" OnRowClick="@RowClicked" Items="@AllEvents" Hover="true" Filter="new Func<EventViewModel,bool>(FilterSearch)" Class="mb-2">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Events</MudText>
+        <MudSpacer></MudSpacer>
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Date</MudTh>
@@ -16,16 +19,32 @@
         <MudTd DataLabel="Date">@context.Date</MudTd>
         <MudTd DataLabel="Organizer">@context.Organizer</MudTd>
     </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
 </MudTable>
 
 @code {
     private List<EventViewModel> AllEvents { get; set; } = new();
+    private string searchString { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
         var serviceResponse = await EventService.GetEvents();
         if (serviceResponse.Success) AllEvents = serviceResponse.Data;
     }
+
+    private bool FilterSearch(EventViewModel eventToSearch)
+    {
+        bool isNumber = int.TryParse(searchString, out int result);
+        if(eventToSearch.Organizer.ToLower().Contains(searchString.ToLower()) || eventToSearch.Id.Equals(result))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void RowClicked(TableRowClickEventArgs<EventViewModel> e)
     {
         NavigationManager.NavigateTo($"/eventmanagement/{e.Item.Id}");
