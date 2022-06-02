@@ -85,10 +85,8 @@ namespace BISA.Server.Services.LoanService
             return response;
         }
 
-        public async Task<ServiceResponseDTO<List<LoanDTO>>> GetAllLoans()
+        public async Task<List<LoanDTO>> GetAllLoans()
         {
-            var response = new ServiceResponseDTO<List<LoanDTO>>();
-
             var loans = await _context.LoansActive
                 .Include(l => l.User)
                 .Include(l => l.ItemInventory)
@@ -97,13 +95,11 @@ namespace BISA.Server.Services.LoanService
 
             if (loans != null)
             {
-                response.Data = ConvertToDTO(loans);
-                response.Success = true;
-                return response;
+                var userLoans = ConvertToDTO(loans);
+                return userLoans;
             }
-            response.Success = false;
-            response.Message = "Error calling the database";
-            return response;
+
+            throw new NotFoundException("No loans found");
         }
 
         public async Task<ServiceResponseDTO<List<LoanDTO>>> GetMyLoans()

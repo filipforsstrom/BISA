@@ -19,13 +19,20 @@ namespace BISA.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var loanResponse = await _loanService.GetAllLoans();
-
-            if (loanResponse.Success)
+            try
             {
-                return Ok(loanResponse.Data);
+                var loanResponse = await _loanService.GetAllLoans();
+                return Ok(loanResponse);
             }
-            return BadRequest(loanResponse.Message);
+            catch (NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest("Error calling the database");
+            }
+            
         }
 
         [HttpGet("user")]
