@@ -21,16 +21,31 @@
             <MudItem xs=12>
                 <MudCard >
                     <MudCardContent>
+
                         <MudText Typo="Typo.h6"><u>Title</u></MudText>
                     <MudText Typo="Typo.body2">@Book.Title</MudText>
+
                     <MudText Typo="Typo.h6"><u>Description</u></MudText>
                     <MudText Typo="Typo.body2">@Book.Description</MudText>
+
                     <MudText Typo="Typo.h6"><u>Author</u></MudText>
                     <MudLink href="@($"search/{Book.Creator}")" Typo="Typo.body2">@Book.Creator</MudLink>
+
+                    <MudText Typo="Typo.h6"><u>Publisher</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.Publisher</MudText>
+
+                    <MudText Typo="Typo.h6"><u>Date</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.Date</MudText>
+
+                    <MudText Typo="Typo.h6"><u>Language</u></MudText>
+                    <MudText Typo="Typo.body2">@Book.Language</MudText>
+
                     <MudText Typo="Typo.h6"><u>ISBN</u></MudText>
                     <MudText Typo="Typo.body2">@Book.ISBN</MudText>
+
                     <MudText Typo="Typo.h6"><u>Media type</u></MudText>
                     <MudText Typo="Typo.body2">@Item.Type</MudText>
+
                     <MudText Typo="Typo.h6"><u>Tags</u></MudText>
                         @foreach (var tag in Book.Tags)
                         {
@@ -53,14 +68,28 @@
             <MudCardContent>
                 <MudText Typo="Typo.h6"><u>Title</u></MudText>
                 <MudText Typo="Typo.body2">@Ebook.Title</MudText>
+
                 <MudText Typo="Typo.h6"><u>Description</u></MudText>
                 <MudText Typo="Typo.body2">@Ebook.Description</MudText>
+
                 <MudText Typo="Typo.h6"><u>Author</u></MudText>
                 <MudLink href="@($"search/{Ebook.Creator}")" Typo="Typo.body2">@Ebook.Creator</MudLink>
+
+                <MudText Typo="Typo.h6"><u>Publisher</u></MudText>
+                    <MudText Typo="Typo.body2">@Ebook.Publisher</MudText>
+
+                    <MudText Typo="Typo.h6"><u>Date</u></MudText>
+                    <MudText Typo="Typo.body2">@Ebook.Date</MudText>
+
+                    <MudText Typo="Typo.h6"><u>Language</u></MudText>
+                    <MudText Typo="Typo.body2">@Ebook.Language</MudText>
+
                 <MudText Typo="Typo.h6"><u>URL</u></MudText>
                 <MudText Typo="Typo.body2">@Ebook.Url</MudText>
+
                 <MudText Typo="Typo.h6"><u>Media type</u></MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+
                 <MudText Typo="Typo.h6"><u>Tags</u></MudText>
                 @foreach (var tag in Ebook.Tags)
                 {
@@ -77,14 +106,28 @@
             <MudCardContent>
                 <MudText Typo="Typo.h6"><u>Title</u></MudText>
                 <MudText Typo="Typo.body2">@Movie.Title</MudText>
+
                 <MudText Typo="Typo.h6"><u>Description</u></MudText>
                 <MudText Typo="Typo.body2">@Movie.Description</MudText>
+
                 <MudText  Typo="Typo.h6"><u>Director</u></MudText>
                 <MudLink href="@($"search/{Movie.Creator}")" Typo="Typo.body2">@Movie.Creator</MudLink>
+
+                <MudText Typo="Typo.h6"><u>Publisher</u></MudText>
+                    <MudText Typo="Typo.body2">@Movie.Publisher</MudText>
+
+                    <MudText Typo="Typo.h6"><u>Date</u></MudText>
+                    <MudText Typo="Typo.body2">@Movie.Date</MudText>
+
+                    <MudText Typo="Typo.h6"><u>Language</u></MudText>
+                    <MudText Typo="Typo.body2">@Movie.Language</MudText>
+
                 <MudText Typo="Typo.h6"><u>Runtime</u></MudText>
                 <MudText Typo="Typo.body2">@Movie.RuntimeInMinutes min</MudText>
+
                 <MudText Typo="Typo.h6"><u>Media type</u></MudText>
                 <MudText Typo="Typo.body2">@Item.Type</MudText>
+
                 <MudText Typo="Typo.h6"><u>Tags</u></MudText>
                 @foreach (var tag in Movie.Tags)
                 {

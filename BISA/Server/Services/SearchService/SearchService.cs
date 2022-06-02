@@ -16,12 +16,14 @@ namespace BISA.Server.Services.SearchService
         public async Task<ServiceResponseDTO<List<ItemDTO>>> SearchByTags(string tag)
         {
             ServiceResponseDTO<List<ItemDTO>> response = new();
+            List<ItemEntity> itemsWithTags = new List<ItemEntity>();
+
+            var tags = await _context.Tags.ToListAsync();
 
             var items = await _context.Items
+                .Where(i => i.Tags.Any(t => t.Tag.ToLower().Contains(tag.ToLower())))
                 .Include(i => i.Tags)
-                .Include(i => i.ItemInventory)
-                .Where(i => i.Tags.Select(t => t.Tag).Contains(tag))
-                .ToListAsync();
+                .Include(i => i.ItemInventory).ToListAsync();
 
             if (items != null)
             {
