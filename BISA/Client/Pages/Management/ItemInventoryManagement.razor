@@ -9,18 +9,18 @@
 
     <MudTable Items=ItemInventory Dense="true" Class="mb-2">
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Inventory for item Id: @ItemId</MudText>
+            <MudText Typo="Typo.h6">Inventory for @ItemTitle</MudText>
             <MudSpacer></MudSpacer>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>Id</MudTh>
+            <MudTh>Copy nr</MudTh>
             <MudTh>Available</MudTh>
             <MudTh>Delete</MudTh>
         </HeaderContent>
         <RowTemplate>
 
-            <MudTd DataLabel="Id">@context.Id</MudTd>
-            <MudTd DataLabel="Available">@context.Available</MudTd>
+            <MudTd DataLabel="Copy nr">@context.Id</MudTd>
+            <MudTd DataLabel="Available for loan">@(context.Available ? "Yes" : "No")</MudTd>
             <MudTd DataLabel="Delete">
                 <MudIconButton @onclick="(() => DeleteInventoryItem(context.Id))"
                            Icon="@Icons.Material.Filled.Delete"
@@ -53,6 +53,7 @@ else
     private int InventoryToAdd { get; set; }
     private List<ItemInventoryViewModel> ItemInventory { get; set; }
     private ServiceResponseViewModel<string> ServiceResponse = new();
+    private string ItemTitle { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,6 +79,7 @@ else
         if (serviceResponse.Success)
         {
             ItemInventory = serviceResponse.Data;
+            ItemTitle = ItemInventory.Select(i => i.Title).FirstOrDefault();
         }
         else if (!serviceResponse.Success)
         {

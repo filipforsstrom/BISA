@@ -71,7 +71,7 @@ namespace BISA.Server.Services.InventoryService
             ServiceResponseDTO<List<ItemInventoryDTO>> responseDTO = new();
             List<ItemInventoryDTO> itemInventoryDTOs = new List<ItemInventoryDTO>();
 
-            var inventory = await _context.ItemInventory.Where(i => i.ItemId == itemId).ToListAsync();
+            var inventory = await _context.ItemInventory.Where(i => i.ItemId == itemId).Include(i => i.Item).ToListAsync();
 
             if (!inventory.Any())
             {
@@ -82,7 +82,7 @@ namespace BISA.Server.Services.InventoryService
 
             foreach(var inventoryItem in inventory)
             {
-                itemInventoryDTOs.Add(new ItemInventoryDTO { Id = inventoryItem.Id, ItemId = inventoryItem.ItemId, Available = inventoryItem.Available }); 
+                itemInventoryDTOs.Add(new ItemInventoryDTO { Id = inventoryItem.Id, ItemId = inventoryItem.ItemId, Available = inventoryItem.Available, Title = inventoryItem.Item.Title }); 
             }
 
             responseDTO.Success = true;

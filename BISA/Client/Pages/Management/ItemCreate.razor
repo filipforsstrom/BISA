@@ -117,6 +117,7 @@ else { <p>Loading form....</p>}
             {
                 var bookResponse = await BookService.GetBook(itemToUpdate);
                 book = bookResponse.Data;
+                tagsForItem = book.Tags;
             }
 
             EditContext = new EditContext(book);
@@ -128,9 +129,11 @@ else { <p>Loading form....</p>}
             {
                 var ebookResponse = await EbookService.GetEbook(itemToUpdate);
                 ebook = ebookResponse.Data;
+                tagsForItem = ebook.Tags;
             }
 
             EditContext = new EditContext(ebook);
+
         }
 
         if(mediaType == "Movie")
@@ -139,6 +142,7 @@ else { <p>Loading form....</p>}
             {
                 var movieResponse = await MovieService.GetMovie(itemToUpdate);
                 movie = movieResponse.Data;
+                tagsForItem = movie.Tags;
             }
 
             EditContext = new EditContext(movie);
