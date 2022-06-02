@@ -14,7 +14,7 @@ namespace BISA.Server.Services.LoanService
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public async Task<ServiceResponseDTO<List<LoanDTO>>> AddLoan(List<CheckoutDTO> items)
+        public async Task<List<LoanDTO>> AddLoan(List<CheckoutDTO> items)
         {
             var response = new ServiceResponseDTO<List<LoanDTO>>();
 
@@ -24,9 +24,7 @@ namespace BISA.Server.Services.LoanService
 
             if (userInDb == null)
             {
-                response.Success = false;
-                response.Message = "Could not find matching user";
-                return response;
+                throw new UserNotFoundException("User not found.");
             }
 
             var currentUserLoans = await _context.LoansActive
@@ -102,9 +100,8 @@ namespace BISA.Server.Services.LoanService
             throw new NotFoundException("No loans found");
         }
 
-        public async Task<ServiceResponseDTO<List<LoanDTO>>> GetMyLoans()
+        public async Task<List<LoanDTO>> GetMyLoans()
         {
-            var response = new ServiceResponseDTO<List<LoanDTO>>();
 
             var userIdFromToken = _httpContextAccessor.HttpContext.User
                 .FindFirstValue(ClaimTypes.NameIdentifier);
@@ -122,22 +119,18 @@ namespace BISA.Server.Services.LoanService
 
                 if (userLoans.Any())
                 {
-                    response.Data = ConvertToDTO(userLoans);
-                    response.Success = true;
-                    return response;
+                    var userLoansDtos = ConvertToDTO(userLoans);
+                    return userLoansDtos;
                 }
 
-                response.Success= false;
-                response.Message = "You do not have any loans";
-                return response;
+                throw new NotFoundException("You do not have any loans.");
                 
             }
-            response.Success = false;
-            response.Message = "Error calling the database";
-            return response;
+
+            throw new InvalidOperationException("Error calling the database");
         }
 
-        public async Task<ServiceResponseDTO<string>> ReturnLoan(int id)
+        public async Task<string> ReturnLoan(int id)
         {
             var response = new ServiceResponseDTO<string>();
 

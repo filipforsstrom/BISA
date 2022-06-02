@@ -3,8 +3,8 @@
     public interface ILoanService
     {
         Task<List<LoanDTO>> GetAllLoans();
-        Task<ServiceResponseDTO<List<LoanDTO>>> GetMyLoans();
-        Task<ServiceResponseDTO<List<LoanDTO>>> AddLoan(List<CheckoutDTO> items);
-        Task<ServiceResponseDTO<string>> ReturnLoan(int id);
+        Task<List<LoanDTO>> GetMyLoans();
+        Task<List<LoanDTO>> AddLoan(List<CheckoutDTO> items);
+        Task<string> ReturnLoan(int id);
     }
 }

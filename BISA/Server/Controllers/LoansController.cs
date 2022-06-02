@@ -38,13 +38,24 @@ namespace BISA.Server.Controllers
         [HttpGet("user")]
         public async Task<IActionResult> GetUserLoans()
         {
-            var loanResponse = await _loanService.GetMyLoans();
 
-            if (loanResponse.Success)
+            try
             {
-                return Ok(loanResponse.Data);
+                var loanResponse = await _loanService.GetMyLoans();
+                return Ok(loanResponse);
             }
-            return BadRequest(loanResponse.Message);
+            catch (NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch(InvalidOperationException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
