@@ -1,5 +1,6 @@
 ﻿using BISA.Server.Services.AuthService;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Authentication;
 
 namespace BISA.Server.Controllers
 {
@@ -16,32 +17,37 @@ namespace BISA.Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO user)
         {
-            var loginResponse = await _authService.Login(user);
-
-            if (loginResponse.Success)
+            try
             {
-                HttpContext.Response.Headers.Add("X-AuthToken", loginResponse.Data); // for RestClient in vscode
-                return Ok(loginResponse.Data);
+                var loginResponse = await _authService.Login(user);
+                HttpContext.Response.Headers.Add("X-AuthToken", loginResponse); // for RestClient in vscode
+                return Ok(loginResponse);
             }
-            else
+            catch (AuthenticationException exception)
             {
-                return BadRequest(loginResponse.Message);
+                return Unauthorized(exception.Message);
             }
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO user)
         {
-            var registerResponse = await _authService.Register(user);
-
-            if (registerResponse.Success)
+            try
             {
-                HttpContext.Response.Headers.Add("X-AuthToken", registerResponse.Data); // for RestClient in vscode
+                var registerResponse = await _authService.Register(user);
                 return Ok(registerResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(registerResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch (AuthenticationException exception)
+            {
+                return Unauthorized(exception.Message);
+            }
+            catch (DbUpdateException exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
     }
