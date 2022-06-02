@@ -2,8 +2,8 @@
 {
     public interface IEbookService
     {
-        Task<ServiceResponseDTO<EbookDTO>> GetEbook(int itemId);
-        Task<ServiceResponseDTO<EbookUpdateDTO>> UpdateEbook(EbookUpdateDTO EbookToUpdate);
-        Task<ServiceResponseDTO<EbookCreateDTO>> CreateEbook(EbookCreateDTO EbookToAdd);
+        Task<EbookDTO> GetEbook(int itemId);
+        Task<EbookUpdateDTO> UpdateEbook(EbookUpdateDTO EbookToUpdate);
+        Task<EbookCreateDTO> CreateEbook(EbookCreateDTO EbookToAdd);
     }
 }
