@@ -1,4 +1,19 @@
-@id = 1
+@id = 0202
 
-# @name GetItemReservations
-get {{baseUri}}/reservations/{{id}}
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+###
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+###
+
+# @name GetMyReservations
+get {{baseUri}}/reservations/user
+Authorization: bearer {{authToken}}

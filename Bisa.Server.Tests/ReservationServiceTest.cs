@@ -1,17 +1,16 @@
 ﻿using BISA.Server.Data.DbContexts;
+using BISA.Server.Exceptions;
 using BISA.Server.Services.ReservationService;
 using BISA.Shared.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
-using System.Threading.Tasks;
-using System.Linq;
-using Xunit;
-using BISA.Shared.DTO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace BISA.Server.Tests
 {
@@ -41,7 +40,7 @@ namespace BISA.Server.Tests
 
         private void InitDb()
         {
-            var user = new UserEntity { Id = 1000, UserId = "b74ddd14-6340-4840-95c2-db12554843e6", Firstname = "michael", Lastname = "kors", Username = "mkor" ,Email = "michael@gmail.com" };
+            var user = new UserEntity { Id = 1000, UserId = "b74ddd14-6340-4840-95c2-db12554843e6", Firstname = "michael", Lastname = "kors", Username = "mkor", Email = "michael@gmail.com" };
             var user_two = new UserEntity { Id = 1001, UserId = "f156", Firstname = "michael", Lastname = "kors", Username = "mkor", Email = "michael@gmail.com" };
 
             var item = new ItemEntity { Id = 1001, Title = "Ondskan", Date = "1980", Creator = "Jan Guillou" };
@@ -67,42 +66,48 @@ namespace BISA.Server.Tests
         {
             // Arrange
             var itemIdToReserve = 1001;
+            var expectedReservation = new LoanReservationEntity
+            {
+                ItemId = itemIdToReserve,
+                UserId = 1000
+            };
             // Act
             var result = await _sut.AddReservation(itemIdToReserve);
             // Assert
-            Assert.True(result.Success);
-            Assert.NotNull(result.Data);
+            Assert.Equal(expectedReservation.ItemId, result.ItemId);
+            Assert.Equal(expectedReservation.UserId, result.UserId);
         }
         [Fact]
-        public async Task AddReservation_OnDuplicateFail_ReturnsServiceResponseFalseAndWithMessage()
+        public async Task AddReservation_OnDuplicateFail_ThrowsArgumentExceptionAndWithMessage()
         {
             // Arrange
             var itemIdToReserve = 1001;
-            var expectedErrorMessage = $"Item with id: {itemIdToReserve} already reserved by user";
+            var expectedErrorMessage = "This item is allready reserved by user";
             // Act
             var firstReservation = await _sut.AddReservation(itemIdToReserve);
-            var secondReservation = await _sut.AddReservation(itemIdToReserve);
+            Func<Task> act = async () => await _sut.AddReservation(itemIdToReserve);
+
             // Assert
-            Assert.False(secondReservation.Success);
-            Assert.Equal(expectedErrorMessage, secondReservation.Message);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
         }
 
         [Fact]
-        public async Task AddReservation_OnWrongItemId_ReturnsServiceResponseFalseAndWithMessage()
+        public async Task AddReservation_OnWrongItemId_ThrowsArgumentExceptionAndWithMessage()
         {
             // Arrange
             var itemIdToReserve = 5000;
-            var expectedErrorMessage = $"Item with id: {itemIdToReserve} not found";
+            var expectedErrorMessage = "No item with matching id";
             // Act
-            var result = await _sut.AddReservation(itemIdToReserve);
+            Func<Task> act = async () => await _sut.AddReservation(itemIdToReserve);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal(expectedErrorMessage, result.Message);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
         }
 
         [Fact]
-        public async Task GetItemReservations_OnSuccess_ReturnsAServiceResponseWithData()
+        public async Task GetItemReservations_OnSuccess_ReturnsAListWithReservations()
         {
             // Arrange
             var itemId = 1001;
@@ -129,23 +134,23 @@ namespace BISA.Server.Tests
             // Act
             var result = await _sut.GetItemReservations(itemId);
             // Assert
-            Assert.IsType<ServiceResponseDTO<List<LoanReservationEntity>>>(result);
-            Assert.NotNull(result.Data);
-            Assert.True(result.Success);
+            Assert.IsType<List<LoanReservationEntity>>(result);
+            Assert.Equal(2, result.Count);
         }
 
         [Fact]
-        public async Task GetItemReservations_OnFail_ReturnsAServiceResponseWithMessage()
+        public async Task GetItemReservations_OnMissingItem_ThrowsArgumentExceptionWithMessage()
         {
             // Arrange
             var itemId = 200;
 
-            var expectedErrorMessage = "No reservations found";
+            var expectedErrorMessage = "No item with matching id";
             // Act
-            var result = await _sut.GetItemReservations(itemId);
+            Func<Task> act = async () => await _sut.GetItemReservations(itemId);
+
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal(expectedErrorMessage, result.Message);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
         }
 
         [Fact]
@@ -153,8 +158,8 @@ namespace BISA.Server.Tests
         {
             // Arrange
             var userId = 1000;
-            _context.LoansReservation.AddRange(new LoanReservationEntity[]
-            {
+            var reservationsToAdd = new LoanReservationEntity[]
+                {
                 new LoanReservationEntity
                 {
                     Id = 1,
@@ -171,26 +176,45 @@ namespace BISA.Server.Tests
                     Date_To = DateTime.Now.AddDays(41),
                     UserId = 1001
                 },
-            });
+                new LoanReservationEntity
+                {
+                    Id = 3,
+                    ItemId = 1001,
+                    Date_From = DateTime.Now.AddDays(21),
+                    Date_To = DateTime.Now.AddDays(41),
+                    UserId = 1000
+                },
+                new LoanReservationEntity
+                {
+                    Id = 4,
+                    ItemId = 1001,
+                    Date_From = DateTime.Now.AddDays(21),
+                    Date_To = DateTime.Now.AddDays(41),
+                    UserId = 1002
+                },
+            };
+            _context.LoansReservation.AddRange(reservationsToAdd);
             _context.SaveChanges();
 
             // Act
             var result = await _sut.GetMyReservations();
+
             // Assert
-            Assert.NotEmpty(result.Data);
-            var reservations = result.Data;
-            foreach (var reservation in reservations)
+            Assert.IsType<List<LoanReservationEntity>>(result);
+            var userIds = result.Select(reservation => reservation.UserId);
+            foreach (var res in userIds)
             {
-                Assert.Equal(reservation.UserId, userId);
+                Assert.Equal(userId, res);
             }
         }
 
         [Fact]
-        public async Task GetMyReservations_OnMissingUser_ReturnsFalseAndWithMessage()
+        public async Task GetMyReservations_OnMissingUser_ThrowsArgumentExceptionWithMessage()
         {
             // Arrange
             _contextAccessor.Setup(h => h.HttpContext.User).Returns(new ClaimsPrincipal());
-            
+            var expectedErrorMessage = "No matching user";
+
             _context.LoansReservation.AddRange(new LoanReservationEntity[]
             {
                 new LoanReservationEntity
@@ -212,12 +236,12 @@ namespace BISA.Server.Tests
             });
             _context.SaveChanges();
 
-            var expected = "User not found";
             // Act
-            var result = await _sut.GetMyReservations();
+            Func<Task> act = async () => await _sut.GetMyReservations();
+
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal(expected, result.Message);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
         }
 
         [Fact]
@@ -233,22 +257,20 @@ namespace BISA.Server.Tests
                 Date_To = DateTime.Now.AddDays(40)
             });
             _context.SaveChanges();
-            var expectedMessage = "Reservation was canceled";
+
             var reservationsAtStart = _context.LoansReservation.ToList();
 
             // Act
-            var result = await _sut.RemoveReservation(1);
+            await _sut.RemoveReservation(1);
 
             // Assert
             var reservationsAtEnd = _context.LoansReservation.ToList();
-            
-            Assert.True(result.Success);            
-            Assert.Equal(result.Message, expectedMessage);
+
             Assert.Equal(reservationsAtEnd.Count, reservationsAtStart.Count - 1);
         }
 
         [Fact]
-        public async void RemoveReservation_OnInvalidUser_ReturnsResponseFalseWithMessage()
+        public async void RemoveReservation_OnInvalidUser_ThrowsUnauthorzedAccessExceptionWithMessage()
         {
             // Arrange
             _context.LoansReservation.Add(new LoanReservationEntity
@@ -260,18 +282,14 @@ namespace BISA.Server.Tests
                 Date_To = DateTime.Now.AddDays(40)
             });
             _context.SaveChanges();
-            var expectedMessage = "Invalid user";
-            var reservationsAtStart = _context.LoansReservation.ToList();
-            
-            // Act
-            var result = await _sut.RemoveReservation(1);
+            var expectedErrorMessage = "User does not have the right to delete this item";
+
+            // Act            
+            Func<Task> act = async () => await _sut.RemoveReservation(1);
 
             // Assert
-            var reservationsAtEnd = _context.LoansReservation.ToList();
-
-            Assert.False(result.Success);
-            Assert.Equal(expectedMessage, result.Message);
-            Assert.Equal(reservationsAtStart.Count, reservationsAtEnd.Count);
+            UnauthorizedAccessException exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
         }
 
         [Fact]
@@ -287,18 +305,14 @@ namespace BISA.Server.Tests
                 Date_To = DateTime.Now.AddDays(40)
             });
             _context.SaveChanges();
-            var expectedMessage = "No matching reservation found";
-            var reservationsAtStart = _context.LoansReservation.ToList();
+            var expectedErrorMessage = "No reservation with matching id";
 
             // Act
-            var result = await _sut.RemoveReservation(2);
+            Func<Task> act = async () => await _sut.RemoveReservation(2);
 
             // Assert
-            var reservationsAtEnd = _context.LoansReservation.ToList();
-
-            Assert.False(result.Success);
-            Assert.Equal(expectedMessage, result.Message);
-            Assert.Equal(reservationsAtStart.Count, reservationsAtEnd.Count);
+            NotFoundException exception = await Assert.ThrowsAsync<NotFoundException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
         }
 
         [Fact]
@@ -308,7 +322,7 @@ namespace BISA.Server.Tests
             var item = _context.Items.FirstOrDefault(item => item.Id == 1001);
             var loanTime = 20;
 
-            var expected = DateTime.Now.AddDays(loanTime + 1); 
+            var expected = DateTime.Now.AddDays(loanTime + 1);
             //  Act
             var result = _sut.CheckTimeAvailable(item.Id);
             //  Assert
@@ -352,6 +366,6 @@ namespace BISA.Server.Tests
             var actual = _sut.GetItemLoanTime(type);
             // Assert
             Assert.Equal(expected, actual);
-        }        
+        }
     }
 }

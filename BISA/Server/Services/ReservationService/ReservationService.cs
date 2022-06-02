@@ -14,145 +14,105 @@ namespace BISA.Server.Services.ReservationService
             _httpContext = httpContext ?? throw new ArgumentNullException(nameof(httpContext));
         }
 
-        public async Task<ServiceResponseDTO<LoanReservationEntity>> AddReservation(int itemId)
+        public async Task<LoanReservationEntity> AddReservation(int itemId)
         {
-            var response = new ServiceResponseDTO<LoanReservationEntity>();
-
             var userIdFromToken = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userIdFromToken);
 
             if (userInDb == null)
             {
-                response.Success = false;
-                response.Message = "No matching user";
-                return response;
+                throw new ArgumentException("No matching user");
             }
+
             var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
 
-            if (item != null)
+            if (item == null)
             {
-                var duplicateCheck = await _context.LoansReservation
+                throw new ArgumentException("No item with matching id");
+            }
+
+            var duplicateCheck = await _context.LoansReservation
                     .Where(lr => lr.ItemId == itemId && lr.UserId == userInDb.Id)
                     .FirstOrDefaultAsync();
 
-                if (duplicateCheck == null)
-                {
-                    // check earliest available time
-                    var time = CheckTimeAvailable(item.Id);
-
-                    var newReservation = new LoanReservationEntity
-                    {
-                        UserId = userInDb.Id,
-                        Date_From = time,
-                        Date_To = time.AddDays(GetItemLoanTime(item.Type)),
-                        ItemId = item.Id
-                    };
-
-                    _context.LoansReservation.Add(newReservation);
-                    await _context.SaveChangesAsync();
-
-                    response.Data = newReservation;
-                    response.Success = true;
-                    return response;
-                }
-
-                response.Success = false;
-                response.Message = $"Item with id: {itemId} already reserved by user";
-                return response;
+            if (duplicateCheck != null)
+            {
+                throw new ArgumentException("This item is allready reserved by user");
             }
 
-            response.Success = false;
-            response.Message = $"Item with id: {itemId} not found";
-            return response;
+            var time = CheckTimeAvailable(item.Id);
+
+            var newReservation = new LoanReservationEntity
+            {
+                UserId = userInDb.Id,
+                Date_From = time,
+                Date_To = time.AddDays(GetItemLoanTime(item.Type)),
+                ItemId = item.Id
+            };
+
+            _context.LoansReservation.Add(newReservation);
+            await _context.SaveChangesAsync();
+
+            return newReservation;
         }
 
-        public async Task<ServiceResponseDTO<List<LoanReservationEntity>>> GetItemReservations(int itemId)
+        public async Task<List<LoanReservationEntity>> GetItemReservations(int itemId)
         {
-            var response = new ServiceResponseDTO<List<LoanReservationEntity>>();
+            var item = await _context.Items.FirstOrDefaultAsync(item => item.Id == itemId);
 
-            var reservations = await _context.LoansReservation
+            if (item == null)
+            {
+                throw new ArgumentException("No item with matching id");
+            }
+
+            return await _context.LoansReservation
                 .Where(lr => lr.ItemId == itemId)
                 .ToListAsync();
-
-            if (reservations.Any())
-            {
-                response.Data = reservations;
-                response.Success = true;
-                return response;
-            }
-            response.Success = false;
-            response.Message = "No reservations found";
-            return response;
         }
 
-        public async Task<ServiceResponseDTO<List<LoanReservationEntity>>> GetMyReservations()
+        public async Task<List<LoanReservationEntity>> GetMyReservations()
         {
-            var response = new ServiceResponseDTO<List<LoanReservationEntity>>();
 
             var userIdFromToken = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userIdFromToken);
 
             if (userInDb == null)
             {
-                response.Success = false;
-                response.Message = "User not found";
-                return response;
+                throw new ArgumentException("No matching user");
             }
 
-            var reservations = _context.LoansReservation
+            return await _context.LoansReservation
                 .Include(lrItem => lrItem.Item)
-                .Where(lr => lr.UserId == userInDb.Id);
-
-            if (reservations.Any())
-            {
-                response.Data = await reservations.ToListAsync();
-                response.Success = true;
-                return response;
-            }
-
-            response.Success = false;
-            response.Message = "You do not have any items reserved";
-            return response;
+                .Where(lr => lr.UserId == userInDb.Id)
+                .ToListAsync();
         }
 
-        public async Task<ServiceResponseDTO<string>> RemoveReservation(int reservationsId)
+        public async Task RemoveReservation(int reservationsId)
         {
-            var response = new ServiceResponseDTO<string>();
-
             var userIdFromToken = _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userInDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == userIdFromToken);
 
             if (userInDb == null)
             {
-                response.Success = false;
-                response.Message = "No matching user";
-                return response;
+                throw new ArgumentException("No matching user");
             }
 
             var reservationToRemove = await _context.LoansReservation
                 .Where(lr => lr.Id == reservationsId)
                 .FirstOrDefaultAsync();
 
-            if (reservationToRemove != null)
+            if (reservationToRemove == null)
             {
-                if (userInDb.Id == reservationToRemove.UserId)
-                {
-                    _context.LoansReservation.Remove(reservationToRemove);
-                    await _context.SaveChangesAsync();
-
-                    response.Success = true;
-                    response.Message = "Reservation was canceled";
-                    return response;
-                }
-
-                response.Success = false;
-                response.Message = "Invalid user";
-                return response;
+                throw new NotFoundException("No reservation with matching id");
             }
 
-            response.Success = false;
-            response.Message = "No matching reservation found";
-            return response;
+            if (userInDb.Id != reservationToRemove.UserId)
+            {
+                throw new UnauthorizedAccessException("User does not have the right to delete this item");
+            }
+
+            _context.LoansReservation.Remove(reservationToRemove);
+            await _context.SaveChangesAsync();            
         }
 
         public DateTime CheckTimeAvailable(int id)
