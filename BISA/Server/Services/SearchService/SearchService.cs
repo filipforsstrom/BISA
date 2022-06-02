@@ -13,32 +13,29 @@ namespace BISA.Server.Services.SearchService
         {
             _context = context;
         }
-        public async Task<ServiceResponseDTO<List<ItemDTO>>> SearchByTags(string tag)
+        public async Task<List<ItemDTO>> SearchByTags(string tag)
         {
-            ServiceResponseDTO<List<ItemDTO>> response = new();
-            List<ItemEntity> itemsWithTags = new List<ItemEntity>();
-
-            var tags = await _context.Tags.ToListAsync();
+            List<ItemDTO> itemList = new();
 
             var items = await _context.Items
                 .Where(i => i.Tags.Any(t => t.Tag.ToLower().Contains(tag.ToLower())))
                 .Include(i => i.Tags)
                 .Include(i => i.ItemInventory).ToListAsync();
 
-            if (items != null)
+            if (items.Count == 0 || items == null)
             {
-                response.Data = ConvertToItemDTO(items);
-                response.Success = true;
-                return response;
+                throw new NotFoundException("No matching results");
             }
-            response.Success = false;
-            response.Message = "No matching results";
-            return response;
+
+            itemList = ConvertToItemDTO(items);
+            return itemList;
+            
+            
         }
 
-        public async Task<ServiceResponseDTO<List<ItemDTO>>> SearchByTitle(string title)
+        public async Task<List<ItemDTO>> SearchByTitle(string title)
         {
-            ServiceResponseDTO<List<ItemDTO>> response = new();
+            List<ItemDTO> itemList = new();
 
             var items = await _context.Items
                 .Include(i => i.ItemInventory)
@@ -46,20 +43,18 @@ namespace BISA.Server.Services.SearchService
                 .Where(i => i.Title.ToLower().Contains(title.ToLower()))
                 .ToListAsync();
 
-            if (items != null)
+            if (items.Count == 0 || items == null)
             {
-                response.Data = ConvertToItemDTO(items);
-                response.Success = true;
-                return response;
+                throw new NotFoundException("No matching results");
+                
             }
-            response.Success = false;
-            response.Message = "No matching results";
-            return response;
+            itemList = ConvertToItemDTO(items);
+            return itemList;
         }
 
-        public async Task<ServiceResponseDTO<List<ItemDTO>>> SearchByAll(string search)
+        public async Task<List<ItemDTO>> SearchByAll(string search)
         {
-            ServiceResponseDTO<List<ItemDTO>> response = new();
+            List<ItemDTO> itemlist = new();
 
             var items = await _context.Items
                 .Include(i => i.ItemInventory)
@@ -72,16 +67,12 @@ namespace BISA.Server.Services.SearchService
                 || i.Tags.Any(t => t.Tag.ToLower().Contains(search.ToLower())))
                 .ToListAsync();
 
-            if (items != null)
+            if (items.Count == 0 || items == null)
             {
-                response.Data = ConvertToItemDTO(items);
-                response.Success = true;
-                return response;
+                throw new NotFoundException("No matching results");
             }
-
-            response.Success = false;
-            response.Message = "No matching results";
-            return response;
+            itemlist = ConvertToItemDTO(items);
+            return itemlist;
         }
 
         private List<ItemDTO> ConvertToItemDTO(List<ItemEntity> itemsInDb)

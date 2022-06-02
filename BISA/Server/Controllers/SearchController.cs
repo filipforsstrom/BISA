@@ -18,47 +18,60 @@ namespace BISA.Server.Controllers
         [HttpGet("title")]
         public async Task<IActionResult> GetByTitle([FromQuery] string title) // searchdto
         {
-            if (string.IsNullOrEmpty(title))
+            try
             {
-                return BadRequest("Please enter a title");
+                var searchResponse = await _searchService.SearchByTitle(title);
+                return Ok(searchResponse);
             }
-            var searchResponse = await _searchService.SearchByTitle(title);
-            if (searchResponse.Success)
+            catch (NotFoundException exception)
             {
-                return Ok(searchResponse.Data);
+                return NotFound(exception.Message);
             }
-            return BadRequest(searchResponse.Message);
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+
+
         }
 
         [HttpGet("tag")]
         public async Task<IActionResult> GetByTags([FromQuery] string tag)
         {
-            if (string.IsNullOrEmpty(tag))
+            try
             {
-                return BadRequest("Please enter a subject");
+                var searchResponse = await _searchService.SearchByTags(tag);
+                return Ok(searchResponse);
             }
-            // Filter response by title, tags
-            var searchResponse = await _searchService.SearchByTags(tag);
-            if (searchResponse.Success)
+            catch (NotFoundException exception)
             {
-                return Ok(searchResponse.Data);
+                return NotFound(exception.Message);
             }
-            return BadRequest(searchResponse.Message);
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetByAll([FromQuery] string search) // searchdto
+        public async Task<IActionResult> GetByAll([FromQuery] string search)
         {
-            if (string.IsNullOrEmpty(search))
+            try
             {
-                return BadRequest("Please enter a title");
+                var searchResponse = await _searchService.SearchByAll(search);
+                return Ok(searchResponse);
             }
-            var searchResponse = await _searchService.SearchByAll(search);
-            if (searchResponse.Success)
+
+            catch (NotFoundException exception)
             {
-                return Ok(searchResponse.Data);
+                return NotFound(exception.Message);
             }
-            return BadRequest(searchResponse.Message);
+
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+
         }
     }
 }
