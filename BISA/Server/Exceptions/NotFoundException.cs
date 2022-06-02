@@ -3,7 +3,7 @@
 namespace BISA.Server.Exceptions
 {
     [Serializable]
-    internal class NotFoundException : Exception
+    public class NotFoundException : Exception
     {
         public NotFoundException()
         {

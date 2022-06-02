@@ -1,9 +1,24 @@
 @id = 1
-GET {{baseUri}}/reservations/1
+@authToken = {{loginAdmin.response.headers.X-AuthToken}}
+
+# @name loginAdmin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+GET {{baseUri}}/reservations/{{id}}
+Authorization: bearer {{authToken}}
 
 ###
 # @name RemoveReservation
-DELETE {{baseUri}}/reservations/1
+DELETE {{baseUri}}/reservations/4
+Authorization: bearer {{authToken}}
 
 ###
-GET {{baseUri}}/reservations/1
+GET {{baseUri}}/reservations/{{id}}

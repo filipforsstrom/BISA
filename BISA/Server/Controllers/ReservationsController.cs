@@ -20,45 +20,77 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            // Get reservations for one item
-            var resResponse = await _reservationService.GetItemReservations(id);
-            if (resResponse.Success)
+            try
             {
-                return Ok(resResponse.Data);
+                var resResponse = await _reservationService.GetItemReservations(id);
+                return Ok(resResponse);
             }
-            return BadRequest(resResponse.Message);
+            catch (ArgumentException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            
         }
         [HttpGet("user")]
         public async Task<IActionResult> GetUserReservations()
         {
-            var resResponse = await _reservationService.GetMyReservations();
-            if (resResponse.Success)
+            try
             {
-                return Ok(resResponse.Data);
+                var resResponse = await _reservationService.GetMyReservations();
+                return Ok(resResponse);
             }
-            return BadRequest(resResponse.Message);
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpPost("{id}")]
         public async Task<IActionResult> Post(int id)
         {
-            var resResponse = await _reservationService.AddReservation(id);
-            if (resResponse.Success)
+            try
             {
-                return Ok(resResponse.Data);
+                var resResponse = await _reservationService.AddReservation(id);
+                return Ok(resResponse);
             }
-            return BadRequest(resResponse.Message);
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var resResponse = await _reservationService.RemoveReservation(id);
-            if (resResponse.Success)
+            try
             {
-                return Ok(resResponse.Message);
+                await _reservationService.RemoveReservation(id);
+                return NoContent();
             }
-            return BadRequest(resResponse.Message);
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (UnauthorizedAccessException exception)
+            {
+                return Unauthorized(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }
