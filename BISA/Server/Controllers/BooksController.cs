@@ -57,19 +57,29 @@ namespace BISA.Server.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin, Staff")]
-        public async Task<IActionResult> Put(int id, [FromBody] BookUpdateDTO bookToUpdate)
+        public async Task<IActionResult> Put( [FromBody] BookUpdateDTO bookToUpdate)
         {
-            bookToUpdate.Id = id;
-            var bookResponse = await _bookService.UpdateBook(bookToUpdate);
+            try
+            {
+                var bookResponse = await _bookService.UpdateBook(bookToUpdate);
+                return Ok(bookResponse);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch(NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
 
-            if (bookResponse.Success)
+            catch (Exception exception)
             {
-                return Ok(bookResponse.Message);
+                return StatusCode(500, exception.Message);
             }
-            else
-            {
-                return BadRequest(bookResponse.Message);
-            }
+
+
+
         }
 
 

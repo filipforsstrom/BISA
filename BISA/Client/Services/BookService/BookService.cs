@@ -16,7 +16,7 @@
             if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Book created successfully";
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
@@ -53,7 +53,7 @@
             if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Book successfully updated";
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {

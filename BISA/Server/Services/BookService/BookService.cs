@@ -134,9 +134,9 @@ namespace BISA.Server.Services.BookService
             return bookDTO;
         }
 
-        public async Task<ServiceResponseDTO<BookUpdateDTO>> UpdateBook(BookUpdateDTO bookToUpdate)
+        public async Task<BookUpdateDTO> UpdateBook(BookUpdateDTO bookToUpdate)
         {
-            ServiceResponseDTO<BookUpdateDTO> responseDTO = new();
+            
             List<TagEntity> tagsForBookToBeUpdated = new();
 
             var allBooks = await _context.Books.ToListAsync();
@@ -151,18 +151,15 @@ namespace BISA.Server.Services.BookService
 
             if (foundDuplicate)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "A book with these exact properties already exists.";
-                return responseDTO;
+                throw new ArgumentException("A book with these exact properties already exists.");
             }
 
             var bookEntity = await _context.Books.Include(b => b.Tags).FirstOrDefaultAsync(i => i.Id == bookToUpdate.Id);
 
             if (bookEntity == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Book requested for update not found.";
-                return responseDTO;
+                throw new NotFoundException("Book requested for update not found.");
+               
             }
 
             //Remove current non-updated book's tags.
@@ -185,7 +182,6 @@ namespace BISA.Server.Services.BookService
                 }
             }
 
-
             bookEntity.Id = bookToUpdate.Id;
             bookEntity.Title = bookToUpdate.Title;
             bookEntity.Creator = bookToUpdate.Creator;
@@ -201,11 +197,8 @@ namespace BISA.Server.Services.BookService
             //Let ef know that the entity we found's state has been modified and then save changes.
             _context.Entry(bookEntity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            responseDTO.Success = true;
-            responseDTO.Data = bookToUpdate;
-            responseDTO.Message = "Book successfully updated";
 
-            return responseDTO;
+            return bookToUpdate;
         }
 
     }
