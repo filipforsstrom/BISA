@@ -3,11 +3,11 @@
 @using Append.Blazor.Printing
 @inject IPrintingService PrintingService
 @inject ISearchService SearchService
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@SearchMessage" OnSubmit="SearchBy">
     <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" Required="true" RequiredError="Search is required!" />
-
     <div class="d-flex">
         <MudRadioGroup T="string" Required="true" @bind-SelectedOption="SearchByProperty">
             <MudRadio Option="@("title")">Search by title</MudRadio>
@@ -43,20 +43,24 @@
 
     private async Task SearchBy()
     {
-        
+        if (!string.IsNullOrEmpty(SearchMessage.UserSearch))
+        {
             if (SearchByProperty.Equals("title"))
-        {
-            ItemsSearchedFor = await SearchService.GetByTitle(SearchMessage);
+            {
+                ItemsSearchedFor = await SearchService.GetByTitle(SearchMessage);
+            }
+            else if (SearchByProperty.Equals("tags"))
+            {
+                ItemsSearchedFor = await SearchService.GetByTags(SearchMessage);
+            }
+            else if (SearchByProperty.Equals("all"))
+            {
+                ItemsSearchedFor = await SearchService.GetByAll(SearchMessage);
+            }
         }
-        else if (SearchByProperty.Equals("tags"))
+        else
         {
-            ItemsSearchedFor = await SearchService.GetByTags(SearchMessage);
+            Snackbar.Add("Please enter a searchvalue", severity: Severity.Warning);
         }
-        else if (SearchByProperty.Equals("all"))
-        {
-            ItemsSearchedFor = await SearchService.GetByAll(SearchMessage);
-        }
-        
     }
-
 }

@@ -2,6 +2,7 @@
 using BISA.Shared.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
 using System.Security.Claims;
 
 
@@ -21,75 +22,53 @@ namespace BISA.Server.Services.AuthService
             _context = context;
         }
 
-        public async Task<ServiceResponseDTO<string>> Login(UserLoginDTO userLogin)
+        public async Task<string> Login(UserLoginDTO userLogin)
         {
-            ServiceResponseDTO<string> serviceResponse = new();
             var signInResult = await _signInManager.PasswordSignInAsync(userLogin.Username, userLogin.Password, false, false);
 
             if (signInResult.Succeeded)
             {
-
                 var currentUser = await _signInManager.UserManager.FindByNameAsync(userLogin.Username);
-                var jwt = await CreateToken(currentUser);
-                serviceResponse.Data = jwt;
-                serviceResponse.Success = true;
-     
-                return serviceResponse;
+                return await CreateToken(currentUser);
             }
-            serviceResponse.Data = null;
-            serviceResponse.Success = false;
-            serviceResponse.Message = signInResult.ToString();
-            return serviceResponse;
+
+            throw new AuthenticationException(signInResult.ToString());
         }
 
-        public async Task<ServiceResponseDTO<string>> Register(UserRegisterDTO userRegister)
+        public async Task<string> Register(UserRegisterDTO userRegister)
         {
-            ServiceResponseDTO<string> serviceResponse = new();
-
             ApplicationUser newUser = new();
             newUser.UserName = userRegister.Username;
             newUser.Email = userRegister.Email;
 
-            var result = await _signInManager.UserManager.CreateAsync(newUser, userRegister.Password);
-            if (result.Succeeded)
+            var createUser = await _signInManager.UserManager.CreateAsync(newUser, userRegister.Password);
+
+            if (!createUser.Succeeded)
             {
-                bool addedInBisaDb = await RegisterUserInBisaDb(userRegister);
-                if (addedInBisaDb) 
-                {
-                    // Login new user to create jwt
-                    UserLoginDTO userLogin = new UserLoginDTO
-                    {
-                        Username = userRegister.Username,
-                        Password = userRegister.Password
-                    };
-
-                    var signInResult = await Login(userLogin);
-                    if (signInResult.Success)
-                    {
-                        serviceResponse.Data = signInResult.Data;
-                        serviceResponse.Success = true;
-                        serviceResponse.Message = signInResult.Data;
-                        return serviceResponse;
-                    }
-                    else
-                    {
-                        serviceResponse.Success = false;
-                        serviceResponse.Message = signInResult.Data;
-                        return serviceResponse;
-                    }
-                }
-                else
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Could not add user in Bisa DB";
-                    return serviceResponse;
-                }
-
-                
+                throw new ArgumentException(createUser.ToString());
             }
-            serviceResponse.Message = result.ToString();
-            serviceResponse.Success = false;
-            return serviceResponse;
+
+            bool addedInBisaDb = await RegisterUserInBisaDb(userRegister);
+            if (addedInBisaDb)
+            {
+                // Login new user to create jwt
+                UserLoginDTO userLogin = new UserLoginDTO
+                {
+                    Username = userRegister.Username,
+                    Password = userRegister.Password
+                };
+
+                try
+                {
+                    var signInResult = await Login(userLogin);
+                    return signInResult;
+                }
+                catch (AuthenticationException exception)
+                {
+                    throw new AuthenticationException(exception.ToString());
+                }
+            }
+            throw new DbUpdateException("Could not add user in Bisa DB");
         }
 
         private async Task<string> CreateToken(ApplicationUser user)
