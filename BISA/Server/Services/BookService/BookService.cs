@@ -151,6 +151,23 @@ namespace BISA.Server.Services.BookService
             ServiceResponseDTO<BookUpdateDTO> responseDTO = new();
             List<TagEntity> tagsForBookToBeUpdated = new();
 
+            var allBooks = await _context.Books.ToListAsync();
+
+            var foundDuplicate = allBooks
+                .Any(b => b.Title?.ToLower() == bookToUpdate.Title?.ToLower() &&
+                b.Creator?.ToLower() == bookToUpdate.Creator?.ToLower() &&
+                b.Date == bookToUpdate.Date &&
+                b.Language?.ToLower() == bookToUpdate.Language?.ToLower() &&
+                b.ISBN?.ToLower() == bookToUpdate.ISBN?.ToLower() &&
+                b.Publisher?.ToLower() == bookToUpdate.Publisher?.ToLower());
+
+            if (foundDuplicate)
+            {
+                responseDTO.Success = false;
+                responseDTO.Message = "A book with these exact properties already exists.";
+                return responseDTO;
+            }
+
             var bookEntity = await _context.Books.Include(b => b.Tags).FirstOrDefaultAsync(i => i.Id == bookToUpdate.Id);
 
             if (bookEntity == null)
