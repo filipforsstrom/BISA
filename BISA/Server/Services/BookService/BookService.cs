@@ -1,6 +1,7 @@
 ﻿using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.ItemService;
 using BISA.Shared.Entities;
+using System.Data;
 
 namespace BISA.Server.Services.BookService
 {
@@ -13,10 +14,8 @@ namespace BISA.Server.Services.BookService
         {
             _context = context;
         }
-        public async Task<ServiceResponseDTO<BookCreateDTO>> CreateBook(BookCreateDTO bookToCreate)
+        public async Task<BookCreateDTO> CreateBook(BookCreateDTO bookToCreate)
         {
-            ServiceResponseDTO<BookCreateDTO> responseDTO = new();
-
             //See if book already exists.
             var allBooks = await _context.Books.ToListAsync();
 
@@ -30,9 +29,7 @@ namespace BISA.Server.Services.BookService
 
             if (foundDuplicate)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Book already exists.";
-                return responseDTO;
+                throw new ArgumentException("This book already exists");
             }
 
             //If bookToCreate gets a list of Tag Ids passed in,
@@ -54,7 +51,7 @@ namespace BISA.Server.Services.BookService
                 }
             }
 
-            if(string.IsNullOrEmpty(bookToCreate.Image))
+            if (string.IsNullOrEmpty(bookToCreate.Image))
             {
                 bookToCreate.Image = "/assets/book.jpg";
             }
@@ -85,17 +82,12 @@ namespace BISA.Server.Services.BookService
 
             _context.Books.Add(bookEntity);
             await _context.SaveChangesAsync();
-            responseDTO.Success = true;
-            responseDTO.Data = bookToCreate;
-            responseDTO.Message = "Book successfully created";
 
-            return responseDTO;
+            return bookToCreate;
         }
 
-        public async Task<ServiceResponseDTO<BookDTO>> GetBook(int id)
+        public async Task<BookDTO> GetBook(int id)
         {
-            ServiceResponseDTO<BookDTO> responseDTO = new();
-
             //Find books and include the tags & iteminventory-tables to get the books tags & see how many items in inventory.
             var book = _context.Books.Where(b => b.Id == id)
                 .Include(b => b.Tags)
@@ -104,9 +96,7 @@ namespace BISA.Server.Services.BookService
 
             if (book == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Book was not found";
-                return responseDTO;
+                throw new NotFoundException("There is no book with that id");
             }
 
             //New list of TagDTOS to assign to the BookDTO.
@@ -141,9 +131,7 @@ namespace BISA.Server.Services.BookService
                 Image = book.Image,
             };
 
-            responseDTO.Success = true;
-            responseDTO.Data = bookDTO;
-            return responseDTO;
+            return bookDTO;
         }
 
         public async Task<ServiceResponseDTO<BookUpdateDTO>> UpdateBook(BookUpdateDTO bookToUpdate)

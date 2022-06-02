@@ -19,6 +19,7 @@ GET {{baseUri}}/books/1
 # @name createBook
 POST {{baseUri}}/books
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
   "Title": "test_rest",

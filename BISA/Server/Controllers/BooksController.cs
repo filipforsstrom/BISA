@@ -20,15 +20,18 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var bookResponse = await _bookService.GetBook(id);
-
-            if (bookResponse.Success)
+            try
             {
-                return Ok(bookResponse.Data);
+                var bookResponse = await _bookService.GetBook(id);
+                return Ok(bookResponse);
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(bookResponse.Message);
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
 
@@ -37,15 +40,18 @@ namespace BISA.Server.Controllers
         public async Task<IActionResult> Post([FromBody] BookCreateDTO bookToCreate)
         {
 
-            var bookResponse = await _bookService.CreateBook(bookToCreate);
-
-            if (bookResponse.Success)
+            try
             {
-                return Ok(bookResponse.Message);
+                var bookResponse = await _bookService.CreateBook(bookToCreate);
+                return Ok(bookResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(bookResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
 

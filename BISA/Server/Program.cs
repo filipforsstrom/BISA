@@ -1,4 +1,5 @@
 global using BISA.Server.Entities;
+global using BISA.Server.Exceptions;
 global using BISA.Shared.DTO;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity;
@@ -126,7 +127,7 @@ using (var scope = app.Services.CreateScope())
     {
         context.Database.EnsureDeleted();
         context.Database.Migrate();
-        
+
     }
     using (var context = scope.ServiceProvider.GetService<UserDbContext>())
     {
