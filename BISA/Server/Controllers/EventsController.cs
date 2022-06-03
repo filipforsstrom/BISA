@@ -17,45 +17,56 @@ namespace BISA.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var eventResponse = await _eventService.GetEvents();
-
-            if (eventResponse.Success)
+            try
             {
-                return Ok(eventResponse.Data);
+                var eventResponse = await _eventService.GetEvents();
+                return Ok(eventResponse);
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
 
         [HttpGet("types")]
         public async Task<IActionResult> GetEventTypes()
-        {
-            var eventTypeResponse = await _eventService.GetEventTypes();
+        {   
+            try
+            {
+                var eventResponse = await _eventService.GetEventTypes();
+                return Ok(eventResponse);
+            }
+            catch (NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
 
-            if (eventTypeResponse.Success)
-            {
-                return Ok(eventTypeResponse.Data);
-            }
-            else
-            {
-                return BadRequest(eventTypeResponse.Message);
-            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var eventResponse = await _eventService.GetEvent(id);
-
-            if (eventResponse.Success)
+            
+            try
             {
-                return Ok(eventResponse.Data);
+                var eventResponse = await _eventService.GetEvent(id);
+                return Ok(eventResponse);
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return NotFound(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
 
@@ -63,51 +74,66 @@ namespace BISA.Server.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] EventCreateDTO eventToCreate)
         {
-            //Föreställer mig att datum och tiden man sätter är "2022-05-05 17:00" och inte på millisekunden
-            //eventToCreate.Date = new DateTime(2020, 03, 22);
-
-            var eventResponse = await _eventService.CreateEvent(eventToCreate);
-
-            if (eventResponse.Success)
+            try
             {
-                return Created($"/events/{eventResponse.Data.Id}", eventResponse.Data);
+                var eventResponse = await _eventService.CreateEvent(eventToCreate);
+                return Ok(eventResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(exception.Message);
             }
+
+            catch (DbUpdateException exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
+            
+
+
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Put(int id, [FromBody] EventDTO eventToUpdate)
         {
-            var eventResponse = await _eventService.UpdateEvent(id, eventToUpdate);
+            try
+            {
+                var eventResponse = await _eventService.UpdateEvent(id, eventToUpdate);
+                return Ok(eventResponse);
+            }
+            catch (NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
 
-            if (eventResponse.Success)
-            {
-                return Ok(eventResponse.Data);
-            }
-            else
-            {
-                return BadRequest(eventResponse.Message);
-            }
+
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(int id)
         {
-            var eventResponse = await _eventService.DeleteEvent(id);
-
-            if (eventResponse.Success)
+            
+            try
             {
+                var eventResponse = await _eventService.DeleteEvent(id);
                 return NoContent();
             }
-            else
+            catch (NotFoundException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return NotFound(exception.Message);
+             
             }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
+
         }
     }
 }

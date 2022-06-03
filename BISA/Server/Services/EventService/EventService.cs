@@ -13,13 +13,13 @@ namespace BISA.Server.Services.EventService
             _context = context;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> CreateEvent(EventCreateDTO eventToCreate)
+        public async Task<EventDTO> CreateEvent(EventCreateDTO eventToCreate)
         {
             //Get all events
             var allEvents = await GetEvents();
 
             //See if event to be created has exact same property data as another event except Id.
-            var foundDuplicate = allEvents.Data
+            var foundDuplicate = allEvents
                 .Any(e => e.Subject.ToLower() == eventToCreate.Subject.ToLower()
                 && e.Date.Equals(eventToCreate.Date)
                 && e.Location.ToLower() == eventToCreate.Location.ToLower()
@@ -29,9 +29,7 @@ namespace BISA.Server.Services.EventService
 
             if (foundDuplicate)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Event already exists";
-                return responseDTO;
+                throw new ArgumentException("Event already exists");
             }
 
             var eventEntity = new EventEntity()
@@ -49,10 +47,7 @@ namespace BISA.Server.Services.EventService
 
             if (savedResult < 1)
             {
-                responseDTO.Data = null;
-                responseDTO.Success = false;
-                responseDTO.Message = "Unable to save event to database";
-                return responseDTO;
+                throw new DbUpdateException("Unable to save event to database");
             }
 
             var savedEvent = new EventDTO
@@ -73,34 +68,28 @@ namespace BISA.Server.Services.EventService
                 }
             };
 
-            responseDTO.Data = savedEvent;
-            responseDTO.Success = true;
-            responseDTO.Message = "Event created";
-            return responseDTO;
+            return savedEvent;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> DeleteEvent(int eventId)
+        public async Task<bool> DeleteEvent(int eventId)
         {
             var eventToDelete = await _context.Events.Where(e => e.Id == eventId).FirstOrDefaultAsync();
 
             if (eventToDelete == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Event requested for deletion not found.";
-                return responseDTO;
+                throw new NotFoundException("Event requested for deletion not found.");
             }
 
             var removed = _context.Events.Remove(eventToDelete);
             if (removed != null)
             {
                 await _context.SaveChangesAsync();
-                responseDTO.Success = true;
             }
 
-            return responseDTO;
+            return true;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> GetEvent(int eventId)
+        public async Task<EventDTO> GetEvent(int eventId)
         {
             var response = await _context.Events
                 .Where(e => e.Id == eventId)
@@ -109,13 +98,11 @@ namespace BISA.Server.Services.EventService
 
             if (response == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Event not found";
-                return responseDTO;
+                throw new NotFoundException("Event not found");
             }
 
-            responseDTO.Success = true;
-            responseDTO.Data = new EventDTO
+            
+            EventDTO eventDto = new()
             {
                 Id = response.Id,
                 Date = response.Date,
@@ -132,24 +119,20 @@ namespace BISA.Server.Services.EventService
                     Image = response.EventType.Image
                 }
             };
-            return responseDTO;
+            return eventDto;
 
         }
 
-        public async Task<ServiceResponseDTO<List<EventDTO>>> GetEvents()
+        public async Task<List<EventDTO>> GetEvents()
         {
             var response = await _context.Events.Include(e => e.EventType).ToListAsync();
 
             List<EventDTO> Events = new();
             ServiceResponseDTO<List<EventDTO>> responseDTO = new();
 
-            if (response == null)
+            if (!response.Any())
             {
-                //Is an empty list also a result?
-                responseDTO.Success = false;
-                responseDTO.Message = "No events found";
-                responseDTO.Data = null;
-                return responseDTO;
+                throw new NotFoundException("No events found");
             }
 
             foreach (var item in response)
@@ -173,26 +156,19 @@ namespace BISA.Server.Services.EventService
                 });
             }
 
-            responseDTO.Success = true;
-            responseDTO.Data = Events;
-
-            return responseDTO;
+            return Events;
         }
 
-        public async Task<ServiceResponseDTO<List<EventTypeDTO>>> GetEventTypes()
+        public async Task<List<EventTypeDTO>> GetEventTypes()
         {
             var response = await _context.EventType.ToListAsync();
 
             List<EventTypeDTO> EventTypes = new();
             ServiceResponseDTO<List<EventTypeDTO>> responseDTO = new();
 
-            if (response == null)
+            if (!response.Any())
             {
-                //Is an empty list also a result?
-                responseDTO.Success = false;
-                responseDTO.Message = "No event types found";
-                responseDTO.Data = null;
-                return responseDTO;
+                throw new NotFoundException("No event types found");
             }
 
             foreach (var item in response)
@@ -207,21 +183,16 @@ namespace BISA.Server.Services.EventService
                 });
             }
 
-            responseDTO.Success = true;
-            responseDTO.Data = EventTypes;
-
-            return responseDTO;
+            return EventTypes;
         }
 
-        public async Task<ServiceResponseDTO<EventDTO>> UpdateEvent(int eventId, EventDTO eventToUpdate)
+        public async Task<EventDTO> UpdateEvent(int eventId, EventDTO eventToUpdate)
         {
             var eventEntity = await _context.Events.FirstOrDefaultAsync(i => i.Id == eventId);
 
             if (eventEntity == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Event requested for update not found.";
-                return responseDTO;
+                throw new NotFoundException("Event requested for update not found.");
             }
 
             EventEntity updatedEvent = new()
@@ -239,10 +210,8 @@ namespace BISA.Server.Services.EventService
             //Overridear värdena som finns i eventEntity med dem nya.
             _context.Entry(eventEntity).CurrentValues.SetValues(updatedEvent);
             await _context.SaveChangesAsync();
-            responseDTO.Success = true;
-            responseDTO.Data = eventToUpdate;
 
-            return responseDTO;
+            return eventToUpdate;
         }
     }
 }

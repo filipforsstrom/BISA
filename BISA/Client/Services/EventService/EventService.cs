@@ -15,18 +15,17 @@ namespace BISA.Client.Services.EventService
         {
             ServiceResponseViewModel<EventViewModel> serviceResponse = new();
             var response = await _http.PostAsJsonAsync($"api/events", eventToCreate);
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                serviceResponse.Data = null;
-                serviceResponse.Success = false;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
-            }
-            else if (response.IsSuccessStatusCode)
+            
+            if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Data = await response.Content.ReadFromJsonAsync<EventViewModel>();
                 serviceResponse.Success = true;
-                serviceResponse.Message = response.ReasonPhrase;
+                serviceResponse.Message = "Event successfully created";
+                return serviceResponse;
             }
+            serviceResponse.Data = null;
+            serviceResponse.Success = false;
+            serviceResponse.Message = await response.Content.ReadAsStringAsync();
             return serviceResponse;
         }
 
@@ -99,18 +98,17 @@ namespace BISA.Client.Services.EventService
             ServiceResponseViewModel<EventViewModel> serviceResponse = new();
 
             var response = await _http.PutAsJsonAsync($"api/events/{eventToUpdate.Id}", eventToUpdate);
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                serviceResponse.Data = null;
-                serviceResponse.Success = false;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
-            }
-            else if (response.IsSuccessStatusCode)
+            
+            if (response.IsSuccessStatusCode)
             {
                 serviceResponse.Data = await response.Content.ReadFromJsonAsync<EventViewModel>();
                 serviceResponse.Success = true;
                 serviceResponse.Message = response.ReasonPhrase;
+                return serviceResponse;
             }
+            serviceResponse.Data = null;
+            serviceResponse.Success = false;
+            serviceResponse.Message = await response.Content.ReadAsStringAsync();
             return serviceResponse;
         }
     }
