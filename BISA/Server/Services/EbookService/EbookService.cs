@@ -124,13 +124,28 @@ namespace BISA.Server.Services.EbookService
 
         public async Task<EbookUpdateDTO> UpdateEbook(EbookUpdateDTO updatedEbook)
         {
+            var allEbooks = await _context.Ebooks.ToListAsync();
+
+            var foundDuplicate = allEbooks
+              .Any(b => b.Title?.ToLower() == updatedEbook.Title?.ToLower() &&
+              b.Creator?.ToLower() == updatedEbook.Creator?.ToLower() &&
+              b.Date == updatedEbook.Date &&
+              b.Language?.ToLower() == updatedEbook.Language?.ToLower() &&
+              b.Url?.ToLower() == updatedEbook.Url?.ToLower() &&
+              b.Publisher?.ToLower() == updatedEbook.Publisher?.ToLower());
+
+            if (foundDuplicate)
+            {
+                throw new ArgumentException("This ebook already exists");
+            }
+
             var ebookToUpdate = await _context.Ebooks.Where(e => e.Id == updatedEbook.Id)
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync();
 
             if (ebookToUpdate == null)
             {
-                throw new ArgumentException("Book requested for update not found");
+                throw new NotFoundException("Book requested for update not found");
             }
 
             ebookToUpdate.Tags.Clear();
