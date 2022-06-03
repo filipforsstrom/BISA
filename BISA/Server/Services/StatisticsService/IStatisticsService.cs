@@ -2,9 +2,9 @@
 {
     public interface IStatisticsService
     {
-        Task<ServiceResponseDTO<ItemDTO>> GetMostPopularItem();
-        Task<ServiceResponseDTO<UserStatisticsDTO>> GetMostActiveUser();
+        Task<ItemDTO> GetMostPopularItem();
+        Task<UserStatisticsDTO> GetMostActiveUser();
 
-        Task<ServiceResponseDTO<MostPopularAuthorDTO>> GetMostPopularAuthor();
+        Task<MostPopularAuthorDTO> GetMostPopularAuthor();
     }
 }
