@@ -1,4 +1,5 @@
 ﻿using BISA.Server.Data.DbContexts;
+using BISA.Shared.Constants;
 using BISA.Shared.Entities;
 
 namespace BISA.Server.Services.ReservationService
@@ -148,9 +149,9 @@ namespace BISA.Server.Services.ReservationService
 
         public double GetItemLoanTime(string itemType) => itemType switch
         {
-            "Ebook" => BusinessRulesDTO.EbookLoanTime,
-            "Movie" => BusinessRulesDTO.MovieLoanTime,
-            _ => BusinessRulesDTO.BookLoanTime
+            "Ebook" => BussinessRulesConstants.EbookLoanTime,
+            "Movie" => BussinessRulesConstants.MovieLoanTime,
+            _ => BussinessRulesConstants.BookLoanTime
         };
 
     }
