@@ -26,7 +26,7 @@ namespace BISA.Client.Services.InventoryService
             if(response.IsSuccessStatusCode)
             {
                 serviceResponse.Success = true;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Inventory items has successfully been added";
             }
             else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
@@ -42,9 +42,9 @@ namespace BISA.Client.Services.InventoryService
             ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.DeleteAsync($"api/inventory/{id}");
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                serviceResponse.Message = "Deletion successful";
                 serviceResponse.Success = true;
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
