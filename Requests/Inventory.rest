@@ -14,10 +14,11 @@ Content-Type: application/json
 ###
 # @name AddItemInventory
 POST {{baseUri}}/inventory
+Authorization: bearer {{authToken}}
 Content-Type: application/json
 
 {
-    "ItemId": 5,
+    "ItemId": 992392,
     "AmountToAdd": 10
 }
 
@@ -29,3 +30,8 @@ Content-Type: application/json
 {
     "InventoryId": 5
 }
+
+###
+# @name GetItemInventory
+GET {{baseUri}}/Inventory/10
+Authorization: bearer {{authToken}}

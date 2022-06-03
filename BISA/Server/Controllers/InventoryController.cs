@@ -17,15 +17,14 @@ namespace BISA.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItemInventory(int id)
         {
-            var inventoryResponse = await _inventoryService.GetItemsInventory(id);
-
-            if (inventoryResponse.Success)
+            try
             {
-                return Ok(inventoryResponse.Data);
+                var inventoryResponse = await _inventoryService.GetItemsInventory(id);
+                return Ok(inventoryResponse);
             }
-            else
+            catch (Exception exception)
             {
-                return BadRequest(inventoryResponse.Message);
+                return BadRequest(exception.Message);
             }
         }
 
@@ -33,32 +32,41 @@ namespace BISA.Server.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Post([FromBody] ItemInventoryChangeDTO itemInventoryAdd)
         {
-            var inventoryResponse = await _inventoryService.AddItemInventory(itemInventoryAdd);
-
-            if (inventoryResponse.Success)
+            try
             {
-                return Ok(inventoryResponse.Message);
+                var inventoryResponse = await _inventoryService.AddItemInventory(itemInventoryAdd);
+                return Ok(inventoryResponse);
             }
-            else
+            catch (ArgumentException exception)
             {
-                return BadRequest(inventoryResponse.Message);
+                return BadRequest(exception.Message);
             }
-
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(int id)
         {
-            var inventoryResponse = await _inventoryService.DeleteItemInventory(id);
-
-            if (inventoryResponse.Success)
+            try
             {
-                return NotFound(inventoryResponse.Message);
+                await _inventoryService.DeleteItemInventory(id);
+                return NoContent();
             }
-            else
+            catch (InvalidOperationException exception)
             {
-                return BadRequest(inventoryResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
             }
         }
     }

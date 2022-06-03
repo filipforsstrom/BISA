@@ -17,44 +17,54 @@ namespace BISA.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var itemsResponse = await _itemService.GetItems();
-
-            if (itemsResponse.Success)
+            try
             {
-                return Ok(itemsResponse.Data);
+                var itemsResponse = await _itemService.GetItems();
+                return Ok(itemsResponse);
             }
-            else
+            catch(NotFoundException exception)
             {
-                return BadRequest(itemsResponse.Message);
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var itemResponse = await _itemService.GetItem(id);
-
-            if (itemResponse.Success)
+             try
+             {
+                 var itemResponse = await _itemService.GetItem(id);
+                 return Ok(itemResponse);
+             }
+             catch (NotFoundException exception)
+             {
+                 return NotFound(exception.Message);
+             }
+            catch (Exception exception)
             {
-                return Ok(itemResponse.Data);
-            }
-            else
-            {
-                return BadRequest(itemResponse.Message);
+                return BadRequest(exception.Message);
             }
         }
 
         [HttpGet("tags")]
         public async Task<IActionResult> GetTags()
         {
-            var tagResponse = await _itemService.GetTags();
-
-            if (tagResponse.Success)
+            try
             {
-                return Ok(tagResponse.Data);
+                var tagResponse = await _itemService.GetTags();
+                return Ok(tagResponse);
             }
-            else
+            catch(NotFoundException exception)
             {
-                return BadRequest(tagResponse.Message);
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
 
@@ -62,14 +72,24 @@ namespace BISA.Server.Controllers
         [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(int id) // skall vi rensa inventory här eller ska den vara en egen controller? 
         {
-            var deleteResponse = await _itemService.DeleteItem(id);
-
-            if (deleteResponse.Success)
+     
+            try
             {
-                return NotFound(deleteResponse.Message);
+                var deleteResponse = await _itemService.DeleteItem(id);
+                return NoContent();
             }
-
-            return BadRequest(deleteResponse.Message);
+            catch(InvalidOperationException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch(NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }
