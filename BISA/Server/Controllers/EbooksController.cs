@@ -65,10 +65,15 @@ namespace BISA.Server.Controllers
             {
                 return BadRequest(exception.Message);
             }
+            catch (NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
             catch (Exception exception)
             {
                 return StatusCode(500, exception.Message);
             }
+            
         }
     }
 }
