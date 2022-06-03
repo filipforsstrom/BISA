@@ -18,61 +18,89 @@ namespace BISA.Server.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> PromoteToStaff(UserRoleDTO userToPromote)
         {
-
-            var eventResponse = await _userRolesService.PromoteToStaff(userToPromote);
-
-            if (eventResponse.Success)
+            try
             {
-                return Ok(eventResponse.Message);
+                var eventResponse = await _userRolesService.PromoteToStaff(userToPromote);
+                return Ok(eventResponse);
             }
-            else
+            catch(InvalidOperationException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch(NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> PromoteToAdmin(UserRoleDTO userToPromote)
         {
-            var eventResponse = await _userRolesService.PromoteToAdmin(userToPromote);
-
-            if (eventResponse.Success)
+            try
             {
-                return Ok(eventResponse.Message);
+                var eventResponse = await _userRolesService.PromoteToAdmin(userToPromote);
+                return Ok(eventResponse);
             }
-            else
+            catch (InvalidOperationException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch(NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
 
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteAdmin(string id)
         {
-            var eventResponse = await _userRolesService.DemoteAdmin(id);
-
-            if (eventResponse.Success)
+            try
             {
-                return Ok(eventResponse.Message);
+                var eventResponse = await _userRolesService.DemoteAdmin(id);
+                return Ok(eventResponse);
             }
-            else
+            catch(InvalidOperationException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch(NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
 
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteStaff(string id)
         {
-            var eventResponse = await _userRolesService.DemoteStaff(id);
-
-            if (eventResponse.Success)
+            
+            try
             {
-                return Ok(eventResponse.Message);
+                var eventResponse = await _userRolesService.DemoteStaff(id);
+                return Ok(eventResponse);
             }
-            else
+            catch (InvalidOperationException exception)
             {
-                return BadRequest(eventResponse.Message);
+                return BadRequest(exception.Message);
+            }
+            catch(NotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                return BadRequest(exception.Message);
             }
         }
     }

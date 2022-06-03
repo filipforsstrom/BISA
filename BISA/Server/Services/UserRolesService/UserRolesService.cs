@@ -16,18 +16,16 @@ namespace BISA.Server.Services.UserRolesService
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public async Task<ServiceResponseDTO<string>> DemoteAdmin(string id)
+        public async Task<string> DemoteAdmin(string id)
         {
-            ServiceResponseDTO<string> responseDTO = new();
             var userFromContextId = _httpContextAccessor.HttpContext?
                 .User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.Equals(userFromContextId, id))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "You can't demote yourself";
-                return responseDTO;
+                throw new InvalidOperationException("You can't demote yourself");
             }
+
             var roleToRemove = "Admin";
 
             //Find user to demote
@@ -36,40 +34,30 @@ namespace BISA.Server.Services.UserRolesService
             //Check that user exists
             if (userToDemote == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User could not be found.";
-                return responseDTO;
+                throw new NotFoundException("User could not be found.");
             }
 
             var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == id).ToListAsync();
 
             if (!userCurrentRoles.Any(u => u.RoleId == "AdminId"))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User is already not admin";
-                return responseDTO;
+                throw new InvalidOperationException("User is already not admin");
             }
 
             await RemoveRoles(userToDemote);
             await PromoteToStaff(new UserRoleDTO { Id = id });
-            responseDTO.Success = true;
-            responseDTO.Message = $"{userToDemote.UserName} demoted from {roleToRemove}.";
-            return responseDTO;
+            return $"{userToDemote.UserName} demoted from {roleToRemove}.";
 
         }
 
-        public async Task<ServiceResponseDTO<string>> DemoteStaff(string id)
+        public async Task<string> DemoteStaff(string id)
         {
-            ServiceResponseDTO<string> responseDTO = new();
-
             var userFromContextId = _httpContextAccessor.HttpContext?
                 .User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.Equals(userFromContextId, id))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "You can't demote yourself";
-                return responseDTO;
+                throw new InvalidOperationException("You can't demote yourself");
             }
             var roleToRemove = "Staff";
 
@@ -79,30 +67,22 @@ namespace BISA.Server.Services.UserRolesService
             //Check that user exists
             if (userToDemote == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User could not be found.";
-                return responseDTO;
+                throw new NotFoundException("User could not be found.");
             }
 
             var userCurrentRoles = await _context.UserRoles.Where(u => u.UserId == id).ToListAsync();
 
             if (!userCurrentRoles.Any(u => u.RoleId == "StaffId"))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User is already not staff.";
-                return responseDTO;
+                throw new InvalidOperationException("User is already not staff.");
             }
 
             await RemoveRoles(userToDemote);
-            responseDTO.Success = true;
-            responseDTO.Message = $"{userToDemote.UserName} demoted from {roleToRemove}.";
-            return responseDTO;
+            return $"{userToDemote.UserName} demoted from {roleToRemove}.";
         }
 
-        public async Task<ServiceResponseDTO<string>> PromoteToAdmin(UserRoleDTO user)
+        public async Task<string> PromoteToAdmin(UserRoleDTO user)
         {
-
-            ServiceResponseDTO<string> responseDTO = new();
             var newRole = "Admin";
 
             //Find user to promote
@@ -111,9 +91,7 @@ namespace BISA.Server.Services.UserRolesService
             //Check that user exists
             if (userToPromote == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User could not be found.";
-                return responseDTO;
+                throw new NotFoundException("User could not be found.");
             }
 
             //Check if user already has role
@@ -121,9 +99,7 @@ namespace BISA.Server.Services.UserRolesService
 
             if(userCurrentRoles.Any(u => u.RoleId == "AdminId"))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User is already admin";
-                return responseDTO;
+                throw new InvalidOperationException("User is already admin");
             }
 
             if (userCurrentRoles.Any())
@@ -131,17 +107,13 @@ namespace BISA.Server.Services.UserRolesService
                 await RemoveRoles(userToPromote);
             }
 
-
             //If user does not have current role, give them role
             await _userManager.AddToRoleAsync(userToPromote, newRole);
-            responseDTO.Success = true;
-            responseDTO.Message = $"{userToPromote.UserName} promoted to {newRole}.";
-            return responseDTO;
+            return $"{userToPromote.UserName} promoted to {newRole}.";
         }
 
-        public async Task<ServiceResponseDTO<string>> PromoteToStaff(UserRoleDTO user)
+        public async Task<string> PromoteToStaff(UserRoleDTO user)
         {
-            ServiceResponseDTO<string> responseDTO = new();
             var newRole = "Staff";
 
             //Find user to promote
@@ -150,9 +122,8 @@ namespace BISA.Server.Services.UserRolesService
             //Check that user exists
             if(userToPromote == null)
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User could not be found.";
-                return responseDTO;
+                throw new NotFoundException("User could not be found.");
+                
             }
 
             //Check if user already has role
@@ -160,15 +131,12 @@ namespace BISA.Server.Services.UserRolesService
 
             if (userCurrentRoles.Any(u => u.RoleId == "AdminId"))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "Protected user. Contact Administrator";
-                return responseDTO;
+                throw new InvalidOperationException("Protected user. Contact Administrator");
+                
             }
             if (userCurrentRoles.Any(u => u.RoleId == "StaffId"))
             {
-                responseDTO.Success = false;
-                responseDTO.Message = "User is already staff";
-                return responseDTO;
+                throw new InvalidOperationException("User is already staff");
             }
 
             if(userCurrentRoles.Any())
@@ -178,9 +146,7 @@ namespace BISA.Server.Services.UserRolesService
 
             //If user does not have current role, give them role
             await _userManager.AddToRoleAsync(userToPromote, newRole);
-            responseDTO.Success=true;
-            responseDTO.Message = $"{userToPromote.UserName} promoted to {newRole}.";
-            return responseDTO;
+            return $"{userToPromote.UserName} promoted to {newRole}.";
         }
 
         private async Task RemoveRoles(ApplicationUser user)
