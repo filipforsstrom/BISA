@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BISA.Shared.DTO
+namespace BISA.Shared.Constants
 {
-    public struct BusinessRulesDTO
+    public struct BussinessRulesConstants
     {
         public const int MaxLoansPerUser = 5;
         public const double BookLoanTime = 20;
