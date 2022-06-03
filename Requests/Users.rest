@@ -26,7 +26,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name getUser
-GET {{baseUri}}/user/heff
+GET {{baseUri}}/user/jaf
 Authorization: Bearer {{authToken}}
 
 ###

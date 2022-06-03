@@ -4,8 +4,8 @@ namespace BISA.Server.Services.UserService
 {
     public interface IUserService
     {
-        Task<ServiceResponseDTO<UserRoleDTO>> GetUser(string id);
-        Task<ServiceResponseDTO<string>> ChangePassword(UserChangePasswordDTO userChangePassword);
-        Task<ServiceResponseDTO<string>> DeleteUser(string id);
+        Task<UserRoleDTO> GetUser(string id);
+        Task<string> ChangePassword(UserChangePasswordDTO userChangePassword);
+        Task DeleteUser(string id);
     }
 }
