@@ -88,6 +88,8 @@ else { <p>Loading form....</p>}
 
     protected override async Task OnInitializedAsync()
     {
+        tags = await ItemService.GetTags();
+
         //EditForm needs initialized model straight away. Template form model will be book.
         EditContext = new EditContext(book);
 
@@ -96,8 +98,6 @@ else { <p>Loading form....</p>}
 
         //Check what type of item is going to be updated so the form has correct validation parameters.
         await InitializeEditContext();
-
-        tags = await ItemService.GetTags();
 
         //When initial data has been processed, show form.
         dataIsLoaded = true;
