@@ -17,41 +17,57 @@ namespace BISA.Server.Controllers
         [HttpGet("{username}")]
         public async Task<IActionResult> Get(string username)
         {
-            var userResponse = await _userService.GetUser(username);
-            if (userResponse.Success)
+            try
             {
-                return Ok(userResponse.Data);
+                var userResponse = await _userService.GetUser(username);
+                return Ok(userResponse);
             }
-            return BadRequest(userResponse.Message);
+            catch(ArgumentException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [Authorize]
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO userChangePassword)
         {
-            var changePasswordResponse = await _userService.ChangePassword(userChangePassword);
-
-            if (changePasswordResponse.Success)
+            try
             {
-                return Ok(changePasswordResponse.Message);
+                var changePasswordResponse = await _userService.ChangePassword(userChangePassword);
+                return Ok(changePasswordResponse);
             }
-            else
+            catch (ApplicationException exception)
             {
-                return BadRequest(changePasswordResponse.Message);
+                return BadRequest(exception.Message);
             }
-
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }         
         }
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var userResponse = await _userService.DeleteUser(id);
-            if (userResponse.Success)
+            try
             {
+                await _userService.DeleteUser(id);
                 return NoContent();
             }
-            return BadRequest(userResponse.Message);
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

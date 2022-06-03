@@ -15,18 +15,14 @@ namespace BISA.Server.Services.UserService
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _context = context;
         }
-        public async Task<ServiceResponseDTO<string>> ChangePassword(UserChangePasswordDTO userChangePassword)
-        {
-            var response = new ServiceResponseDTO<string>();
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
+        public async Task<string> ChangePassword(UserChangePasswordDTO userChangePassword)
+        {            
+            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var user = await _signInManager.UserManager.FindByIdAsync(userId);
 
             if (user == null)
             {
-                response.Success = false;
-                response.Message = "Couldn't find user";
-                return response;
+                throw new ApplicationException("User not found.");
             }
 
             var changePasswordResult = await _signInManager.UserManager.ChangePasswordAsync(
@@ -34,64 +30,46 @@ namespace BISA.Server.Services.UserService
 
             if (!changePasswordResult.Succeeded)
             {
-                response.Success = false;
-                response.Message = changePasswordResult.Errors.First().Description.ToString();
-                return response;
+                throw new ApplicationException(changePasswordResult.Errors.First().Description.ToString());
             }
 
-            response.Success = changePasswordResult.Succeeded;
-            response.Message = "Password successfully changed";
-            return response;
+            return "Password successfully changed";
         }
 
-        public async Task<ServiceResponseDTO<string>> DeleteUser(string id)
+        public async Task DeleteUser(string id)
         {
-            var response = new ServiceResponseDTO<string>();
-            // get user in userdb
             var userInUserDb = await _signInManager.UserManager.FindByIdAsync(id);
-            if (userInUserDb != null)
+
+            if (userInUserDb == null)
             {
-                // remove user
-                await _signInManager.UserManager.DeleteAsync(userInUserDb);
-                // save?
-                // get user in bisadb
-                var userInBisaDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == id);
-                if (userInBisaDb != null)
-                {
-                    // remove user in bisadb
-                    _context.Users.Remove(userInBisaDb);
-                    await _context.SaveChangesAsync();
-                }
-                response.Success = true;
+                throw new ArgumentException("User not found");
             }
-            else
-            {
-                response.Success = false;
-                response.Message = "User not found";
-            }
+
+            await _signInManager.UserManager.DeleteAsync(userInUserDb);
             
-            return response;
+            var userInBisaDb = await _context.Users.FirstOrDefaultAsync(user => user.UserId == id);
+            if (userInBisaDb != null)
+            {
+                _context.Users.Remove(userInBisaDb);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public async Task<ServiceResponseDTO<UserRoleDTO>> GetUser(string username)
+        public async Task<UserRoleDTO> GetUser(string username)
         {
-            var response = new ServiceResponseDTO<UserRoleDTO>();
-
             var userInDb = await _signInManager.UserManager.FindByNameAsync(username);
-            if (userInDb != null)
+
+            if (userInDb == null)
             {
-                response.Data = new UserRoleDTO
-                {
-                    Id = userInDb.Id,
-                    Email = userInDb.Email,
-                    Username = userInDb.UserName
-                };
-                response.Success = true;
-                return response;
+                throw new ArgumentException("No matching user");
             }
-            response.Success = false;
-            response.Message = "User not found";
-            return response;
+
+            return new UserRoleDTO
+            {
+                Id = userInDb.Id,
+                Email = userInDb.Email,
+                Username = userInDb.UserName
+            };
         }
     }
 }
