@@ -2,11 +2,11 @@
 {
     public interface IEventService
     {
-        Task<ServiceResponseDTO<List<EventDTO>>> GetEvents();
-        Task<ServiceResponseDTO<List<EventTypeDTO>>> GetEventTypes();
-        Task<ServiceResponseDTO<EventDTO>> GetEvent(int eventId);
-        Task<ServiceResponseDTO<EventDTO>> CreateEvent(EventCreateDTO eventToCreate);
-        Task<ServiceResponseDTO<EventDTO>> UpdateEvent(int eventId, EventDTO eventToUpdate);
-        Task<ServiceResponseDTO<EventDTO>> DeleteEvent(int eventId);
+        Task<List<EventDTO>> GetEvents();
+        Task<List<EventTypeDTO>> GetEventTypes();
+        Task<EventDTO> GetEvent(int eventId);
+        Task<EventDTO> CreateEvent(EventCreateDTO eventToCreate);
+        Task<EventDTO> UpdateEvent(int eventId, EventDTO eventToUpdate);
+        Task<bool> DeleteEvent(int eventId);
     }
 }
