@@ -12,9 +12,8 @@ namespace BISA.Server.Services.StatisticsService
             _context = context;
         }
 
-        public async Task<ServiceResponseDTO<UserStatisticsDTO>> GetMostActiveUser()
+        public async Task<UserStatisticsDTO> GetMostActiveUser()
         {
-           ServiceResponseDTO<UserStatisticsDTO> serviceResponseDTO = new();
            UserStatisticsDTO mostPopularUserStatisticsDTO = new();
 
             //get complete loan history
@@ -35,16 +34,11 @@ namespace BISA.Server.Services.StatisticsService
             //assigning users email to DTO 
             mostPopularUserStatisticsDTO.Email = user.Email;
 
-            
-            serviceResponseDTO.Data = mostPopularUserStatisticsDTO;
-            serviceResponseDTO.Success = true;
-
-            return serviceResponseDTO;
+            return mostPopularUserStatisticsDTO;
         }
 
-        public async Task<ServiceResponseDTO<MostPopularAuthorDTO>> GetMostPopularAuthor()
+        public async Task<MostPopularAuthorDTO> GetMostPopularAuthor()
         {
-            ServiceResponseDTO<MostPopularAuthorDTO> serviceResponseDTO = new();
             MostPopularAuthorDTO mostPopularAuthor = new();
 
             //get complete loan history
@@ -58,20 +52,16 @@ namespace BISA.Server.Services.StatisticsService
                 allItemsInHistory.Add(actualItem);
             }
 
-            var sortedItems = allItemsInHistory.GroupBy(l => l.Item.Creator).OrderByDescending(l => l.Count()).Select(l => l).First();
+            var sortedItems = allItemsInHistory.GroupBy(l => l.Item?.Creator).OrderByDescending(l => l.Count()).Select(l => l).First();
 
             mostPopularAuthor.NumberOfLoans = sortedItems.Count();
             mostPopularAuthor.Name = sortedItems.Key;
 
-            serviceResponseDTO.Data = mostPopularAuthor;
-            serviceResponseDTO.Success = true;
-
-            return serviceResponseDTO;
+            return mostPopularAuthor;
         }
 
-        public async Task<ServiceResponseDTO<ItemDTO>> GetMostPopularItem()
+        public async Task<ItemDTO> GetMostPopularItem()
         {
-            ServiceResponseDTO<ItemDTO> responseDTO = new();
             //get complete loan history
             var loanhistory = await _context.LoansHistory.ToListAsync();
 
@@ -89,12 +79,7 @@ namespace BISA.Server.Services.StatisticsService
 
             var mostPopularItemDTO = ConvertEntityToDTO(itemEntity);
 
-            responseDTO.Success = true;
-            responseDTO.Data = mostPopularItemDTO;
-
-            return responseDTO;
-
-
+            return mostPopularItemDTO;
         }
 
         private ItemDTO ConvertEntityToDTO(ItemEntity itemEntity)

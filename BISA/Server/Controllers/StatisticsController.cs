@@ -17,40 +17,44 @@ namespace BISA.Server.Controllers
         [HttpGet("popular")]
         public async Task<IActionResult> GetMostPopularItem()
         {
-            // Populäraste item i biblioteket
-            var statResponse = await _statisticsService.GetMostPopularItem();
-
-            if (statResponse.Success)
+            try
             {
-                return Ok(statResponse.Data);
+                var statResponse = await _statisticsService.GetMostPopularItem();
+                return Ok(statResponse);
             }
-            return BadRequest(statResponse.Message);
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
 
         [HttpGet("users")]
         public async Task<IActionResult> GetMostActiveUser()
         {
-
-            var statResponse = await _statisticsService.GetMostActiveUser();
-
-            if (statResponse.Success)
+            try
             {
-                return Ok(statResponse.Data);
+                var statResponse = await _statisticsService.GetMostActiveUser();
+                return Ok(statResponse);
             }
-            return BadRequest(statResponse.Message);
+            catch(Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet("authors")]
         public async Task<IActionResult> GetMostPopularAuthor()
         {
-            var statResponse = await _statisticsService.GetMostPopularAuthor();
-
-            if (statResponse.Success)
+            try
             {
-                return Ok(statResponse.Data);
+                var statResponse = await _statisticsService.GetMostPopularAuthor();
+                return Ok(statResponse);
             }
-            return BadRequest(statResponse.Message);
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }
