@@ -28,8 +28,12 @@ namespace BISA.Server.Services.EbookService
                 throw new ArgumentException("This ebook already exists");
             }
 
+            if (string.IsNullOrEmpty(ebookToCreate.Image))
+            {
+                ebookToCreate.Image = "/assets/ebook.jpg";
+            }
 
-            List<TagEntity> tagsForEbook = new List<TagEntity>();
+            List<TagEntity> tagsForMovie = new List<TagEntity>();
 
             if (ebookToCreate.Tags.Any())
             {
@@ -37,18 +41,14 @@ namespace BISA.Server.Services.EbookService
                 {
                     try
                     {
-                        tagsForEbook.Add(_context.Tags.Single(t => t.Id == tag.Id));
+                        tagsForMovie.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {
 
                     }
-                }
-            }
 
-            if (string.IsNullOrEmpty(ebookToCreate.Image))
-            {
-                ebookToCreate.Image = "/assets/ebook.jpg";
+                }
             }
 
             var ebookEntity = new EbookEntity
@@ -59,7 +59,7 @@ namespace BISA.Server.Services.EbookService
                 Language = ebookToCreate.Language,
                 Url = ebookToCreate.Url,
                 Publisher = ebookToCreate.Publisher,
-                Tags = tagsForEbook,
+                Tags = tagsForMovie,
                 Description = ebookToCreate.Description,
                 Image = ebookToCreate.Image,
             };
@@ -88,21 +88,6 @@ namespace BISA.Server.Services.EbookService
                 throw new NotFoundException("There is no ebook with that id");
             }
 
-
-            List<TagDTO> tags = new();
-
-            foreach (var tag in ebook.Tags)
-            {
-                tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
-            }
-
-            List<ItemInventoryDTO> ItemInventory = new();
-            foreach (var item in ebook.ItemInventory)
-            {
-                ItemInventory.Add(new ItemInventoryDTO
-                { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
-            }
-
             var ebookDTO = new EbookDTO()
             {
                 Id = ebook.Id,
@@ -112,9 +97,9 @@ namespace BISA.Server.Services.EbookService
                 Language = ebook.Language,
                 Url = ebook.Url,
                 Publisher = ebook.Publisher,
-                Tags = tags,
+                Tags = ebook.Tags.Select(t => new TagDTO { Id = t.Id, Tag = t.Tag }).ToList(),
                 ItemInventory = ebook.ItemInventory.Count(),
-                Inventory = ItemInventory,
+                Inventory = ebook.ItemInventory.Select(it => new ItemInventoryDTO { Id = it.Id, Available = it.Available, ItemId = it.ItemId }).ToList(),
                 Description = ebook.Description,
                 Image = ebook.Image,
             };
@@ -132,9 +117,6 @@ namespace BISA.Server.Services.EbookService
             {
                 throw new ArgumentException("Book requested for update not found");
             }
-
-            ebookToUpdate.Tags.Clear();
-
             List<TagEntity> tagsForEbook = new List<TagEntity>();
 
             if (updatedEbook.Tags.Any())
@@ -149,7 +131,6 @@ namespace BISA.Server.Services.EbookService
                     {
 
                     }
-
                 }
             }
 
