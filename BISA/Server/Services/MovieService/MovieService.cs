@@ -43,7 +43,6 @@ namespace BISA.Server.Services.MovieService
                     {
 
                     }
-
                 }
             }
 
