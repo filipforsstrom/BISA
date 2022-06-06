@@ -46,7 +46,6 @@ namespace BISA.Server.Services.SearchService
             if (items.Count == 0 || items == null)
             {
                 throw new NotFoundException("No matching results");
-                
             }
             itemList = ConvertToItemDTO(items);
             return itemList;
