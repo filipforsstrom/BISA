@@ -1,5 +1,6 @@
 ﻿using BISA.Server.Data.DbContexts;
 using BISA.Shared.Entities;
+using BISA.Shared.ViewModels;
 
 namespace BISA.Server.Services.EbookService
 {
@@ -109,7 +110,7 @@ namespace BISA.Server.Services.EbookService
 
         public async Task<EbookUpdateDTO> UpdateEbook(EbookUpdateDTO updatedEbook)
         {
-            var allEbooks = await _context.Ebooks.ToListAsync();
+            var allEbooks = await _context.Ebooks.Include(e => e.ItemTags).ToListAsync();
 
             var foundDuplicate = allEbooks
               .Any(b => b.Title?.ToLower() == updatedEbook.Title?.ToLower() &&
@@ -117,7 +118,8 @@ namespace BISA.Server.Services.EbookService
               b.Date == updatedEbook.Date &&
               b.Language?.ToLower() == updatedEbook.Language?.ToLower() &&
               b.Url?.ToLower() == updatedEbook.Url?.ToLower() &&
-              b.Publisher?.ToLower() == updatedEbook.Publisher?.ToLower());
+              b.Publisher?.ToLower() == updatedEbook.Publisher?.ToLower() &&
+              AreTagsEqual(updatedEbook.Tags, b.ItemTags));
 
             if (foundDuplicate)
             {
@@ -163,6 +165,36 @@ namespace BISA.Server.Services.EbookService
             await _context.SaveChangesAsync();
 
             return updatedEbook;
+        }
+
+        private bool AreTagsEqual(List<TagViewModel> tags, List<ItemTagEntity> itemTags)
+        {
+            int numOfEqualTags = 0;
+
+            if (tags.Count != itemTags.Count)
+            {
+                return false;
+            }
+
+            foreach (var tag in itemTags)
+            {
+                foreach (var tagsViewModel in tags)
+                {
+                    if (tagsViewModel.Id == tag.TagId)
+                    {
+                        numOfEqualTags++;
+                    }
+                }
+            }
+
+            if (numOfEqualTags == itemTags.Count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

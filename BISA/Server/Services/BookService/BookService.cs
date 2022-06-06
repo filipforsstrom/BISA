@@ -1,6 +1,7 @@
 ﻿using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.ItemService;
 using BISA.Shared.Entities;
+using BISA.Shared.ViewModels;
 using System.Data;
 
 namespace BISA.Server.Services.BookService
@@ -123,7 +124,7 @@ namespace BISA.Server.Services.BookService
             
             List<TagEntity> tagsForBookToBeUpdated = new();
 
-            var allBooks = await _context.Books.ToListAsync();
+            var allBooks = await _context.Books.Include(b => b.ItemTags).ToListAsync();
 
             var foundDuplicate = allBooks
                 .Any(b => b.Title?.ToLower() == bookToUpdate.Title?.ToLower() &&
@@ -131,7 +132,8 @@ namespace BISA.Server.Services.BookService
                 b.Date == bookToUpdate.Date &&
                 b.Language?.ToLower() == bookToUpdate.Language?.ToLower() &&
                 b.ISBN?.ToLower() == bookToUpdate.ISBN?.ToLower() &&
-                b.Publisher?.ToLower() == bookToUpdate.Publisher?.ToLower());
+                b.Publisher?.ToLower() == bookToUpdate.Publisher?.ToLower() &&
+                AreTagsEqual(bookToUpdate.Tags, b.ItemTags));
 
             if (foundDuplicate)
             {
@@ -183,6 +185,36 @@ namespace BISA.Server.Services.BookService
             await _context.SaveChangesAsync();
 
             return bookToUpdate;
+        }
+
+        private bool AreTagsEqual(List<TagViewModel> tags, List<ItemTagEntity> itemTags)
+        {
+            int numOfEqualTags = 0;
+
+            if(tags.Count != itemTags.Count)
+            {
+                return false;
+            }
+
+            foreach(var tag in itemTags)
+            {
+                foreach(var tagsViewModel in tags)
+                {
+                    if(tagsViewModel.Id == tag.TagId)
+                    {
+                        numOfEqualTags++;
+                    }
+                }
+            }
+
+            if(numOfEqualTags == itemTags.Count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

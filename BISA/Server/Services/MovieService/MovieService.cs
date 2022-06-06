@@ -1,5 +1,6 @@
 ﻿using BISA.Server.Data.DbContexts;
 using BISA.Shared.Entities;
+using BISA.Shared.ViewModels;
 
 namespace BISA.Server.Services.MovieService
 {
@@ -118,7 +119,7 @@ namespace BISA.Server.Services.MovieService
 
         public async Task<MovieUpdateDTO> UpdateMovie(int id, MovieUpdateDTO updatedMovie)
         {
-            var allmovies = await _context.Movies.ToListAsync();
+            var allmovies = await _context.Movies.Include(m => m.ItemTags).ToListAsync();
 
             var foundDuplicate = allmovies
                 .Any(b => b.Title?.ToLower() == updatedMovie.Title?.ToLower() &&
@@ -126,7 +127,8 @@ namespace BISA.Server.Services.MovieService
                 b.Date == updatedMovie.Date &&
                 b.Language?.ToLower() == updatedMovie.Language?.ToLower() &&
                 b.RuntimeInMinutes == updatedMovie.RuntimeInMinutes &&
-                b.Publisher?.ToLower() == updatedMovie.Publisher?.ToLower());
+                b.Publisher?.ToLower() == updatedMovie.Publisher?.ToLower() &&
+                AreTagsEqual(updatedMovie.Tags, b.ItemTags));
 
             if (foundDuplicate)
             {
@@ -184,6 +186,36 @@ namespace BISA.Server.Services.MovieService
 
             return updatedMovie;
 
+        }
+
+        private bool AreTagsEqual(List<TagViewModel> tags, List<ItemTagEntity> itemTags)
+        {
+            int numOfEqualTags = 0;
+
+            if (tags.Count != itemTags.Count)
+            {
+                return false;
+            }
+
+            foreach (var tag in itemTags)
+            {
+                foreach (var tagsViewModel in tags)
+                {
+                    if (tagsViewModel.Id == tag.TagId)
+                    {
+                        numOfEqualTags++;
+                    }
+                }
+            }
+
+            if (numOfEqualTags == itemTags.Count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
