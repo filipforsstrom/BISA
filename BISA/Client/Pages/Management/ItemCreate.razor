@@ -1,5 +1,6 @@
 ﻿@page "/itemcreateupdate"
 @page "/itemcreateupdate/{itemToUpdate:int}"
+@attribute [Authorize(Roles = "Admin, Staff")]
 @inject IItemService ItemService
 @inject IMovieService MovieService
 @inject IBookService BookService

@@ -7,7 +7,7 @@
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@SearchMessage" OnSubmit="SearchBy">
-    <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" Required="true" RequiredError="Search is required!" />
+    <MudTextField T="string" @bind-Value="SearchMessage.UserSearch" />
     <div class="d-flex">
         <MudRadioGroup T="string" Required="true" @bind-SelectedOption="SearchByProperty">
             <MudRadio Option="@("title")">Search by title</MudRadio>
