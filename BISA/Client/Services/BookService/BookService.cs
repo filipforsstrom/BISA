@@ -1,28 +1,39 @@
-﻿namespace BISA.Client.Services.BookService
+﻿
+using BISA.Client.Services.SessionService;
+
+namespace BISA.Client.Services.BookService
 {
     public class BookService : IBookService
     {
         private readonly HttpClient _http;
+        private readonly ISessionService _sessionService;
 
-        public BookService(HttpClient http)
+        public BookService(HttpClient http, ISessionService sessionService)
         {
             _http = http;
+            _sessionService = sessionService;
         }
 
         public async Task<ServiceResponseViewModel<string>> CreateBook(BookViewModel bookToCreate)
         {
             ServiceResponseViewModel<string> serviceResponse = new();
             var response = await _http.PostAsJsonAsync("api/books", bookToCreate);
-            if (response.IsSuccessStatusCode)
+            var userAuthorized = await _sessionService.CheckFor401(response);
+
+            if (userAuthorized)
             {
-                serviceResponse.Success = true;
-                serviceResponse.Message = "Book created successfully";
+                if (response.IsSuccessStatusCode)
+                {
+                    serviceResponse.Success = true;
+                    serviceResponse.Message = "Book created successfully";
+                }
+                else
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = await response.Content.ReadAsStringAsync();
+                }
             }
-            else
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = await response.Content.ReadAsStringAsync();
-            }
+            
 
             return serviceResponse;
         }
