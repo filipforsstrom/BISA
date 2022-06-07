@@ -74,8 +74,8 @@ namespace BISA.Server.Services.LoanService
 
                 throw new InvalidOperationException(infoMessage);
             }
-
-            throw new ArgumentOutOfRangeException($"User only eligible for {BussinessRulesConstants.MaxLoansPerUser - currentUserLoans.Count} more loans");
+            string errorMessage = $"User only eligible for {BussinessRulesConstants.MaxLoansPerUser - currentUserLoans.Count} more loans";
+            throw new ArgumentException(errorMessage);
         }
 
         public async Task<List<LoanDTO>> GetAllLoans()
@@ -119,7 +119,7 @@ namespace BISA.Server.Services.LoanService
                 }
 
                 throw new NotFoundException("You do not have any loans.");
-                
+
             }
 
             throw new InvalidOperationException("Error calling the database");
@@ -164,7 +164,7 @@ namespace BISA.Server.Services.LoanService
                     _context.Update(invItem);
                     await _context.SaveChangesAsync();
                 }
-                
+
                 return "Loan returned";
             }
 
@@ -205,7 +205,7 @@ namespace BISA.Server.Services.LoanService
             var itemReservation = await _context.LoansReservation
                 .Include(reservation => reservation.Item)
                 .FirstOrDefaultAsync(lr => lr.ItemId == itemId);
-            
+
             if (itemReservation != null)
             {
                 return itemReservation;
@@ -223,14 +223,11 @@ namespace BISA.Server.Services.LoanService
                 {
                     result.Add(new LoanDTO
                     {
-                        Id = loan.Id,
                         Date_From = loan.Date_From,
                         Date_To = loan.Date_To,
                         User_Email = loan.User?.Email,
                         Item = loan.ItemInventory.Item,
                         InvItemId = loan.ItemInventoryId
-                        
-                       
                     });
                 }
             }
