@@ -27,6 +27,7 @@ using MudBlazor.Services;
 using BISA.Client.Services.UserService;
 using BISA.Client.Services.ReservationsService;
 using BISA.Client.Services.InventoryService;
+using BISA.Client.Services.SessionService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<IPrintingService, PrintingService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<ISessionService, SessionService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
