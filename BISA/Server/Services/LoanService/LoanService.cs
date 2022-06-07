@@ -1,4 +1,5 @@
 ﻿using BISA.Server.Data.DbContexts;
+using BISA.Shared.Constants;
 using BISA.Shared.Entities;
 
 namespace BISA.Server.Services.LoanService
@@ -30,7 +31,7 @@ namespace BISA.Server.Services.LoanService
                 .Where(l => l.UserId == userInDb.Id)
                 .ToListAsync();
 
-            if (BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count >= items.Count)
+            if (BussinessRulesConstants.MaxLoansPerUser - currentUserLoans.Count >= items.Count)
             {
                 string infoMessage = "Following items could not be loaned:";
                 var loansToAdd = new List<LoanEntity>();
@@ -74,7 +75,7 @@ namespace BISA.Server.Services.LoanService
                 throw new InvalidOperationException(infoMessage);
             }
 
-            throw new ArgumentOutOfRangeException($"User only eligible for {BusinessRulesDTO.MaxLoansPerUser - currentUserLoans.Count} more loans");
+            throw new ArgumentOutOfRangeException($"User only eligible for {BussinessRulesConstants.MaxLoansPerUser - currentUserLoans.Count} more loans");
         }
 
         public async Task<List<LoanDTO>> GetAllLoans()
@@ -172,9 +173,9 @@ namespace BISA.Server.Services.LoanService
 
         private double GetItemLoanTime(string itemType) => itemType switch
         {
-            "Ebook" => BusinessRulesDTO.EbookLoanTime,
-            "Movie" => BusinessRulesDTO.MovieLoanTime,
-            _ => BusinessRulesDTO.BookLoanTime
+            "Ebook" => BussinessRulesConstants.EbookLoanTime,
+            "Movie" => BussinessRulesConstants.MovieLoanTime,
+            _ => BussinessRulesConstants.BookLoanTime
         };
 
         private async Task RemoveReservation(int reservationId)

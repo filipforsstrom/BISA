@@ -1,6 +1,7 @@
 ﻿using BISA.Server.Data.DbContexts;
 using BISA.Server.Services.ItemService;
 using BISA.Shared.Entities;
+using BISA.Shared.ViewModels;
 using System.Data;
 
 namespace BISA.Server.Services.BookService
@@ -32,28 +33,27 @@ namespace BISA.Server.Services.BookService
                 throw new ArgumentException("This book already exists");
             }
 
-            //If bookToCreate gets a list of Tag Ids passed in,
-            //search for the tags in the Tags-table and add them to a list.
-            List<TagEntity> tagsForBookToBeCreated = new();
 
+            if (string.IsNullOrEmpty(bookToCreate.Image))
+            {
+                bookToCreate.Image = "/assets/book.jpg";
+            }
+
+            List<TagEntity> tagsForMovie = new List<TagEntity>();
             if (bookToCreate.Tags.Any())
             {
                 foreach (var tag in bookToCreate.Tags)
                 {
                     try
                     {
-                        tagsForBookToBeCreated.Add(_context.Tags.Single(t => t.Id == tag.Id));
+                        tagsForMovie.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {
-                        // add to responseDTO.Message
-                    }
-                }
-            }
 
-            if (string.IsNullOrEmpty(bookToCreate.Image))
-            {
-                bookToCreate.Image = "/assets/book.jpg";
+                    }
+
+                }
             }
 
             //Create book entity for the db.
@@ -65,11 +65,11 @@ namespace BISA.Server.Services.BookService
                 Language = bookToCreate.Language,
                 ISBN = bookToCreate.ISBN,
                 Publisher = bookToCreate.Publisher,
-                Tags = tagsForBookToBeCreated,
+                Tags = tagsForMovie,
                 Description = bookToCreate.Description,
                 Image = bookToCreate.Image,
             };
-
+            
             //----------------ITEM TO INVENTORY-TABLE LOGIC------------------------//
 
             //Add how many items there will be of this book to the ItemInventory-table. 
@@ -99,21 +99,6 @@ namespace BISA.Server.Services.BookService
                 throw new NotFoundException("There is no book with that id");
             }
 
-            //New list of TagDTOS to assign to the BookDTO.
-            //Foreach of the book entities tags, create a new tagDTO and add it to Tags-list.
-            List<TagDTO> Tags = new();
-
-            foreach (var tag in book.Tags)
-            {
-                Tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
-            }
-
-            List<ItemInventoryDTO> ItemInventory = new();
-            foreach (var item in book.ItemInventory)
-            {
-                ItemInventory.Add(new ItemInventoryDTO
-                { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
-            }
 
             var bookDTO = new BookDTO()
             {
@@ -124,13 +109,13 @@ namespace BISA.Server.Services.BookService
                 Language = book.Language,
                 ISBN = book.ISBN,
                 Publisher = book.Publisher,
-                Tags = Tags,
+                Tags = book.Tags.Select(t => new TagDTO { Id = t.Id, Tag = t.Tag }).ToList(),
                 ItemInventory = book.ItemInventory.Count(),
-                Inventory = ItemInventory,
+                Inventory = book.ItemInventory.Select(it => new ItemInventoryDTO { Id = it.Id, Available = it.Available, ItemId = it.ItemId }).ToList(),
                 Description = book.Description,
                 Image = book.Image,
             };
-
+            
             return bookDTO;
         }
 
@@ -139,7 +124,7 @@ namespace BISA.Server.Services.BookService
             
             List<TagEntity> tagsForBookToBeUpdated = new();
 
-            var allBooks = await _context.Books.ToListAsync();
+            var allBooks = await _context.Books.Include(b => b.ItemTags).ToListAsync();
 
             var foundDuplicate = allBooks
                 .Any(b => b.Title?.ToLower() == bookToUpdate.Title?.ToLower() &&
@@ -147,7 +132,8 @@ namespace BISA.Server.Services.BookService
                 b.Date == bookToUpdate.Date &&
                 b.Language?.ToLower() == bookToUpdate.Language?.ToLower() &&
                 b.ISBN?.ToLower() == bookToUpdate.ISBN?.ToLower() &&
-                b.Publisher?.ToLower() == bookToUpdate.Publisher?.ToLower());
+                b.Publisher?.ToLower() == bookToUpdate.Publisher?.ToLower() &&
+                AreTagsEqual(bookToUpdate.Tags, b.ItemTags));
 
             if (foundDuplicate)
             {
@@ -162,20 +148,20 @@ namespace BISA.Server.Services.BookService
                
             }
 
-            //Remove current non-updated book's tags.
-            bookEntity.Tags.Clear();
+            List<TagEntity> tagsForBook = new List<TagEntity>();
 
-            //Add the new tags.
             if (bookToUpdate.Tags.Any())
             {
                 foreach (var tag in bookToUpdate.Tags)
                 {
                     try
                     {
-                        tagsForBookToBeUpdated.Add(_context.Tags.Single(t => t.Id == tag.Id));
+                        tagsForBook.Add(_context.Tags.Single(m => m.Id == tag.Id));
                     }
                     catch (Exception)
                     {
+
+
 
                     }
 
@@ -189,7 +175,7 @@ namespace BISA.Server.Services.BookService
             bookEntity.Language = bookToUpdate.Language;
             bookEntity.ISBN = bookToUpdate.ISBN;
             bookEntity.Publisher = bookToUpdate.Publisher;
-            bookEntity.Tags = tagsForBookToBeUpdated;
+            bookEntity.Tags = tagsForBook;
             bookEntity.Image = bookToUpdate.Image;
             bookEntity.Description = bookToUpdate.Description;
 
@@ -199,6 +185,36 @@ namespace BISA.Server.Services.BookService
             await _context.SaveChangesAsync();
 
             return bookToUpdate;
+        }
+
+        private bool AreTagsEqual(List<TagViewModel> tags, List<ItemTagEntity> itemTags)
+        {
+            int numOfEqualTags = 0;
+
+            if(tags.Count != itemTags.Count)
+            {
+                return false;
+            }
+
+            foreach(var tag in itemTags)
+            {
+                foreach(var tagsViewModel in tags)
+                {
+                    if(tagsViewModel.Id == tag.TagId)
+                    {
+                        numOfEqualTags++;
+                    }
+                }
+            }
+
+            if(numOfEqualTags == itemTags.Count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

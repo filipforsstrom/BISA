@@ -10,5 +10,16 @@ namespace BISA.Shared.ViewModels
     {
         public int Id { get; set; }
         public string? Tag { get; set; }
+
+        public override bool Equals(object o)
+        {
+            var other = o as TagViewModel;
+            return other?.Id == Id;
+        }
+        public override int GetHashCode() => Id.GetHashCode();
+        public override string ToString()
+        {
+            return Tag;
+        }
     }
 }

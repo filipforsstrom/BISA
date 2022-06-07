@@ -1,5 +1,6 @@
 ﻿using BISA.Server.Data.DbContexts;
 using BISA.Shared.Entities;
+using BISA.Shared.ViewModels;
 
 namespace BISA.Server.Services.MovieService
 {
@@ -43,7 +44,6 @@ namespace BISA.Server.Services.MovieService
                     {
 
                     }
-
                 }
             }
 
@@ -83,46 +83,35 @@ namespace BISA.Server.Services.MovieService
 
         public async Task<MovieDTO> GetMovie(int itemId)
         {
-            var response = await _context.Movies.Where(m => m.Id == itemId)
+            var movie = await _context.Movies.Where(m => m.Id == itemId)
                 .Include(m => m.Tags)
                 .Include(m => m.ItemInventory)
                 .FirstOrDefaultAsync();
 
             ServiceResponseDTO<MovieDTO> responseDTO = new();
 
-            if (response == null)
+            if (movie == null)
             {
                 throw new NotFoundException("Movie not found");
             }
 
-            List<TagDTO> tags = new();
-            foreach (var tag in response.Tags)
-            {
-                tags.Add(new TagDTO { Id = tag.Id, Tag = tag.Tag });
-            }
-
-            List<ItemInventoryDTO> ItemInventory = new();
-            foreach (var item in response.ItemInventory)
-            {
-                ItemInventory.Add(new ItemInventoryDTO
-                { Id = item.Id, ItemId = item.ItemId, Available = item.Available });
-            }
+     
 
 
             var movieDto = new MovieDTO()
             {
-                Id = response.Id,
-                Title = response.Title,
-                Language = response.Language,
-                Date = response.Date,
-                Publisher = response.Publisher,
-                Creator = response.Creator,
-                Tags = tags,
-                ItemInventory = response.ItemInventory.Count(),
-                Inventory = ItemInventory,
-                RuntimeInMinutes = response.RuntimeInMinutes,
-                Description = response.Description,
-                Image = response.Image,
+                Id = movie.Id,
+                Title = movie.Title,
+                Language = movie.Language,
+                Date = movie.Date,
+                Publisher = movie.Publisher,
+                Creator = movie.Creator,
+                Tags = movie.Tags.Select(t => new TagDTO { Id = t.Id, Tag = t.Tag }).ToList(),
+                ItemInventory = movie.ItemInventory.Count(),
+                Inventory = movie.ItemInventory.Select(it => new ItemInventoryDTO { Id = it.Id, Available = it.Available, ItemId = it.ItemId }).ToList(),
+                RuntimeInMinutes = movie.RuntimeInMinutes,
+                Description = movie.Description,
+                Image = movie.Image,
             };
             return movieDto;
 
@@ -130,7 +119,7 @@ namespace BISA.Server.Services.MovieService
 
         public async Task<MovieUpdateDTO> UpdateMovie(int id, MovieUpdateDTO updatedMovie)
         {
-            var allmovies = await _context.Movies.ToListAsync();
+            var allmovies = await _context.Movies.Include(m => m.ItemTags).ToListAsync();
 
             var foundDuplicate = allmovies
                 .Any(b => b.Title?.ToLower() == updatedMovie.Title?.ToLower() &&
@@ -138,7 +127,8 @@ namespace BISA.Server.Services.MovieService
                 b.Date == updatedMovie.Date &&
                 b.Language?.ToLower() == updatedMovie.Language?.ToLower() &&
                 b.RuntimeInMinutes == updatedMovie.RuntimeInMinutes &&
-                b.Publisher?.ToLower() == updatedMovie.Publisher?.ToLower());
+                b.Publisher?.ToLower() == updatedMovie.Publisher?.ToLower() &&
+                AreTagsEqual(updatedMovie.Tags, b.ItemTags));
 
             if (foundDuplicate)
             {
@@ -196,6 +186,36 @@ namespace BISA.Server.Services.MovieService
 
             return updatedMovie;
 
+        }
+
+        private bool AreTagsEqual(List<TagViewModel> tags, List<ItemTagEntity> itemTags)
+        {
+            int numOfEqualTags = 0;
+
+            if (tags.Count != itemTags.Count)
+            {
+                return false;
+            }
+
+            foreach (var tag in itemTags)
+            {
+                foreach (var tagsViewModel in tags)
+                {
+                    if (tagsViewModel.Id == tag.TagId)
+                    {
+                        numOfEqualTags++;
+                    }
+                }
+            }
+
+            if (numOfEqualTags == itemTags.Count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
