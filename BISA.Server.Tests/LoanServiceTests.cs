@@ -45,6 +45,9 @@ namespace BISA.Server.Tests
         public ItemEntity item1 { get; set; }
         public ItemInventoryEntity inventoryItem1 { get; set; }
         public ItemInventoryEntity inventoryItem2 { get; set; }
+        public ItemInventoryEntity inventoryItem3 { get; set; }
+        public ItemInventoryEntity inventoryItem4 { get; set; }
+        public ItemInventoryEntity inventoryItem5 { get; set; }
         public LoanEntity loan1 { get; set; }
         public LoanEntity loan2 { get; set; }
         public DateTime DateTimeNow { get; set; } = DateTime.Now;
@@ -73,6 +76,9 @@ namespace BISA.Server.Tests
             item1 = new ItemEntity { Id = 1001, Title = "Ondskan", Date = "1980", Creator = "Jan Guillou" };
             inventoryItem1 = new ItemInventoryEntity { Id = 1001, ItemId = item1.Id, Available = false };
             inventoryItem2 = new ItemInventoryEntity { Id = 1002, ItemId = item1.Id, Available = false };
+            inventoryItem3 = new ItemInventoryEntity { Id = 1003, ItemId = item1.Id, Available = false };
+            inventoryItem4 = new ItemInventoryEntity { Id = 1004, ItemId = item1.Id, Available = false };
+            inventoryItem5 = new ItemInventoryEntity { Id = 1005, ItemId = item1.Id, Available = false };
 
             loan1 = new LoanEntity
             {
@@ -89,6 +95,207 @@ namespace BISA.Server.Tests
                 UserId = user2.Id
             };
         }
+
+        [Fact]
+
+        public async Task AddLoan_OnSuccess_ReturnListOfLoanDTO()
+        {
+            //arrange
+            List<CheckoutDTO> loansToAdd = new List<CheckoutDTO>
+            {
+                 new CheckoutDTO
+                {
+                    ItemId = 1001,
+                    Title = "Ondskan"
+                }
+            };
+
+            List<LoanDTO> expectedLoanList = new List<LoanDTO>
+            {
+                new LoanDTO
+                {
+                    InvItemId = 1001
+                }
+            };
+
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            inventoryItem1.Available = true;
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.ItemInventory.Add(inventoryItem2);
+            _context.SaveChanges();
+
+            //act
+            var result = await _systemUnderTest.AddLoan(loansToAdd);
+
+            //assert
+            Assert.IsType<List<LoanDTO>>(result);
+            Assert.Equal(expectedLoanList[0].InvItemId, result[0].InvItemId);
+
+        }
+
+        [Fact]
+        public async Task AddLoan_OnSuccess_LoanAddedToDb()
+        {
+            //Arrange
+            List<CheckoutDTO> loansToAdd = new List<CheckoutDTO>
+            {
+                 new CheckoutDTO
+                {
+                    ItemId = 1001,
+                    Title = "Ondskan"
+                }
+            };
+
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            inventoryItem1.Available = true;
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.SaveChanges();
+
+            var loansAtStart = await _context.LoansActive.ToListAsync();
+
+
+            //Act
+
+            var addedLoan = await _systemUnderTest.AddLoan(loansToAdd);
+            var loansAfterAddedLoan = await _context.LoansActive.ToListAsync();
+
+            //Assert
+            Assert.Equal(loansAtStart.Count + 1, loansAfterAddedLoan.Count);
+        }
+
+        [Fact]
+        public async Task AddLoan_OnInvalidUser_ThrowUserNotFoundException()
+        {
+            //arrange
+            string expectedErrorMessage = "User not found.";
+            List<CheckoutDTO> loansToAdd = new List<CheckoutDTO>
+            {
+                 new CheckoutDTO
+                {
+                    ItemId = 1001,
+                    Title = "Ondskan"
+                }
+            };
+
+            _context.Items.Add(item1);
+            inventoryItem1.Available = true;
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.SaveChanges();
+
+            //act
+            Func<Task> act = async () => await _systemUnderTest.AddLoan(loansToAdd);
+
+            //assert
+            UserNotFoundException exception = await Assert.ThrowsAsync<UserNotFoundException>(act);
+            Assert.Equal(expectedErrorMessage, exception.Message);
+        }
+
+        [Fact]
+        public async Task AddLoan_OnMaxLoansReached_ThrowsArgumentOutOfRangeException()
+        {
+            //arrange
+
+            string excpectedErrorMessage = "User only eligible for 0 more loans";
+            List<CheckoutDTO> loansToAdd = new List<CheckoutDTO>
+            {
+                 new CheckoutDTO
+                {
+                    ItemId = 1001,
+                    Title = "Ondskan"
+                }
+            };
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            _context.ItemInventory.AddRange(new ItemInventoryEntity[]
+            {
+                inventoryItem1,
+                inventoryItem2,
+                inventoryItem3,
+                inventoryItem4,
+                inventoryItem5,
+                new ItemInventoryEntity{Id = 1006, ItemId = item1.Id, Available = true}
+            });
+            _context.LoansActive.AddRange(new LoanEntity[]
+            {
+                new LoanEntity
+                {
+                    ItemInventoryId = 1001,
+                    UserId = 1
+                },
+                new LoanEntity
+                {
+                    ItemInventoryId = 1002,
+                    UserId = 1
+                },
+                new LoanEntity
+                {
+                    ItemInventoryId = 1003,
+                    UserId = 1
+                },
+                new LoanEntity
+                {
+                    ItemInventoryId = 1004,
+                    UserId = 1
+                },
+                new LoanEntity
+                {
+                    ItemInventoryId = 1005,
+                    UserId = 1
+                }
+            }) ;
+            _context.SaveChanges();
+
+            //act
+            Func<Task> act = async () => await _systemUnderTest.AddLoan(loansToAdd);
+
+            //assert
+
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal(excpectedErrorMessage, exception.Message);
+
+        }
+
+        [Fact]
+        public async Task AddLoan_OnNoItemsAvailable_InvalidOperationException()
+        {
+            //arrange
+
+            string excpectedErrorMessage = "Following items could not be loaned: Ondskan";
+            List<CheckoutDTO> loansToAdd = new List<CheckoutDTO>
+            {
+                 new CheckoutDTO
+                {
+                    ItemId = 1001,
+                    Title = "Ondskan"
+                }
+            };
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            _context.ItemInventory.AddRange(new ItemInventoryEntity[]
+            {
+                inventoryItem1,
+                inventoryItem2,
+                inventoryItem3,
+                inventoryItem4,
+                inventoryItem5,
+                
+            });
+            
+            _context.SaveChanges();
+
+            //act
+            Func<Task> act = async () => await _systemUnderTest.AddLoan(loansToAdd);
+
+            //assert
+
+            InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(act);
+            Assert.Equal(excpectedErrorMessage, exception.Message);
+
+        }
+
+
 
         [Fact]
         public async Task GetAllLoansWithActiveLoans_OnSuccess_ReturnsAListWithLoans()
@@ -163,6 +370,84 @@ namespace BISA.Server.Tests
             var result = await _systemUnderTest.GetMyLoans();
             // arrange
 
+        }
+
+        [Fact]
+        public async Task ReturnLoan_OnSuccess_RemovesLoanFromDatabase()
+        {
+            // Arrange
+            var invItemId = 1001;
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.LoansActive.Add(loan1);
+
+            _context.SaveChanges();
+
+            var loansAtStart = await _context.LoansActive.ToListAsync();
+            // Act
+            await _systemUnderTest.ReturnLoan(invItemId);
+            // Assert
+            var loansAtEnd = await _context.LoansActive.ToListAsync();
+            Assert.Equal(loansAtStart.Count - 1, loansAtEnd.Count);
+        }
+
+        [Fact]
+        public async Task ReturnLoan_OnSuccess_TogglesInvItemToAvailable()
+        {
+            // Arrange
+            var invItemId = 1001;
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.LoansActive.Add(loan1);
+
+            _context.SaveChanges();
+
+            // Act
+            var act = await _systemUnderTest.ReturnLoan(invItemId);
+            // Assert
+            var invItem = await _context.ItemInventory.FirstAsync(i => i.Id == invItemId);
+            Assert.True(invItem.Available);
+        }
+
+        [Fact]
+        public async Task ReturnLoan_OnSuccess_ReturnsSuccessMessageString()
+        {
+            // Arrange
+            var invItemId = 1001;
+            var expectedMessage = "Loan returned";
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.LoansActive.Add(loan1);
+
+            _context.SaveChanges();
+
+            // Act
+            var act = await _systemUnderTest.ReturnLoan(invItemId);
+            // Assert
+            Assert.Equal(expectedMessage, act);
+        }
+
+        [Fact]
+        public async Task ReturnLoan_OnNoMatchingInvItem_ThrowsNotFoundExceptionWithMessage()
+        {
+            // Arrange
+            var invItemId = 94328423;
+            var expectedMessage = "No matching item found.";
+            _context.Users.Add(user1);
+            _context.Items.Add(item1);
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.LoansActive.Add(loan1);
+
+            _context.SaveChanges();
+
+            // Act
+            Func<Task> act = async () => await _systemUnderTest.ReturnLoan(invItemId);
+            // Assert
+            NotFoundException exception = await Assert.ThrowsAsync<NotFoundException>(act);
+            Assert.Equal(expectedMessage, exception.Message);
         }
     }
 }

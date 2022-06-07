@@ -74,8 +74,8 @@ namespace BISA.Server.Services.LoanService
 
                 throw new InvalidOperationException(infoMessage);
             }
-
-            throw new ArgumentOutOfRangeException($"User only eligible for {BussinessRulesConstants.MaxLoansPerUser - currentUserLoans.Count} more loans");
+            string errorMessage = $"User only eligible for {BussinessRulesConstants.MaxLoansPerUser - currentUserLoans.Count} more loans";
+            throw new ArgumentException(errorMessage);
         }
 
         public async Task<List<LoanDTO>> GetAllLoans()
