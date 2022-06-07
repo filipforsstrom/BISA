@@ -6,7 +6,6 @@ namespace BISA.Server.Services.EventService
     public class EventService : IEventService
     {
         private readonly BisaDbContext _context;
-        private ServiceResponseDTO<EventDTO> responseDTO = new();
 
         public EventService(BisaDbContext context)
         {
@@ -101,7 +100,7 @@ namespace BISA.Server.Services.EventService
                 throw new NotFoundException("Event not found");
             }
 
-            
+
             EventDTO eventDto = new()
             {
                 Id = response.Id,
@@ -164,7 +163,6 @@ namespace BISA.Server.Services.EventService
             var response = await _context.EventType.ToListAsync();
 
             List<EventTypeDTO> EventTypes = new();
-            ServiceResponseDTO<List<EventTypeDTO>> responseDTO = new();
 
             if (!response.Any())
             {
