@@ -6,7 +6,6 @@ namespace BISA.Server.Services.EventService
     public class EventService : IEventService
     {
         private readonly BisaDbContext _context;
-        private ServiceResponseDTO<EventDTO> responseDTO = new();
 
         public EventService(BisaDbContext context)
         {
@@ -16,7 +15,7 @@ namespace BISA.Server.Services.EventService
         public async Task<EventDTO> CreateEvent(EventCreateDTO eventToCreate)
         {
             //Get all events
-            var allEvents = await GetEvents();
+            var allEvents = await _context.Events.Include(e => e.EventType).ToListAsync();
 
             //See if event to be created has exact same property data as another event except Id.
             var foundDuplicate = allEvents
@@ -25,7 +24,7 @@ namespace BISA.Server.Services.EventService
                 && e.Location.ToLower() == eventToCreate.Location.ToLower()
                 && e.Organizer.ToLower() == eventToCreate.Organizer.ToLower()
                 && e.Description.ToLower() == eventToCreate.Description.ToLower()
-                && e.Type.Id == eventToCreate.Type.Id);
+                && e.EventTypeId == eventToCreate.Type.Id);
 
             if (foundDuplicate)
             {
@@ -39,10 +38,10 @@ namespace BISA.Server.Services.EventService
                 Subject = eventToCreate.Subject,
                 Location = eventToCreate.Location,
                 Description = eventToCreate.Description,
-                EventTypeId = eventToCreate.Type.Id
+                EventTypeId = eventToCreate.Type.Id,
             };
 
-            var savedEntity = _context.Events.Add(eventEntity);
+            var savedEntity = _context.Events.Add(eventEntity).Entity;
             var savedResult = await _context.SaveChangesAsync();
 
             if (savedResult < 1)
@@ -52,19 +51,19 @@ namespace BISA.Server.Services.EventService
 
             var savedEvent = new EventDTO
             {
-                Id = savedEntity.Entity.Id,
-                Date = savedEntity.Entity.Date,
-                Organizer = savedEntity.Entity.Organizer,
-                Subject = savedEntity.Entity.Subject,
-                Location = savedEntity.Entity.Location,
-                Description = savedEntity.Entity.Description,
+                Id = eventToCreate.Id,
+                Date = eventToCreate.Date,
+                Organizer = eventToCreate.Organizer,
+                Subject = eventToCreate.Subject,
+                Location = eventToCreate.Location,
+                Description = eventToCreate.Description,
                 Type = new EventTypeDTO
                 {
-                    Id = savedEntity.Entity.EventType.Id,
-                    Capacity = savedEntity.Entity.EventType.Capacity,
-                    Description = savedEntity.Entity.EventType.Description,
-                    Image = savedEntity.Entity.EventType.Image,
-                    Type = savedEntity.Entity.EventType.Type
+                    Id = eventToCreate.Type.Id,
+                    Capacity = eventToCreate.Type.Capacity,
+                    Description = eventToCreate.Type.Description,
+                    Image = eventToCreate.Type.Image,
+                    Type = eventToCreate.Type.Type
                 }
             };
 
@@ -101,7 +100,7 @@ namespace BISA.Server.Services.EventService
                 throw new NotFoundException("Event not found");
             }
 
-            
+
             EventDTO eventDto = new()
             {
                 Id = response.Id,
@@ -164,7 +163,6 @@ namespace BISA.Server.Services.EventService
             var response = await _context.EventType.ToListAsync();
 
             List<EventTypeDTO> EventTypes = new();
-            ServiceResponseDTO<List<EventTypeDTO>> responseDTO = new();
 
             if (!response.Any())
             {

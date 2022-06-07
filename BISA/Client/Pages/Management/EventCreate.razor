@@ -48,6 +48,7 @@
 
     private async Task CreateEvent()
     {
+        var eventType = EventTypes.Find(e => e.Id == EventToValidate.EventTypeId);
         EventViewModel eventToCreate = new EventViewModel
         {
             Date = EventDate.GetValueOrDefault().Date.Add(EventTime.GetValueOrDefault()),
@@ -55,7 +56,14 @@
             Location = EventToValidate.Location,
             Organizer = EventToValidate.Organizer,
             Subject = EventToValidate.Subject,
-            Type = new EventTypeViewModel { Id = EventToValidate.EventTypeId }
+            Type = new EventTypeViewModel
+            {
+                Id = eventType.Id,
+                Capacity = eventType.Capacity,
+                Description = eventType.Description,
+                Image = eventType.Image,
+                Type = eventType.Type
+            }
         };
 
         var createEventResult = await EventService.CreateEvent(eventToCreate);
