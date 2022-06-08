@@ -10,6 +10,7 @@ using Moq;
 using MudBlazor;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -370,6 +371,36 @@ namespace BISA.Server.Tests
             var result = await _systemUnderTest.GetMyLoans();
             // arrange
 
+        }
+
+        [Fact]
+        public async Task ReturnLoan_OnExistingReservations_MovesReservationToActiveLoan()
+        {
+            // Arrange
+            _context.Users.Add(user1);
+            _context.Users.Add(user2);
+            _context.Items.Add(item1);
+            _context.ItemInventory.Add(inventoryItem1);
+            _context.LoansActive.Add(loan1);
+            _context.LoansReservation.Add(new LoanReservationEntity
+            {
+                Id = 1,
+                ItemId = item1.Id,
+                Date_From = DateTime.MaxValue.AddDays(-2),
+                Date_To = DateTime.MaxValue,
+                UserId = user2.Id
+            });
+
+            _context.SaveChanges();
+
+            var reservationsAtStart = _context.LoansReservation.ToList();
+            // Act
+            await _systemUnderTest.ReturnLoan(inventoryItem1.Id);
+            // Assert
+            var reservationsAtEnd = _context.LoansReservation.ToList();
+            Assert.Equal(reservationsAtStart.Count - 1, reservationsAtEnd.Count);
+            var newLoan = _context.LoansActive.First();
+            Assert.Equal(newLoan.UserId, reservationsAtStart[0].UserId);
         }
 
         [Fact]
