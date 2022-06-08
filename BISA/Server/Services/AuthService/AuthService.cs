@@ -94,7 +94,7 @@ namespace BISA.Server.Services.AuthService
                 _configuration["JWTSettings:Audience"],
                 claims: claims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
                 );
 
