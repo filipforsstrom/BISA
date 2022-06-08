@@ -12,7 +12,16 @@
         public async Task<string> DeleteItem(int id)
         {
             var response = await _http.DeleteAsync($"api/items/{id}");
-            return await response.Content.ReadAsStringAsync();
+
+            if(response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                return "Item deleted";
+            }
+            
         }
 
         public async Task<ItemViewModel> GetItem(int id)
