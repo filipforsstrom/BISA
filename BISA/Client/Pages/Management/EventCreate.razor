@@ -8,8 +8,8 @@
     <MudCard>
         <MudText Align="Align.Center" Typo="Typo.h3">Create event</MudText>
         <MudCardContent>
-            <MudDatePicker Label="Date" @bind-Date="EventDate" Required="true"/>
-            <MudTimePicker Label="Time" @bind-Time="EventTime" Required="true"/>
+            <MudDatePicker Label="Date" @bind-Date="EventDate"/>
+            <MudTimePicker Label="Time" @bind-Time="EventTime"/>
             <MudTextField Label="Organizer" @bind-Value="EventToValidate.Organizer"
                           For="(() => EventToValidate.Organizer)"></MudTextField>
             <MudTextField Label="Subject" @bind-Value="EventToValidate.Subject"

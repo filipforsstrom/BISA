@@ -136,6 +136,8 @@
             </MudCardContent>
         </MudCard>
     }
+    <br />
+    <br />
     <AuthorizeView>
         <Authorized>
             @if (Available)
@@ -151,7 +153,6 @@
                 <MudText>This @Item.Type isn't available</MudText>
             }
         </Authorized>
-
         <NotAuthorized>
             <MudText Typo="Typo.body2">
                 Please
@@ -160,6 +161,10 @@
             </MudText>
         </NotAuthorized>
     </AuthorizeView>
+     <br />
+    <br />
+     <br />
+    <br />
 }
 
 @code {
