@@ -76,11 +76,11 @@ builder.Services.AddSwaggerGen(setupAction =>
 });
 
 // BisaDb
-builder.Services.AddDbContext<BisaDbContext>(options => options.UseSqlServer(
+builder.Services.AddDbContext<BisaDbContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("BisaDbConnection")));
 
 //UserDb
-builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlServer(
+builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("UserConnection")
     ));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<UserDbContext>();
