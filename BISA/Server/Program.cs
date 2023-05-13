@@ -76,11 +76,11 @@ builder.Services.AddSwaggerGen(setupAction =>
 });
 
 // BisaDb
-builder.Services.AddDbContext<BisaDbContext>(options => options.UseSqlServer(
+builder.Services.AddDbContext<BisaDbContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("BisaDbConnection")));
 
 //UserDb
-builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlServer(
+builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("UserConnection")
     ));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<UserDbContext>();
@@ -127,13 +127,13 @@ using (var scope = app.Services.CreateScope())
     using (var context = scope.ServiceProvider.GetService<BisaDbContext>())
     {
         context.Database.EnsureDeleted();
-        context.Database.Migrate();
+        context.Database.EnsureCreated();
 
     }
     using (var context = scope.ServiceProvider.GetService<UserDbContext>())
     {
         context.Database.EnsureDeleted();
-        context.Database.Migrate();
+        context.Database.EnsureCreated();
     }
 }
 
